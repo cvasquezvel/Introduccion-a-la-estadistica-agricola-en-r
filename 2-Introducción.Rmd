@@ -1,0 +1,165 @@
+---
+title: "Introducción a la Estadística Aplicada en Agricultura"
+author: "Christian Vásquez Velasco"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+options(scipen = 9999,
+        max.print = 9999)
+```
+
+# 1. Conceptos básicos
+
+## Población (N)
+
+Es el conjunto de todos los elementos que se desean analizar y que presentan una o varias características en común.
+
+Ejemplos:
+
+Las parcelas de maíz amarillo duro en la comunidad de Lambayeque durante los meses de abril a agosto de 2021.
+Las plantas de arándano variedad Biloxi en el área experimental del vivero, modulo 9.
+
+## Muestra (m)
+
+Es un subconjunto representativo de elementos provenientes de una problación.
+
+Ejemplos:
+
+Las parcelas de 10 agricultores de maíz amarillo duro en la comunidad de Lambayeque.
+30 plantas de arándano variedad Biloxi en el área experimental del vivero, modulo 9.
+
+## Unidad elemental
+
+Es cada una de las personas, animales, cosas, o entidades que conforman las población en estudio.
+
+Ejemplos:
+
+Las parcelas de maíz amarillo duro.
+Las plantas de arándano.
+
+## Variable
+
+Es toda característica que se desea observar, medir o evaluar de las unidades elementales.
+
+Las variables se pueden clasificar en cuantitativas o cualitativas.
+
+### Variable cualitativa
+
+Proporcionan datos que dan como resultado una categoría.
+Pueden ser de tipo nominal u ordinal.
+
+#### Nominales
+
+Son aquellos cuyos valores o resultados pueden ser organizados y presentados en cualquier orden.
+
+Ejemplos:
+
+- Forma de la hoja bandera del maíz.
+- Tipo de dentadura del grano de maíz.
+
+#### Ordinales
+
+Son aquellas cuyos valores o resultados deben ser organizados y presentados en orden definido.
+
+Ejemplos:
+
+- Grado de instrucción del agricultor.
+
+### Variable cuantitativa
+
+Son aquellas cuyos valores pueden ser expresados en forma numérica,
+Pueden ser discretas o continuas.
+
+#### Discreta
+
+Son aquellas que tienen un número finito o infinito numerable de valores posibles. Por lo general se obtienen mediante conteo.
+
+Ejemplo:
+
+- Número de hojas por planta.
+
+#### Continua
+
+Son aquellas que tienen una cantidad infinita o no numerable de valores posibles. Por lo general se puede obtener mediante instrumentos de medición.
+
+Ejemplos:
+
+- Diámetro de fruto.
+- Peso de fruto.
+
+## Otra forma de clasificación de variables
+
+Otra forma de clasificación de las varibales es según su escalada de medida. De esta manera la clasificación sería:
+
+- Nominal: Los datos son etiquetas o nombres que se emplean para definir un atributo del elemento.
+
+Ejemplos: Estado civil, profesión, género.
+
+- Ordinal: Los datos son etiquetas y además se pueden ordenar de forma ascendente o descendente.
+
+Ejemplos: Nivel de apreciación o calidad de un fruto.
+
+- Intervalo: Los datos son numéricos, el cero es relativo, es decir, no indica ausencia de la característica medida.
+
+Ejemplo: Temperatura, fechas del calendario.
+
+Razón: Los datos son numéricos, el cero es **absoluto**, es decir, indica la ausencia de característica medida.
+
+Ejemplo: Peso, estatura, salario, diámetro.
+
+## Observación
+
+Es el dato registrado, producto de la *medición* o aprecación de una característica en una unidad elemental.
+
+Ejemplo:
+
+El ingreso mensual de la empresa agroexportadora Camposol, producto de las ventas de arándano.
+
+## Parámetro
+
+Es una medida que resume los datos provenientes de la población. Es decir es una función de todas las observaciones de una población.
+
+Ejemplo: Luego de realizar un censo a los agricultores del distrito de Túcume se obtuvo que el ingreso medio mensual fue de 920 soles.
+
+## Estadístico
+
+Es una medida que resume los datos provenientes de la muestra.
+
+Ejemplo: Luego de realizar un muestreo a 30 agricultores del distrito de Túcume se obtuvo que el ingreso medio mensual fue de 950 soles.
+
+# 2. Deficinión de Estadística
+
+Es la ciencia que se ocupa de la creación, desarrollo y aplicación de técnicas que permiten hacer un análisis confiable de una población.
+
+En terminos generales, se ocupa de la colección, resumen, presentación, análisis e interpretación de datos y resultados, de modo tal que pueda evaluarse la confiabilidad y riesgos asociados a las conclusiones que se puedan derivar a partir de los datos captados.
+
+# 3. División de la Estadística
+
+## Descriptiva
+
+Son técnicas de recolección, caracterización, resumen y presentación que permiten `describir` un conjunto de datos.
+
+Con un análisis descriptivo, se pueden obtener indicadores (estimaciones puntuales). tablas de frecuencia (o contingencia) y gráficos.
+
+Para realizar el análisis descriptivo se debe tener en cuenta el tipo de variable que se está analizando (cualitativa o cuantitativa) y la cantidad de variables que se están analizando a la vez (univariada, bivariada o multivariada).
+
+## Inferencial
+
+Son técnicas para estimar parámetros de una población o tomar decisiones sobre la población basadas en el resultado de una muestra. Estas conclusiones pueden tener cierto margen de error; por eso, se dan con una medida de confiabilidad o probabilidad.
+
+Comprende la estimación de intervalos de confianza y la realización de pruebas de hipótesis para uno o varios parámetros.
+
+Al igual que el análisis descriptivo para realizar un inferencial se debe tener en cuenta la naturaleza de la variable (si los datos provienen de alguna distribución teórica), el tipo de variable y la cantidad de variables involucradas en el análisis.
+
+## Paramétrica
+
+Utiliza cálculos y procedimientos asumiendo que conoce cómo se distribuye la variable aleatoria a estudiar.
+
+## No paramétrica
+
+No requiere del conocimiento de la distribución de la variable aleatoria a estudiar.
+
+
+

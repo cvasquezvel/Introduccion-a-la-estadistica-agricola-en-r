@@ -1,0 +1,172 @@
+---
+title: "Pruebas de hipótesis (parte II)"
+author: "Christian Vásquez Velasco"
+date: "14/8/2021"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(scipen = 9999,
+        max.print = 9999)
+library(agricolae)
+library(agroforestry)
+library(dplyr)
+library(exactRankTests)
+library(kSamples)
+```
+
+## Prueba de hipótesis para k variancias
+
+Sirve para detectar si las variancias son constantes (homogéneas) o no constantes (heterogéneas)
+
+### Prueba de Barttlet
+
+**Con DAP**
+
+$H_0: \sigma_{Aucatadijo} = \sigma_{Bolaina} = \sigma_{Shihuahuaco} = \sigma_{Tornillo}$
+
+$H_1: \text{Al menos un } \sigma \text{ es diferente a los demás}$
+
+$\alpha = 0.01$
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+data("bagua")
+
+dap <- bagua %>%
+  select(dap,especie) %>%
+  filter(especie %in% c("Aucatadijo","Bolaina","Shihuahuaco","Tornillo"))
+
+dap$especie <- dap$especie %>% as.character %>% as.factor
+
+# bartlett.test(especie$dap, especie$especie)
+bartlett.test(dap$dap~dap$especie)
+
+boxplot(dap$dap~dap$especie)
+```
+
+*Conclusión*. A un nivel de significancia de 0.01, existe suficiente evidencia estadística para rechazar $H_0$. Por lo tanto, se puede afirmar que la varianza del diámetro a la altura del pecho es diferente el al menos una de las especies.
+
+**Con Altura**
+
+$H_0: \sigma_{Aucatadijo} = \sigma_{Bolaina} = \sigma_{Shihuahuaco} = \sigma_{Tornillo}$
+
+$H_1: \text{Al menos un } \sigma \text{ es diferente a los demás}$
+
+$\alpha = 0.01$
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+data("bagua")
+
+altura <- bagua %>%
+  select(altura,especie) %>%
+  filter(especie %in% c("Aucatadijo","Bolaina","Shihuahuaco","Tornillo")) 
+
+altura$especie <- altura$especie %>% as.character %>% as.factor
+
+bartlett.test(altura$altura~altura$especie)
+
+boxplot(altura$altura~altura$especie)
+```
+
+*Conclusión*. A un nivel de significancia de 0.01, existe suficiente evidencia estadística para no rechazar $H_0$. Por lo tanto, se puede afirmar que la varianza de la altura del árbol no es diferente entre las especies.
+
+## Prueba de k medias
+
+$H_0: \mu_{Aucatadijo} = \mu_{Bolaina} = \mu_{Shihuahuaco} = \mu_{Tornillo}$
+
+$H_1: \text{Al menos un } \mu \text{ es diferente a los demás}$
+
+$\alpha = 0.07$
+
+Esta prueba tiene como supuesto que la dispersión o varianza de los niveles del factor evaluado es estadísticamente similar entre los niveles.
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+data("bagua")
+
+summary(aov(lm(altura~especie, altura)))
+cat("F tabular al 0.07 de alfa:",qf(0.07,3,267, lower.tail = F),".\n")
+```
+*Conclusión*. A un nivel de significancia de 0.07, existe suficiente evidencia estadística para no rechazar $H_0$. Por lo tanto puede afirmar que la altura de planta es estadísticamente similar entre las especies "Aucatadijo", "Bolaina", "Shihuahuaco" y "Tornillo".
+
+# Pruebas no paramétricas
+
+## Prueba de Wilcoxon
+
+$H_0: Mediana_{Aucatadijo} = Mediana_{Shihuahuaco}$
+
+$H_1: Mediana_{Aucatadijo} \neq Mediana_{Shihuahuaco}$
+
+$\alpha = 0.05$
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+dap2 <- bagua %>%
+  select(dap,especie) %>%
+  filter(especie %in% c("Aucatadijo","Shihuahuaco"))
+
+Aucatadijo <- dap2%>%
+  filter(especie %in% c("Aucatadijo"))
+
+Shihuahuaco <- dap2%>%
+  filter(especie %in% c("Shihuahuaco"))
+
+# Sin corrección por empates
+wilcox.test(Aucatadijo$dap,Shihuahuaco$dap, mu = 0,
+            paired = F, alternative = "l")
+# Con corrección por empates
+wilcox.exact(Aucatadijo$dap,Shihuahuaco$dap, mu = 0,
+            paired = F, alternative = "l")
+```
+*Conclusión*. A un nivel de significancia de 0.05, existe suficiente evidencia estadística para rechazar la $H_0$. Por lo tanto, podemos afirmar que el dap mediano de la especie Aucatadijo es diferente al de la especie Shihuahuaco.
+
+## Prueba U de Mann-Whitney
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+wilcox.exact(Aucatadijo$dap,Shihuahuaco$dap, mu = 0,
+            paired = F, alternative = "t")
+```
+
+## Prueba Mood
+
+$H_0: \theta_{Aucatadijo} = \theta_{Shihuahuaco}$
+
+$H_1: \theta_{Aucatadijo} \neq \theta_{Shihuahuaco}$
+
+$\alpha = 0.05$
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+mood.test(Aucatadijo$dap,Shihuahuaco$dap, alternative = "t")
+```
+*Conclusión*. A un nivel de significancia de 0.05, existe suficiente evidencia estadística para no rechazar la $H_0$. Por lo tanto, podemos afirmar que la diferencia en la dispersión del diámetro a la altura del pecho de la especie Aucatadijo es igual al de la especie Shihuahuaco.
+
+## Prueba Kruskal Wallis
+
+$H_0: \text{El dap de las especies provienen de la misma distribución}$
+
+$H_1: \text{El dap de las especies no provienen de la misma distribución}$
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+kSamples::ad.test(dap$dap~dap$especie)
+
+```
+ 
+$H_0: Mediana_{Aucatadijo} = Mediana_{Bolaina} = Mediana_{Shihuahuaco} = Mediana_{Tornillo}$
+
+$H_1: \text{Al menos una Mediana es diferente a las demás}$
+ 
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+with(dap,kruskal(y = dap,trt = especie,alpha = 0.05,group = T,console = T))
+```
+
+## Prueba de la Mediana
+
+$H_0: Mediana_{Aucatadijo} = Mediana_{Bolaina} = Mediana_{Shihuahuaco} = Mediana_{Tornillo}$
+
+$H_1: \text{Al menos una Mediana es diferente a las demás}$
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+with(dap,Median.test(y = dap,trt = especie,alpha = 0.05,group = T,console = T))
+```
+

@@ -1,0 +1,170 @@
+---
+title: "Análisis exploratorio y descriptivo (parte II)"
+author: "Christian Vásquez Velasco"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+options(scipen = 9999,
+        max.print = 9999)
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(readxl, agricolae, summarytools, car, psych)
+```
+
+# Escala de medida
+
+Es una manera de valorar los datos observados desde los datos cuantitativos o datos cualitativos.
+
+## Escala nominal
+
+Corresponde a valores de tipo cualitativo, sin ningún orden y por lo general son pocos los niveles o valores. No se puede realizar operaciones elementales, solo permite conteo.
+
+## Escala ordinal
+
+Las clases o categorías que se asigna a los observado de tipo cualitativo, mantiene una cierta jerarquía sin importar su distanciamiento y son conocidos como variables seudo cuantitativas.
+
+## Escala de intervalo.
+
+Es aplicable en datos cuantitativos, no permiten todas las operaciones elementales, solo suma o resta.
+
+## Escala de razón
+
+Es aplicable por lo general a datos cuantitativos continuos generados por instrumentos de medida.
+
+## Aplicación
+
+Para establecer la identificación y diferencias en las medidas, se utilizará el investario de maíz.
+
+Se registró información de variables morfológicas del maíz en dos localidades y ocho tratamientos.
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+# Importación
+maiz2 <- read_excel("datos 1.xlsx", sheet = "Datos 2")
+
+# Etiquetado de variables
+
+maiz2$PAE <- car::recode(maiz2$PAE, "1='Ausente o muy débil';
+                        3='Débil'; 5='Media'; 7='Fuerte'; 9='Muy fuerte'")
+maiz2$PAE <- factor(maiz2$PAE,
+                   levels = c("Ausente o muy débil","Débil","Media","Fuerte",
+                              "Muy fuerte"), ordered = TRUE)
+
+set.seed(645)
+maiz3 <- maiz2[sample(nrow(maiz2),400),]
+
+with(maiz3,table(Tratamiento))
+with(maiz3,table(Localidad))
+with(maiz3,table(PAE))
+```
+
+La descripción permite indicar lo siguiente:
+
+**Escala nominal**
+
+- Tratamiento
+- Localidad
+
+**Escala ordinal**
+
+- Pigmentación antociánica de los estigmas (PAE).
+
+**Escala de intervalo**
+
+- No se registran variables en escala intervalo.
+
+**Escala de razon**
+
+- Hojas por planta (HPP).
+- Granos por mazorca (GPM).
+- Longitud de grano (LG).
+- Ancho de grano (AG).
+- Peso de mazorca (PM).
+
+Su identificación de algunas medias, permite agrupar, y son considerados como factores.
+
+- Tratamiento
+- Localidad
+- Pigmentación antociánica de los estigmas (PAE).
+
+## Medidas estadísticas
+
+Para el ejemplo, utilizar la moda como medida expresiva (representativa) para las variables Localidad y Tratamiento. En la variable PAE, que es ordinal, la medida más relevante y expresiva es la mediana.
+
+## Representación de las medidad en gráficos.
+
+Es importante caracterizar el tipo de medida en su escala definida.
+
+Distribución de los tratamientos
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+op <- par(mar = c(4,10,2,2))
+tratamientos <- table(maiz3$Tratamiento)
+barplot(tratamientos, horiz = FALSE, density = 15,
+        col = "blue", las = 2)
+par(op)
+op <- par(mar = c(0,0,0,0))
+pie(tratamientos)
+par(op)
+
+```
+
+En el caso de la escala ordinal, debe tener presente el orden (ascendente o descendente).
+
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+op <- par(mar = c(4,4,2,2))
+PAE <- table(maiz3$PAE)
+barplot(PAE, horiz = TRUE, density = 15,
+        col = "blue", las = 2)
+par(op)
+```
+
+En el caso de variable discreta en datos agrupados, el gráfico debe ser de líneas verticales para cada valor.
+
+Para este caso simulamos datos de un comportamiento binomial, como número de frutos de mango defectuosos en 30 cajas de 5 unidades observadas cada una (probabilidad de éxito de 0.3)
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+op <- par(mar = c(4,4,2,2))
+x <- rbinom(30,5,0.3)
+y <- table(x)
+plot(y)
+points(as.numeric(names(y)),y,pch=20,cex = 2)
+par(op)
+```
+
+En el caso de variables continuas que corresponden a la escala de razón, los, los histogramas, diagramas de cajas y puntos son las más utilizadas.
+
+Para mostrar estos gráficos se utilizará la longitud y el ancho de los granos en el inventario muestreado.
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+op <- par(mar = c(4,4,2,2))
+Localidad1 <- subset(maiz3,maiz3$Localidad=="L1")
+pairs(Localidad1[,c(5,6)])
+par(op)
+```
+Se observa que la relación entre LG y AG es muy débil, no existe un patrón que indique una relación fuerte entre las variables LG y AG.
+
+Los histogramas y el diagráma de cajas (Tukey) permite una mejor descripción.
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+op <- par(mar = c(4,4,2,2))
+h1 <- hist(Localidad1$LG, main = "Longitud de grano en la localidad 1")
+h2 <- hist(Localidad1$AG, main = "Ancho de grano en la localidad 1")
+par(op)
+```
+
+**Diagráma de cajas para la Longitud de grano y el ancho de grano de todos los tratamientos**
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+op <- par(mar = c(4,4,2,2))
+b1 <- boxplot(LG ~ Tratamiento, data = Localidad1, xlab = "", main = "Longitud de grano en la localidad 1")
+b2 <- boxplot(AG ~ Tratamiento, data = Localidad1, xlab = "", main = "Ancho de grano en la localidad 1")
+par(op)
+```
+

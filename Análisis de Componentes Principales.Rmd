@@ -1,0 +1,165 @@
+---
+title: "Análisis de componentes principales (PCA)"
+author: "Christian Vásquez Velasco"
+date: "14/8/2021"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(scipen = 9999,
+        max.print = 9999)
+library(readxl)
+library(factoextra)
+library(FactoMineR)
+library(ade4)
+library(corrplot)
+library(ggcorrplot)
+library(ggplot2)
+library(dplyr)
+```
+
+# Introducción
+
+El Análisis de Componentes Principales (Principal Component Analysis), es una técnica multivariada que tiene como objetivo reducir la dimensionalidad, es decir, explicar con el menor número de variables posibles, la mayor cantidad de variancia del experimento. Para ello, se crea un nuevo conjunto de variables a la cual llamaremos componentes.
+
+El PCA tiene un uso exploratorio y descriptivo. 
+
+Se emplea para variables cuantitativas.
+
+Es la puerta de entrada para la creación de modelos inferenciales y predictivos.
+
+# ¿Que es un componente?
+
+Es una variable creada por la relación lineal entre distintas variables originales.
+
+Los componentes son variables ortogonales, es decir, su correlación entre ellas es nula.
+
+# ¿Cómo se seleccionan los componentes principales?
+
+Se seleccionan a través de tres criterios:
+
+- Criterio práctico: Seleccionar a los dos primeros componentes.
+
+- Criterio de la media aritmétrica. Seleccionar a todos aquellos componentes que expliquen la variancia de más de una varible original. Es se observa en el autovalor (\lambda). Si es mayor a 1, se elige este componente como principal.
+
+- Criterio del gráfico de sedimentación. Es muy similar al criterio de la media aritmétrica. En ese criterio se usa un gráfico en forma de media montaña, donde se observa que a medida que aumenta el número de componentes, se va disminuyendo la explicación de la variancia del componente creado.
+
+## Caso Maíz
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+maiz <- readxl::read_xlsx("datos 1.xlsx", sheet = "Datos 2")
+
+Tratamiento <- factor(maiz$Tratamiento)
+
+data.PCA <- maiz%>%
+  select(HPP, GPM, LG, AG, PM)
+```
+
+### Correlación de variables
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+cor <- cor(data.PCA)
+
+corrplot(cor)
+
+p.mat <- cor_pmat(data.PCA)
+
+ggcorrplot(cor, hc.order = F,
+                    type = "lower", p.mat = p.mat) 
+
+ggcorrplot(cor, hc.order = F,
+                    type = "lower", p.mat = p.mat,
+           insig = "blank")
+
+```
+
+### Análisis de componentes principales
+
+**Forma 1**
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+acp <- FactoMineR::PCA(data.PCA, scale.unit = T, ncp = 5, graph = F)
+summary(acp)
+
+# acp$ind$contrib
+# colSums(acp$ind$contrib)
+# acp$ind$cos2
+# rowSums(acp$ind$cos2)
+# acp$ind$coord
+# 
+# acp$var$contrib
+# colSums(acp$var$contrib)
+# acp$var$cos2
+# rowSums(acp$var$cos2)
+# acp$var$coord
+```
+
+**Forma 2**
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+pca <- ade4::dudi.pca(data.PCA, scannf = F, scale = T, nf = 5)
+# pca
+
+# pca$l1 # scores normalizados
+# pca$li # scores
+# pca$co # coordenadas de variables
+
+# autovalores
+summary(pca)
+
+```
+
+### Gráfico de sedimentación
+ 
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+# primera forma
+
+plot(pca$eig, type = "b", pch = 20, col ="blue")
+abline(h=1, lty = 3, col = "red")
+
+fviz_eig(pca, geom = "line")+
+  theme_test()
+
+# segunda forma
+
+eig.val <- get_eigenvalue(pca)
+eig.val
+
+```
+
+### Correlación entre variables y componentes
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+pca$co
+
+corpca <- cbind(data.PCA,pca$li)
+
+i = cor(corpca, method="pearson")
+
+corrplot(i[1:5,6:10], sig.level = 0.05)
+
+```
+
+### Gráfico de variables sobre el círculo de correlaciones
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+fviz_pca_var(pca,repel = TRUE, axes = c(1,2))
+fviz_pca_var(pca,repel = TRUE, axes = c(1,3))
+```
+
+### Gráfico de individuos sobre el primer plano de componentes
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+fviz_pca_ind(pca,repel = TRUE,geom.ind = c("text","point"),habillage = Tratamiento)
+```
+
+### Gráfico de individuos sobre el primer plano con biplot
+
+```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+fviz_pca_biplot(pca,repel = TRUE,habillage = Tratamiento)
+fviz_pca_biplot(pca,repel = TRUE,habillage = Tratamiento, addEllipses = T)
+```
+

@@ -1,0 +1,130 @@
+---
+title: "Muestreo aplicado"
+author: "Christian Vásquez Velasco"
+date: "14/8/2021"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 9999,
+        max.print = 9999)
+library(agricolae)
+library(agroforestry)
+```
+
+# Introducción
+
+El muestreo es una técnica estadística que permite extraer individuos de una población con la condición de representar en pequeño la ocurrencia en la población, desde parámetros hasta características particulares de interés.
+
+Hay dos tipos de muestreo: 
+
+- Probabilístico.
+
+- No Probabilístico.
+
+El primero requiere un ingrediente aleatorio y el no probabilístico es completamente dirigido, realizado en forma personalizada por el observador.
+
+**Estimar una respuesta cuantitativa**
+
+En el caso de de muestreo probabilístico, en un muestreo aleatorio, el tamaño de la muestra si es obtenida bajo los criterios de confianza, tolerancia y variabilidad, esta será considerada como una muestra con tamaño óptimo.
+
+$$n_0 = \frac{t_{0.05}^2*S^2}{\text{tol}^2}$$
+
+$n_0$: tamaño de muestre preliminar.
+
+$t_{0.05}$: es el valor del cuantil de t al 95 % de confianza, en la práctica es 1.96. El valor de \alfa puede cambiar a gusto o necesidad del investigador.
+
+$S^2$: Variancia estimada de la población o rando al cuadrado para un número pequeño (muestra preliminar) para la estiamción correspondiente.
+
+tol: Tolerancia, expresado en diferencia a considerar entre el valor real o verdadero y el posible valor determinado.
+
+$$n_1 = \frac{n_0}{1+\frac{n_0}{N}}$$
+
+Aplicar en el inventario de Isabelita, estimar el diámetro (DAP) de la especie SHIHUAHUACO.
+
+```{r, echo = TRUE, comment=NA}
+data("Isabelita")
+SHI <- subset(Isabelita, especie == "SHIHUAHUACO")
+head(SHI[,1:10])
+```
+
+**Muestreo piloto para tener una idea de la variación**
+
+```{r}
+set.seed(123)
+n0 <- sample(1:949,6)
+n1 <- SHI[n0,]
+r <- max(n1$dap)-min(n1$dap)
+r
+```
+
+Es un estimado de la desviación de los datos (rango), al cuadrado será un estimado de la variancia. El rango se debe utilizar cuando se tiene como máximo 10 observaciones en la muestra preliminar.
+
+```{r,echo = TRUE,comment=NA,warning=FALSE}
+set.seed(123)
+n0 <- sample(1:nrow(SHI),50)
+n1 <- SHI[n0,]
+sd <- sd(n1$dap)
+sd
+```
+
+Se elige a la desviación estándar ($s$), como un estimador de la desviación de los datos cuando se tiene más de 10 observaciones en la muestra preliminar. La desviación estándar al cuadrado de la muestra preliminar nos dará una proyección de la variancia de la población.
+
+Se fija un $95\%$ de confianza (1.96) y una tolerancia, por ejemplo, de $1.2*0.1=0.12$ y la variancia es $s^2$.
+
+```{r,echo = TRUE,comment=NA,warning=FALSE}
+xhat <- mean(n1$dap)
+# xhat
+tol <- xhat*0.1
+# tol
+N <- nrow(SHI)
+n <- qnorm(0.975)^2*sd^2/tol^2
+n <- round(n+0.5,0)
+n <- n/(1+n/N)
+n <- round(n+0.5,0)
+cat("Tamaño de muestra ótpimo para DAP:", n, "\n")
+```
+**Estimar DAP**
+
+```{r,echo = TRUE,comment=NA,warning=FALSE}
+n0 <- sample(1:nrow(SHI),n)
+muestra <- SHI[n0,]
+summary(muestra$dap)
+```
+
+**Estimar una respuesta cualitativa**
+
+El interés pueder ser, conocer el número y las especies que hay en la localidad en base a una muestra.
+
+Utilizando la misma fórmula de tamaño de muestra, se realiza las siguientes aproximaciones:
+
+$S^2$ aproximado de la variancia poblacional de una proporción entre dos alternativas y la máxima variancia es 0.5*0.5 = 0.25 = p(1-p).
+
+Tol es reemplazada por el margen de error a cometer en la estimación. Si es $10\%$ significa que la tolerancia es $0.1$
+
+$$n = \frac{t_{0.05}^2*S^2}{tol^2}$$
+
+En el caso de población finita (N), se realiza una corrección:
+
+$$n = \frac{n_0}{1+\frac{n_0}{N}}$$
+
+Aplicación en el inventario Isabelita, estimar el número y las especies que existen utilizando una muestra óptima.
+
+```{r,echo = TRUE,comment=NA,warning=FALSE}
+n <- qnorm(0.975)^2*0.5^2/0.05^2
+N <- nrow(Isabelita)
+n <- n/(1+n/N)
+n <- round(n+0.5,0)
+cat("Tamaño de muestra óptimo para estimar el número de especies:", n, "\n")
+```
+
+```{r,echo = TRUE,comment=NA,warning=FALSE}
+n0 <- sample(1:N,n)
+muestra <- Isabelita[n0,]
+table(muestra$especie) -> tabla
+cat("Total de especies en la muestra:", length(tabla), "\n")
+tabla
+```

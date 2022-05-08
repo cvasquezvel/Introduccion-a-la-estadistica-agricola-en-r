@@ -1,0 +1,237 @@
+---
+title: "Análisis Exploratorio y Descriptivo"
+author: "Christian Vásquez Velasco"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+options(scipen = 9999,
+        max.print = 9999)
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(readxl, agricolae, summarytools, car, psych)
+```
+
+# Caso: Investigación en Maíz
+
+Se realizó un estudio del comportamiento agronómico de líneas promisorias y variedades comerciales de maíz amarillo duro en un experimento realizado en la Estación Experimental Agraria Vista Florida del Instituto Nacional de Innovación Agraria (INIA), ubicado en el distrito de Picsi, Provincia de Ferreñafe, Departamento de Lambayeque, Perú.
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+# Importación
+
+
+# maiz <- read_excel("C:/Users/Christian/Documents/Curso Fundamentos/datos 1.xlsx", sheet = "Datos 1")
+
+maiz <- read_excel("datos 1.xlsx", sheet = "Datos 1")
+
+# Etiquetado de variables
+
+maiz$PAE <- car::recode(maiz$PAE, "1='Ausente o muy débil';
+                        3='Débil'; 5='Media'; 7='Fuerte'; 9='Muy fuerte'")
+maiz$PAE <- factor(maiz$PAE,
+                   levels = c("Ausente o muy débil","Débil","Media","Fuerte",
+                              "Muy fuerte"), ordered = TRUE)
+
+```
+ 
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+op <- par(mar = c(3,12,2,2), cex = 0.8)
+cat("Información del inventario:\n")
+# Estructura del data.frame
+str(maiz)
+cat("Clase del inventario:\n")
+# Clase
+class(maiz)
+cat("Primeros registros:\n")
+# Resumen de la base de datos
+head(maiz,10)
+cat("Número de columnas:\n")
+# Ncol
+ncol(maiz)
+cat("Número de filas:\n")
+# Nrow
+nrow(maiz)
+cat("Dimensiones:\n")
+# Dimensiones
+dim(maiz)
+
+# Tabla de frecuencia
+cat("Total de observaciones:",nrow(maiz),"\n")
+cat("Tabla de frecuencia de los tratamientos:\n")
+table(maiz$Tratamiento) -> tabla1
+tabla1
+barplot(tabla1, horiz = FALSE, las = 1)
+cat("Tabla de frecuencia de las localidades:\n")
+table(maiz$Localidad) -> tabla2
+tabla2
+barplot(tabla2, horiz = TRUE, las = 1)
+par(op)
+```
+
+## Resumen general de los datos
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+summary(maiz)
+```
+## Pigmentación Antociánica de los estigmas
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+op <- par(mar = c(3,12,2,2), cex = 0.8)
+cat("Tabla de frecuencia de PAE:\n")
+table(maiz$PAE) -> tabla3
+addmargins(tabla3)
+barplot(tabla3,horiz = TRUE, las = 1)
+cat("Tabla de proporciones de PAE:\n")
+addmargins(prop.table(tabla3))
+cat("Tabla de frecuencia y proporciones de PAE:\n")
+cbind(addmargins(tabla3),addmargins(prop.table(tabla3)))
+
+# Otras formas
+cat("Tabla de frecuencia y proporciones de PAE:\n")
+summarytools::freq(maiz$PAE, plain.ascii = FALSE,
+                   style = "rmarkdown")
+cat("Tabla de frecuencia y proporciones de PAE:\n")
+summarytools::freq(maiz$PAE, plain.ascii = FALSE,
+                   style = "rmarkdown", cumul = FALSE,
+                   headings = FALSE,
+                   report.nas = FALSE)
+cat("Tabla de frecuencia y proporciones de PAE:\n")
+summarytools::freq(maiz$PAE, plain.ascii = FALSE,
+                   style = "rmarkdown", cumul = TRUE,
+                   headings = FALSE,
+                   report.nas = FALSE)
+
+p1 <- round(prop.table(tabla3)*100,2)
+
+pie(p1, main = "Gráfico circular")
+pie(p1, main = "Gráfico circular", labels = c("Ausente o muy\ndébil (21.71 %)","Débil (39.69 %)","Media (22.5 %)","Fuerte (16.09 %)","Muy fuerte\n(0 %)"))
+
+barplot(tabla3,horiz = TRUE, las = 1, main = "Gráfico de barras",
+        col = "blue")
+barplot(prop.table(tabla3)*100,horiz = TRUE, las = 1)
+
+cat("Tabla de contingencia de PAE según los tratamientos:\n")
+table(maiz$PAE,maiz$Tratamiento) -> tabla4
+addmargins(tabla4)
+cat("Margenes de fila:\n")
+margin.table(tabla4,1)
+cat("Margenes de columna:\n")
+margin.table(tabla4,2)
+
+barplot(tabla4,horiz = TRUE, las = 1, main = "Gráfico de barras")
+
+cat("Tabla de contingencia (Proporciones) de PAE según los tratamientos:\n")
+
+cat("Tabla de contingencia de PAE según la localidad:\n")
+table(maiz$PAE,maiz$Localidad) -> tabla5
+tabla5
+
+barplot(tabla5,horiz = TRUE, las = 1, main = "Gráfico de barras", beside = T)
+
+par(op)
+```
+
+## Exploración y estadísticas de la localidad 1
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+Loc1 <- subset(maiz, maiz$Localidad=="L1")
+summary(Loc1[,c(3,4,5,6)])
+# summary(Loc1[,3:6])
+```
+
+**Diagrama de Tukey (diagrama de cajas, box plot)**
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+op <- par(mar = c(4,3,2,2), cex = 0.8)
+LGLoc1 <- with(Loc1, boxplot(LG, col = "Yellow", main = "Longitud de grano"))
+LGLoc1
+AGLoc1 <- with(Loc1, boxplot(AG, col = "Orange", main = "Ancho de grano"))
+AGLoc1
+```
+
+## Exploración y estadísticas de los tratamientos en Maíz
+
+**Estadísticas**
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+promedios <- with(maiz, tapply.stat(maiz[,4:6],Tratamiento,function(x) mean(x,na.rm = TRUE)))
+promedios
+sd <- with(maiz, tapply.stat(maiz[,4:6],Tratamiento,function(x) sd(x,na.rm = TRUE)))
+sd
+```
+
+**Diagrama de Tukey para el ancho de grano de los tratamientos**
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+op <- par(mar = c(10,2,2,2), cex = 0.8)
+ancho <- with(maiz, boxplot(AG ~ Tratamiento, col = "Green",
+                            main = "Diagrama de ancho de grano por tratamiento",
+                            las = 2, xlab = ""))
+par(op)
+```
+
+**Diagrama de Tukey para el longitud de grano de los tratamientos**
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+op <- par(mar = c(10,2,2,2), cex = 0.8)
+longitud <- with(maiz, boxplot(LG ~ Tratamiento, col = "Red",
+                            main = "Diagrama de longitud de grano por tratamiento",
+                            las = 2, xlab = ""))
+par(op)
+```
+
+**Tabla de frecuencia y gráfico de líneas para Número de hileras por mazorca**
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+# Importación
+maiz2 <- read_excel("datos 1.xlsx", sheet = "Datos 2")
+
+# Etiquetado de variables
+
+maiz2$PAE <- car::recode(maiz2$PAE, "1='Ausente o muy débil';
+                        3='Débil'; 5='Media'; 7='Fuerte'; 9='Muy fuerte'")
+maiz2$PAE <- factor(maiz2$PAE,
+                   levels = c("Ausente o muy débil","Débil","Media","Fuerte",
+                              "Muy fuerte"), ordered = TRUE)
+# Variable cuantitativa discreta
+# Tabla de frecuencias
+f1 <- table(maiz2$HPP)
+p2 <- round(prop.table(f1)*100,2)
+# La función que permite unir vectores
+tabla6 <- cbind(f1,p2)
+tabla6
+
+# Gráfico de líneas
+x <- row.names(tabla6)
+graphics::plot(p2, type = "h",col = 3,main = "Gráfico de líneas",las = 2)
+```
+
+**Tabla de frecuencia y gráfico de líneas para Longitud de grano**
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+# Variable cuantitativa continua
+# Tabla de frecuencias
+h2 <- with(maiz2, graph.freq(LG,plot = TRUE))
+print(table.freq(h2), row.names = FALSE)
+
+# Grafico
+h <- hist(maiz2$LG)
+polygon.freq(h)
+
+psych::multi.hist(maiz2[,5:7],global = F)
+psych::histBy(as.data.frame(maiz2),"LG","Tratamiento")
+psych::histBy(LG~Localidad,data=as.data.frame(maiz2))
+
+tapply(maiz2$LG, maiz2$Localidad,mean)
+```
+
+**Resumen general de un dataset**
+
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+
+psych::describe(maiz2)
+summarytools::descr(maiz2)
+```
