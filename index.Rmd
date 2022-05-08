@@ -6,6 +6,7 @@ output:
   bookdown::html_document2:
     includes:
       in_header: header.html
+    theme: darkly
   bookdown::gitbook:
     includes:
       in_header: header.html
