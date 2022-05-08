@@ -4,7 +4,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, dplyr, agricolae, agroforestry)
 ```
 
-# Muestreo aplicado
+# 7. Muestreo aplicado
 
 El muestreo es una técnica estadística que permite extraer individuos de una población con la condición de representar en pequeño la ocurrencia en la población, desde parámetros hasta características particulares de interés.
 

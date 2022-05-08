@@ -5,7 +5,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, dplyr, factoextra, FactoMineR, ade4, ggplot2, corrplot, ggcorrplot)
 ```
 
-# Análisis de componentes principales
+# 9. Análisis de componentes principales
 
 ## Introducción
 
@@ -33,7 +33,7 @@ Se seleccionan a través de tres criterios:
 
 - Criterio del gráfico de sedimentación. Es muy similar al criterio de la media aritmétrica. En ese criterio se usa un gráfico en forma de media montaña, donde se observa que a medida que aumenta el número de componentes, se va disminuyendo la explicación de la variancia del componente creado.
 
-### Caso Maíz
+## Aplicación: Caso Maíz
 
 ```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 maiz <- readxl::read_xlsx("datos 1.xlsx", sheet = "Datos 2")
@@ -47,7 +47,7 @@ data.PCA <- maiz%>%
   select(HPP, GPM, LG, AG, PM)
 ```
 
-#### Correlación de variables
+### Correlación de variables
 
 ```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 cor <- cor(data.PCA)
@@ -65,7 +65,7 @@ ggcorrplot(cor, hc.order = F,
 
 ```
 
-#### Análisis de componentes principales
+### Análisis de componentes principales
 
 **Forma 1**
 
@@ -73,11 +73,11 @@ ggcorrplot(cor, hc.order = F,
 acp <- FactoMineR::PCA(data.PCA, scale.unit = T, ncp = 5, graph = F)
 summary(acp)
 
-acp$ind$contrib
+#acp$ind$contrib
 colSums(acp$ind$contrib)
-acp$ind$cos2
-rowSums(acp$ind$cos2)
-acp$ind$coord
+# acp$ind$cos2
+# rowSums(acp$ind$cos2)
+# acp$ind$coord
 
 acp$var$contrib
 colSums(acp$var$contrib)
@@ -88,12 +88,12 @@ acp$var$coord
 
 **Forma 2**
 
-```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, warnings = F, fig.align='center',fig.width=6,fig.height=4}
 pca <- ade4::dudi.pca(data.PCA, scannf = F, scale = T, nf = 5)
 pca
 
-pca$l1 # scores normalizados
-pca$li # scores
+# pca$l1 # scores normalizados
+# pca$li # scores
 pca$co # coordenadas de variables
 
 # autovalores
@@ -101,9 +101,9 @@ summary(pca)
 
 ```
 
-#### Gráfico de sedimentación
+### Gráfico de sedimentación
  
-```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, warnings = F, fig.align='center',fig.width=6,fig.height=4}
 # primera forma
 
 plot(pca$eig, type = "b", pch = 20, col ="blue")
@@ -119,9 +119,9 @@ eig.val
 
 ```
 
-#### Correlación entre variables y componentes
+### Correlación entre variables y componentes
 
-```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, warnings = F, fig.align='center',fig.width=6,fig.height=4}
 pca$co
 
 corpca <- cbind(data.PCA,pca$li)
@@ -132,22 +132,22 @@ corrplot(i[1:5,6:10], sig.level = 0.05)
 
 ```
 
-#### Gráfico de variables sobre el círculo de correlaciones
+### Gráfico de variables sobre el círculo de correlaciones
 
-```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, warnings = F, fig.align='center',fig.width=6,fig.height=4}
 fviz_pca_var(pca,repel = TRUE, axes = c(1,2))
 fviz_pca_var(pca,repel = TRUE, axes = c(1,3))
 ```
 
-#### Gráfico de individuos sobre el primer plano de componentes
+### Gráfico de individuos sobre el primer plano de componentes
 
-```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, warnings = F, fig.align='center',fig.width=6,fig.height=4}
 fviz_pca_ind(pca,repel = TRUE,geom.ind = c("text","point"),habillage = Tratamiento)
 ```
 
-#### Gráfico de individuos sobre el primer plano con biplot
+### Gráfico de individuos sobre el primer plano con biplot
 
-```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, warnings = F, fig.align='center',fig.width=6,fig.height=4}
 fviz_pca_biplot(pca,repel = TRUE,habillage = Tratamiento)
 fviz_pca_biplot(pca,repel = TRUE,habillage = Tratamiento, addEllipses = T)
 ```

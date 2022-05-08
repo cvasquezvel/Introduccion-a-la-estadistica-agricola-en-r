@@ -4,7 +4,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, dplyr, agricolae, agroforestry, exactRankTests, kSamples)
 ```
 
-# Pruebas de hipótesis II
+# 6. Pruebas de hipótesis II
 
 ## Prueba de hipótesis para k variancias
 
@@ -79,9 +79,9 @@ cat("F tabular al 0.07 de alfa:",qf(0.07,3,267, lower.tail = F),".\n")
 ```
 *Conclusión*. A un nivel de significancia de 0.07, existe suficiente evidencia estadística para no rechazar $H_0$. Por lo tanto puede afirmar que la altura de planta es estadísticamente similar entre las especies "Aucatadijo", "Bolaina", "Shihuahuaco" y "Tornillo".
 
-# Pruebas no paramétricas
+## Pruebas no paramétricas
 
-## Prueba U de Mann-Whitney
+### Prueba U de Mann-Whitney
 
 $H_0: Mediana_{Aucatadijo} = Mediana_{Shihuahuaco}$
 
@@ -108,7 +108,7 @@ wilcox.exact(Aucatadijo$dap,Shihuahuaco$dap, mu = 0,
 
 *Conclusión*. A un nivel de significancia de 0.05, existe suficiente evidencia estadística para rechazar la $H_0$. Por lo tanto, podemos afirmar que el dap mediano de la especie Aucatadijo es diferente al de la especie Shihuahuaco.
 
-## Prueba Mood
+### Prueba Mood
 
 $H_0: \theta_{Aucatadijo} = \theta_{Shihuahuaco}$
 
@@ -121,7 +121,7 @@ mood.test(Aucatadijo$dap,Shihuahuaco$dap, alternative = "t")
 ```
 *Conclusión*. A un nivel de significancia de 0.05, existe suficiente evidencia estadística para no rechazar la $H_0$. Por lo tanto, podemos afirmar que la diferencia en la dispersión del diámetro a la altura del pecho de la especie Aucatadijo es igual al de la especie Shihuahuaco.
 
-## Prueba Kruskal Wallis
+### Prueba Kruskal Wallis
 
 $H_0: \text{El dap de las especies provienen de la misma distribución}$
 
@@ -140,7 +140,7 @@ $H_1: \text{Al menos una Mediana es diferente a las demás}$
 with(dap,kruskal(y = dap,trt = especie,alpha = 0.05,group = T,console = T))
 ```
 
-## Prueba de la Mediana
+### Prueba de la Mediana
 
 $H_0: Mediana_{Aucatadijo} = Mediana_{Bolaina} = Mediana_{Shihuahuaco} = Mediana_{Tornillo}$
 

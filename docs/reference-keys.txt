@@ -84,7 +84,7 @@ análisis-de-componentes-principales
 introducción
 que-es-un-componente
 cómo-se-seleccionan-los-componentes-principales
-caso-maíz
+aplicación-caso-maíz
 correlación-de-variables
 análisis-de-componentes-principales-1
 gráfico-de-sedimentación
