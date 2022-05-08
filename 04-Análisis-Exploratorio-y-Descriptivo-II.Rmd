@@ -26,7 +26,7 @@ Es aplicable en datos cuantitativos, no permiten todas las operaciones elemental
 
 Es aplicable por lo general a datos cuantitativos continuos generados por instrumentos de medida.
 
-### Aplicación
+## Aplicación
 
 Para establecer la identificación y diferencias en las medidas, se utilizará el investario de maíz.
 
