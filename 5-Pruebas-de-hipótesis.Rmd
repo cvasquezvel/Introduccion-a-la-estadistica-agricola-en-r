@@ -1,23 +1,16 @@
----
-title: "Pruebas de hipótesis"
-author: "Christian Vásquez Velasco"
-date: "`r Sys.Date()`"
-output: html_document
----
 
-```{r setup, include=FALSE}
-options(scipen = 9999,
-        max.print = 9999)
+```{r, include=FALSE}
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, dplyr)
 ```
 
-### Prueba sobre la media poblacional
+# Pruebas de hipótesis
+
+## Prueba sobre la media poblacional
 
 La media poblacional es un parámetro que mide la centralidad de los datos. Lo que se investiga a través de la hipótesis, es probar si hay cambios en la medida central.
 
 ```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
-
 # Importación
 maiz2 <- read_excel("datos 1.xlsx", sheet = "Datos 2")
 
@@ -28,14 +21,17 @@ maiz2$PAE <- car::recode(maiz2$PAE, "1='Ausente o muy débil';
 maiz2$PAE <- factor(maiz2$PAE,
                    levels = c("Ausente o muy débil","Débil","Media","Fuerte",
                               "Muy fuerte"), ordered = TRUE)
+```
 
+
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 T1 <- maiz2[maiz2$Tratamiento=="T1",]
 T2 <- maiz2[maiz2$Tratamiento=="T2",]
 T3 <- maiz2[maiz2$Tratamiento=="T3",]
 
 ```
 
-### Prueba de una cola superior
+## Prueba de una cola superior
 
 El interés del investigador es probar que la media del Longitud de grano es superior a la actual.
 
@@ -49,7 +45,7 @@ $\alpha = 0.05$
 
 Utilice la prueba de t-student
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 t.test(T1$LG, mu = 15, alternative = "greater")
 # Valor critico de la prueba
 qt(0.95,79)
@@ -60,7 +56,7 @@ Se observó que la media de la longitud de grano en el tratamiento 1 fue de 12.2
 
 No hay ninguna evidencia estadística para sospechar que la media de LG en el tratamiento 1 sea mayor o superior a 15 mm, debido a que el pvalor obtenido por la prueba fue de 1 (superior al nivel de incertibumbre fijado para este experimento).
 
-### Prueba de una cola inferior
+## Prueba de una cola inferior
 
 El interés del investigador es probar que la media del ancho de grano es inferior a la actual.
 
@@ -74,7 +70,7 @@ $\alpha = 0.08$
 
 Utilice la prueba de t-student
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 t.test(T3$AG, mu = 9, alternative = "less")
 # Valor critico de la prueba
 qt(0.08,79)
@@ -106,7 +102,7 @@ Se rechaza la hipótesis nula:
 
 En experimentos agrícolas, es común utilizar un p valor de 0.05, pero, según el nivel de confianza de las conclusiones que se desean tomar, se puede optar por otros valores de significancia.
 
-### Limites de confianza
+## Limites de confianza
 
 Es una estimación del parámetro por intervalo, es mejor que una estimación puntual.
 
@@ -114,21 +110,21 @@ Halle los límites de confianza al 95 % del ancho de grano del tratamiento 1.
 
 Utilice t-student.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 with(T1, t.test(AG, conf.level = 0.95))
 ```
 
 El valor medio del ancho de grano en el tratamiento 1 fue de $9.23675 mm$, su límite inferior fue de $9.063248$ y su límite superior fue de $9.410252$ al 95 % de confianza.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 with(T1, t.test(AG, conf.level = 0.95, alternative = "less"))
 ```
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 with(T1, t.test(AG, conf.level = 0.95, alternative = "greater"))
 ```
 
-### Prueba de dos colas
+## Prueba de dos colas
 
 Prueba la hipótesis que la media de la longitud de grano en el tratamiento 1 es diferente a la media de la longitud de grano en el tratamiento 3.
 
@@ -158,7 +154,7 @@ $\alpha = 0.1$
 
 Utilice la prueba de F
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 var.test(T1$LG,T3$LG, conf.level = 0.90)
 ```
 
@@ -169,7 +165,7 @@ A un nivel de significancia de 0.1, existe suficiente evidencia estadística par
 
 En la prueba de t-student debemos considerar estos resultados para realizar un ajuste de la prueba.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 t.test(T1$LG,T3$LG, conf.level = 0.97, alternative = "two.sided", var = FALSE)
 ```
 La media de la longitud de grano del tratamiento 1 fue de $12.27925$ mm y en el tratamiento 3 fue de $11.63850$ mm.

@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Análisis exploratorio y descriptivo | Introducción a la estadística agrícola con R</title>
+  <meta name="description" content="Chapter 3 Análisis exploratorio y descriptivo | Introducción a la estadística agrícola con R" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Análisis exploratorio y descriptivo | Introducción a la estadística agrícola con R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Análisis exploratorio y descriptivo | Introducción a la estadística agrícola con R" />
+  
+  
+  
+
+<meta name="author" content="Vásquez V., C.R.A." />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="indicadores-estadísticos.html"/>
+<link rel="next" href="análisis-exploratorio-y-descriptivo-ii.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+<script>
+/* ========================================================================
+  * Bootstrap: transition.js v3.3.7
+* http://getbootstrap.com/javascript/#transitions
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  
+  +function ($) {
+    'use strict';
+    
+    // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+    // ============================================================
+      
+      function transitionEnd() {
+        var el = document.createElement('bootstrap')
+        
+        var transEndEventNames = {
+          WebkitTransition : 'webkitTransitionEnd',
+          MozTransition    : 'transitionend',
+          OTransition      : 'oTransitionEnd otransitionend',
+          transition       : 'transitionend'
+        }
+        
+        for (var name in transEndEventNames) {
+          if (el.style[name] !== undefined) {
+            return { end: transEndEventNames[name] }
+          }
+        }
+        
+        return false // explicit for ie8 (  ._.)
+      }
+    
+    // http://blog.alexmaccaw.com/css-transitions
+    $.fn.emulateTransitionEnd = function (duration) {
+      var called = false
+      var $el = this
+      $(this).one('bsTransitionEnd', function () { called = true })
+      var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+      setTimeout(callback, duration)
+      return this
+    }
+    
+    $(function () {
+      $.support.transition = transitionEnd()
+      
+      if (!$.support.transition) return
+      
+      $.event.special.bsTransitionEnd = {
+        bindType: $.support.transition.end,
+        delegateType: $.support.transition.end,
+        handle: function (e) {
+          if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+        }
+      }
+    })
+    
+  }(jQuery);
+</script>
+<script>
+/* ========================================================================
+  * Bootstrap: collapse.js v3.3.7
+* http://getbootstrap.com/javascript/#collapse
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  /* jshint latedef: false */
+  
+  +function ($) {
+    'use strict';
+    
+    // COLLAPSE PUBLIC CLASS DEFINITION
+    // ================================
+      
+      var Collapse = function (element, options) {
+        this.$element      = $(element)
+        this.options       = $.extend({}, Collapse.DEFAULTS, options)
+        this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                                 '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+        this.transitioning = null
+        
+        if (this.options.parent) {
+          this.$parent = this.getParent()
+        } else {
+          this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+        }
+        
+        if (this.options.toggle) this.toggle()
+      }
+      
+      Collapse.VERSION  = '3.3.7'
+      
+      Collapse.TRANSITION_DURATION = 350
+      
+      Collapse.DEFAULTS = {
+        toggle: true
+      }
+      
+      Collapse.prototype.dimension = function () {
+        var hasWidth = this.$element.hasClass('width')
+        return hasWidth ? 'width' : 'height'
+      }
+      
+      Collapse.prototype.show = function () {
+        if (this.transitioning || this.$element.hasClass('in')) return
+        
+        var activesData
+        var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+        
+        if (actives && actives.length) {
+          activesData = actives.data('bs.collapse')
+          if (activesData && activesData.transitioning) return
+        }
+        
+        var startEvent = $.Event('show.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+        
+        if (actives && actives.length) {
+          Plugin.call(actives, 'hide')
+          activesData || actives.data('bs.collapse', null)
+        }
+        
+        var dimension = this.dimension()
+        
+        this.$element
+        .removeClass('collapse')
+        .addClass('collapsing')[dimension](0)
+        .attr('aria-expanded', true)
+        
+        this.$trigger
+        .removeClass('collapsed')
+        .attr('aria-expanded', true)
+        
+        this.transitioning = 1
+        
+        var complete = function () {
+          this.$element
+          .removeClass('collapsing')
+          .addClass('collapse in')[dimension]('')
+          this.transitioning = 0
+          this.$element
+          .trigger('shown.bs.collapse')
+        }
+        
+        if (!$.support.transition) return complete.call(this)
+        
+        var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+        
+        this.$element
+        .one('bsTransitionEnd', $.proxy(complete, this))
+        .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+      }
+      
+      Collapse.prototype.hide = function () {
+        if (this.transitioning || !this.$element.hasClass('in')) return
+        
+        var startEvent = $.Event('hide.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+        
+        var dimension = this.dimension()
+        
+        this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+        
+        this.$element
+        .addClass('collapsing')
+        .removeClass('collapse in')
+        .attr('aria-expanded', false)
+        
+        this.$trigger
+        .addClass('collapsed')
+        .attr('aria-expanded', false)
+        
+        this.transitioning = 1
+        
+        var complete = function () {
+          this.transitioning = 0
+          this.$element
+          .removeClass('collapsing')
+          .addClass('collapse')
+          .trigger('hidden.bs.collapse')
+        }
+        
+        if (!$.support.transition) return complete.call(this)
+        
+        this.$element
+        [dimension](0)
+        .one('bsTransitionEnd', $.proxy(complete, this))
+        .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+      }
+      
+      Collapse.prototype.toggle = function () {
+        this[this.$element.hasClass('in') ? 'hide' : 'show']()
+      }
+      
+      Collapse.prototype.getParent = function () {
+        return $(this.options.parent)
+        .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+        .each($.proxy(function (i, element) {
+          var $element = $(element)
+          this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+        }, this))
+        .end()
+      }
+      
+      Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+        var isOpen = $element.hasClass('in')
+        
+        $element.attr('aria-expanded', isOpen)
+        $trigger
+        .toggleClass('collapsed', !isOpen)
+        .attr('aria-expanded', isOpen)
+      }
+      
+      function getTargetFromTrigger($trigger) {
+        var href
+        var target = $trigger.attr('data-target')
+        || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+                                                                
+                                                                return $(target)
+      }
+      
+      
+      // COLLAPSE PLUGIN DEFINITION
+      // ==========================
+        
+        function Plugin(option) {
+          return this.each(function () {
+            var $this   = $(this)
+            var data    = $this.data('bs.collapse')
+            var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+            
+            if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+            if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+            if (typeof option == 'string') data[option]()
+          })
+        }
+      
+      var old = $.fn.collapse
+      
+      $.fn.collapse             = Plugin
+      $.fn.collapse.Constructor = Collapse
+      
+      
+      // COLLAPSE NO CONFLICT
+      // ====================
+        
+        $.fn.collapse.noConflict = function () {
+          $.fn.collapse = old
+          return this
+        }
+      
+      
+      // COLLAPSE DATA-API
+      // =================
+        
+        $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+          var $this   = $(this)
+          
+          if (!$this.attr('data-target')) e.preventDefault()
+          
+          var $target = getTargetFromTrigger($this)
+          var data    = $target.data('bs.collapse')
+          var option  = data ? 'toggle' : $this.data()
+          
+          Plugin.call($target, option)
+        })
+      
+  }(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+  
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+  
+  // index for unique code element ids
+  var currentIndex = 1;
+  
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+    
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+    
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+    .attr('data-toggle', 'collapse')
+    .attr('data-target', '#' + id)
+    .attr('aria-expanded', show)
+    .attr('aria-controls', id);
+    
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+    
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+    
+    div.before(buttonRow);
+    
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+  
+}
+</script>
+<script>
+/* ========================================================================
+  * Bootstrap: dropdown.js v3.3.7
+* http://getbootstrap.com/javascript/#dropdowns
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  
+  +function ($) {
+    'use strict';
+    
+    // DROPDOWN CLASS DEFINITION
+    // =========================
+      
+      var backdrop = '.dropdown-backdrop'
+      var toggle   = '[data-toggle="dropdown"]'
+      var Dropdown = function (element) {
+        $(element).on('click.bs.dropdown', this.toggle)
+      }
+      
+      Dropdown.VERSION = '3.3.7'
+      
+      function getParent($this) {
+        var selector = $this.attr('data-target')
+        
+        if (!selector) {
+          selector = $this.attr('href')
+          selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+        }
+        
+        var $parent = selector && $(selector)
+        
+        return $parent && $parent.length ? $parent : $this.parent()
+      }
+      
+      function clearMenus(e) {
+        if (e && e.which === 3) return
+        $(backdrop).remove()
+        $(toggle).each(function () {
+          var $this         = $(this)
+          var $parent       = getParent($this)
+          var relatedTarget = { relatedTarget: this }
+          
+          if (!$parent.hasClass('open')) return
+          
+          if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+          
+          $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+          
+          if (e.isDefaultPrevented()) return
+          
+          $this.attr('aria-expanded', 'false')
+          $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+        })
+      }
+      
+      Dropdown.prototype.toggle = function (e) {
+        var $this = $(this)
+        
+        if ($this.is('.disabled, :disabled')) return
+        
+        var $parent  = getParent($this)
+        var isActive = $parent.hasClass('open')
+        
+        clearMenus()
+        
+        if (!isActive) {
+          if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+            // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+.open > .dropdown-menu {
+    display: block;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+<script>
+document.write('<div class="btn-group pull-right" style="position: absolute; top: 20%; right: 2%; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>')
+</script>
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Introducción a la estadística agrícola en R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Conceptos básicos</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#población-n"><i class="fa fa-check"></i><b>1.1</b> Población (N)</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#muestra-n"><i class="fa fa-check"></i><b>1.2</b> Muestra (n)</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#unidad-elemental"><i class="fa fa-check"></i><b>1.3</b> Unidad elemental</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#variable"><i class="fa fa-check"></i><b>1.4</b> Variable</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="index.html"><a href="index.html#variable-cualitativa"><i class="fa fa-check"></i><b>1.4.1</b> Variable cualitativa</a></li>
+<li class="chapter" data-level="1.4.2" data-path="index.html"><a href="index.html#variable-cuantitativa"><i class="fa fa-check"></i><b>1.4.2</b> Variable cuantitativa</a></li>
+<li class="chapter" data-level="1.4.3" data-path="index.html"><a href="index.html#otra-forma-de-clasificación-de-variables"><i class="fa fa-check"></i><b>1.4.3</b> Otra forma de clasificación de variables</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#observación"><i class="fa fa-check"></i><b>1.5</b> Observación</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#parámetro"><i class="fa fa-check"></i><b>1.6</b> Parámetro</a></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#estadístico"><i class="fa fa-check"></i><b>1.7</b> Estadístico</a></li>
+<li class="chapter" data-level="1.8" data-path="index.html"><a href="index.html#deficinión-de-estadística"><i class="fa fa-check"></i><b>1.8</b> Deficinión de Estadística</a></li>
+<li class="chapter" data-level="1.9" data-path="index.html"><a href="index.html#división-de-la-estadística"><i class="fa fa-check"></i><b>1.9</b> División de la Estadística</a>
+<ul>
+<li class="chapter" data-level="1.9.1" data-path="index.html"><a href="index.html#descriptiva"><i class="fa fa-check"></i><b>1.9.1</b> Descriptiva</a></li>
+<li class="chapter" data-level="1.9.2" data-path="index.html"><a href="index.html#inferencial"><i class="fa fa-check"></i><b>1.9.2</b> Inferencial</a></li>
+<li class="chapter" data-level="1.9.3" data-path="index.html"><a href="index.html#paramétrica"><i class="fa fa-check"></i><b>1.9.3</b> Paramétrica</a></li>
+<li class="chapter" data-level="1.9.4" data-path="index.html"><a href="index.html#no-paramétrica"><i class="fa fa-check"></i><b>1.9.4</b> No paramétrica</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html"><i class="fa fa-check"></i><b>2</b> Indicadores estadísticos</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#importancia-de-los-indicadores"><i class="fa fa-check"></i><b>2.1</b> Importancia de los indicadores</a></li>
+<li class="chapter" data-level="2.2" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-centralidad"><i class="fa fa-check"></i><b>2.2</b> Indicadores de centralidad</a></li>
+<li class="chapter" data-level="2.3" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-dispersión"><i class="fa fa-check"></i><b>2.3</b> Indicadores de dispersión</a></li>
+<li class="chapter" data-level="2.4" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-la-forma-de-los-datos"><i class="fa fa-check"></i><b>2.4</b> Indicadores de la forma de los datos</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html"><i class="fa fa-check"></i><b>3</b> Análisis exploratorio y descriptivo</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#caso-investigación-en-maíz"><i class="fa fa-check"></i><b>3.1</b> Caso: Investigación en Maíz</a></li>
+<li class="chapter" data-level="3.2" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#resumen-general-de-los-datos"><i class="fa fa-check"></i><b>3.2</b> Resumen general de los datos</a></li>
+<li class="chapter" data-level="3.3" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#pigmentación-antociánica-de-los-estigmas"><i class="fa fa-check"></i><b>3.3</b> Pigmentación Antociánica de los estigmas</a></li>
+<li class="chapter" data-level="3.4" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#exploración-y-estadísticas-de-la-localidad-1"><i class="fa fa-check"></i><b>3.4</b> Exploración y estadísticas de la localidad 1</a></li>
+<li class="chapter" data-level="3.5" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#exploración-y-estadísticas-de-los-tratamientos-en-maíz"><i class="fa fa-check"></i><b>3.5</b> Exploración y estadísticas de los tratamientos en Maíz</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html"><i class="fa fa-check"></i><b>4</b> Análisis exploratorio y descriptivo II</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-medida"><i class="fa fa-check"></i><b>4.1</b> Escala de medida</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-nominal"><i class="fa fa-check"></i><b>4.1.1</b> Escala nominal</a></li>
+<li class="chapter" data-level="4.1.2" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-ordinal"><i class="fa fa-check"></i><b>4.1.2</b> Escala ordinal</a></li>
+<li class="chapter" data-level="4.1.3" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-intervalo."><i class="fa fa-check"></i><b>4.1.3</b> Escala de intervalo.</a></li>
+<li class="chapter" data-level="4.1.4" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-razón"><i class="fa fa-check"></i><b>4.1.4</b> Escala de razón</a></li>
+<li class="chapter" data-level="4.1.5" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#aplicación"><i class="fa fa-check"></i><b>4.1.5</b> Aplicación</a></li>
+<li class="chapter" data-level="4.1.6" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#medidas-estadísticas"><i class="fa fa-check"></i><b>4.1.6</b> Medidas estadísticas</a></li>
+<li class="chapter" data-level="4.1.7" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#representación-de-las-medidas-en-gráficos."><i class="fa fa-check"></i><b>4.1.7</b> Representación de las medidas en gráficos.</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html"><i class="fa fa-check"></i><b>5</b> Pruebas de hipótesis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-sobre-la-media-poblacional"><i class="fa fa-check"></i><b>5.1</b> Prueba sobre la media poblacional</a></li>
+<li class="chapter" data-level="5.2" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-una-cola-superior"><i class="fa fa-check"></i><b>5.2</b> Prueba de una cola superior</a></li>
+<li class="chapter" data-level="5.3" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-una-cola-inferior"><i class="fa fa-check"></i><b>5.3</b> Prueba de una cola inferior</a></li>
+<li class="chapter" data-level="5.4" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#limites-de-confianza"><i class="fa fa-check"></i><b>5.4</b> Limites de confianza</a></li>
+<li class="chapter" data-level="5.5" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-dos-colas"><i class="fa fa-check"></i><b>5.5</b> Prueba de dos colas</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html"><i class="fa fa-check"></i><b>6</b> Pruebas de hipótesis II</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-hipótesis-para-k-variancias"><i class="fa fa-check"></i><b>6.1</b> Prueba de hipótesis para k variancias</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-barttlet"><i class="fa fa-check"></i><b>6.1.1</b> Prueba de Barttlet</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-k-medias"><i class="fa fa-check"></i><b>6.2</b> Prueba de k medias</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html"><i class="fa fa-check"></i><b>7</b> Pruebas no paramétricas</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-u-de-mann-whitney"><i class="fa fa-check"></i><b>7.1</b> Prueba U de Mann-Whitney</a></li>
+<li class="chapter" data-level="7.2" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-mood"><i class="fa fa-check"></i><b>7.2</b> Prueba Mood</a></li>
+<li class="chapter" data-level="7.3" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-kruskal-wallis"><i class="fa fa-check"></i><b>7.3</b> Prueba Kruskal Wallis</a></li>
+<li class="chapter" data-level="7.4" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-de-la-mediana"><i class="fa fa-check"></i><b>7.4</b> Prueba de la Mediana</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html"><i class="fa fa-check"></i><b>8</b> Muestreo aplicado</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#estimar-una-respuesta-cuantitativa"><i class="fa fa-check"></i><b>8.1</b> Estimar una respuesta cuantitativa</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#muestreo-piloto-para-tener-una-idea-de-la-variación"><i class="fa fa-check"></i><b>8.1.1</b> Muestreo piloto para tener una idea de la variación</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#estimar-una-respuesta-cualitativa"><i class="fa fa-check"></i><b>8.2</b> Estimar una respuesta cualitativa</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html"><i class="fa fa-check"></i><b>9</b> Medidas de asociación y regresión</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#correlación"><i class="fa fa-check"></i><b>9.1</b> Correlación</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#valor-de-la-correlación"><i class="fa fa-check"></i><b>9.1.1</b> Valor de la correlación</a></li>
+<li class="chapter" data-level="9.1.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#prueba-estadística"><i class="fa fa-check"></i><b>9.1.2</b> Prueba estadística</a></li>
+<li class="chapter" data-level="9.1.3" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#gráfico-de-la-dispersión"><i class="fa fa-check"></i><b>9.1.3</b> Gráfico de la dispersión</a></li>
+<li class="chapter" data-level="9.1.4" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#tipo-de-variable"><i class="fa fa-check"></i><b>9.1.4</b> Tipo de variable</a></li>
+<li class="chapter" data-level="9.1.5" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#aplicación-1"><i class="fa fa-check"></i><b>9.1.5</b> Aplicación</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#otros-métodos"><i class="fa fa-check"></i><b>9.2</b> Otros métodos</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#método-de-spearman"><i class="fa fa-check"></i><b>9.2.1</b> Método de Spearman</a></li>
+<li class="chapter" data-level="9.2.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#gráfico-exploratorio"><i class="fa fa-check"></i><b>9.2.2</b> Gráfico exploratorio</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#regresión"><i class="fa fa-check"></i><b>9.3</b> Regresión</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#aplicación-2"><i class="fa fa-check"></i><b>9.3.1</b> Aplicación</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html"><i class="fa fa-check"></i><b>10</b> Análisis de componentes principales</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#introducción"><i class="fa fa-check"></i><b>10.1</b> Introducción</a></li>
+<li class="chapter" data-level="10.2" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#que-es-un-componente"><i class="fa fa-check"></i><b>10.2</b> ¿Que es un componente?</a></li>
+<li class="chapter" data-level="10.3" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#cómo-se-seleccionan-los-componentes-principales"><i class="fa fa-check"></i><b>10.3</b> ¿Cómo se seleccionan los componentes principales?</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#caso-maíz"><i class="fa fa-check"></i><b>10.3.1</b> Caso Maíz</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introducción a la estadística agrícola con R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="análisis-exploratorio-y-descriptivo" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Análisis exploratorio y descriptivo<a href="análisis-exploratorio-y-descriptivo.html#análisis-exploratorio-y-descriptivo" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="caso-investigación-en-maíz" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Caso: Investigación en Maíz<a href="análisis-exploratorio-y-descriptivo.html#caso-investigación-en-maíz" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Se realizó un estudio del comportamiento agronómico de líneas promisorias y variedades comerciales de maíz amarillo duro en un experimento realizado en la Estación Experimental Agraria Vista Florida del Instituto Nacional de Innovación Agraria (INIA), ubicado en el distrito de Picsi, Provincia de Ferreñafe, Departamento de Lambayeque, Perú.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="análisis-exploratorio-y-descriptivo.html#cb26-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">12</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb26-2"><a href="análisis-exploratorio-y-descriptivo.html#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Información del inventario:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Información del inventario:</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="análisis-exploratorio-y-descriptivo.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estructura del data.frame</span></span>
+<span id="cb28-2"><a href="análisis-exploratorio-y-descriptivo.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(maiz)</span></code></pre></div>
+<pre><code>tibble [640 x 6] (S3: tbl_df/tbl/data.frame)
+ $ Tratamiento: chr [1:640] &quot;T1&quot; &quot;T1&quot; &quot;T1&quot; &quot;T1&quot; ...
+ $ Localidad  : chr [1:640] &quot;L1&quot; &quot;L1&quot; &quot;L1&quot; &quot;L1&quot; ...
+ $ PAE        : Ord.factor w/ 5 levels &quot;Ausente o muy débil&quot;&lt;..: 4 4 4 3 3 3 3 3 4 4 ...
+ $ LG         : num [1:640] 12.4 13.4 12.6 12.5 12.3 ...
+ $ AG         : num [1:640] 10.32 9.69 10.13 9.32 9.27 ...
+ $ PM         : num [1:640] 220 192 231 175 223 ...</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="análisis-exploratorio-y-descriptivo.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Clase del inventario:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Clase del inventario:</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="análisis-exploratorio-y-descriptivo.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clase</span></span>
+<span id="cb32-2"><a href="análisis-exploratorio-y-descriptivo.html#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(maiz)</span></code></pre></div>
+<pre><code>[1] &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="análisis-exploratorio-y-descriptivo.html#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Primeros registros:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Primeros registros:</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="análisis-exploratorio-y-descriptivo.html#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen de la base de datos</span></span>
+<span id="cb36-2"><a href="análisis-exploratorio-y-descriptivo.html#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maiz,<span class="dv">10</span>)</span></code></pre></div>
+<pre><code># A tibble: 10 x 6
+   Tratamiento Localidad PAE       LG    AG    PM
+   &lt;chr&gt;       &lt;chr&gt;     &lt;ord&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 T1          L1        Fuerte  12.4 10.3   220.
+ 2 T1          L1        Fuerte  13.4  9.69  192.
+ 3 T1          L1        Fuerte  12.6 10.1   231.
+ 4 T1          L1        Media   12.5  9.32  175 
+ 5 T1          L1        Media   12.3  9.27  223.
+ 6 T1          L1        Media   12.7  9.24  181.
+ 7 T1          L1        Media   12.6  9.27  185.
+ 8 T1          L1        Media   13    9.35  232.
+ 9 T1          L1        Fuerte  12.9 10.0   236.
+10 T1          L1        Fuerte  13.5 10.3   123 </code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="análisis-exploratorio-y-descriptivo.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Número de columnas:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Número de columnas:</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="análisis-exploratorio-y-descriptivo.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ncol</span></span>
+<span id="cb40-2"><a href="análisis-exploratorio-y-descriptivo.html#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(maiz)</span></code></pre></div>
+<pre><code>[1] 6</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="análisis-exploratorio-y-descriptivo.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Número de filas:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Número de filas:</code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="análisis-exploratorio-y-descriptivo.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nrow</span></span>
+<span id="cb44-2"><a href="análisis-exploratorio-y-descriptivo.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(maiz)</span></code></pre></div>
+<pre><code>[1] 640</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="análisis-exploratorio-y-descriptivo.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Dimensiones:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Dimensiones:</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="análisis-exploratorio-y-descriptivo.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensiones</span></span>
+<span id="cb48-2"><a href="análisis-exploratorio-y-descriptivo.html#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(maiz)</span></code></pre></div>
+<pre><code>[1] 640   6</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="análisis-exploratorio-y-descriptivo.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabla de frecuencia</span></span>
+<span id="cb50-2"><a href="análisis-exploratorio-y-descriptivo.html#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Total de observaciones:&quot;</span>,<span class="fu">nrow</span>(maiz),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Total de observaciones: 640 </code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="análisis-exploratorio-y-descriptivo.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de frecuencia de los tratamientos:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de frecuencia de los tratamientos:</code></pre>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="análisis-exploratorio-y-descriptivo.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(maiz<span class="sc">$</span>Tratamiento) <span class="ot">-&gt;</span> tabla1</span>
+<span id="cb54-2"><a href="análisis-exploratorio-y-descriptivo.html#cb54-2" aria-hidden="true" tabindex="-1"></a>tabla1</span></code></pre></div>
+<pre><code>
+T1 T2 T3 T4 T5 T6 T7 T8 
+80 80 80 80 80 80 80 80 </code></pre>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="análisis-exploratorio-y-descriptivo.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla1, <span class="at">horiz =</span> <span class="cn">FALSE</span>, <span class="at">las =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-17-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="análisis-exploratorio-y-descriptivo.html#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de frecuencia de las localidades:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de frecuencia de las localidades:</code></pre>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="análisis-exploratorio-y-descriptivo.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(maiz<span class="sc">$</span>Localidad) <span class="ot">-&gt;</span> tabla2</span>
+<span id="cb59-2"><a href="análisis-exploratorio-y-descriptivo.html#cb59-2" aria-hidden="true" tabindex="-1"></a>tabla2</span></code></pre></div>
+<pre><code>
+ L1  L2 
+320 320 </code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="análisis-exploratorio-y-descriptivo.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla2, <span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-17-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="análisis-exploratorio-y-descriptivo.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+</div>
+<div id="resumen-general-de-los-datos" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Resumen general de los datos<a href="análisis-exploratorio-y-descriptivo.html#resumen-general-de-los-datos" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="análisis-exploratorio-y-descriptivo.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(maiz)</span></code></pre></div>
+<pre><code> Tratamiento         Localidad                          PAE            LG              AG               PM       
+ Length:640         Length:640         Ausente o muy débil:139   Min.   : 8.37   Min.   : 5.740   Min.   : 22.1  
+ Class :character   Class :character   Débil              :254   1st Qu.:11.80   1st Qu.: 8.268   1st Qu.:192.2  
+ Mode  :character   Mode  :character   Media              :144   Median :12.41   Median : 8.855   Median :226.7  
+                                       Fuerte             :103   Mean   :12.45   Mean   : 8.828   Mean   :224.6  
+                                       Muy fuerte         :  0   3rd Qu.:13.16   3rd Qu.: 9.393   3rd Qu.:256.7  
+                                                                 Max.   :16.62   Max.   :12.780   Max.   :358.4  </code></pre>
+</div>
+<div id="pigmentación-antociánica-de-los-estigmas" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Pigmentación Antociánica de los estigmas<a href="análisis-exploratorio-y-descriptivo.html#pigmentación-antociánica-de-los-estigmas" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="análisis-exploratorio-y-descriptivo.html#cb65-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">12</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb65-2"><a href="análisis-exploratorio-y-descriptivo.html#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de frecuencia de PAE:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de frecuencia de PAE:</code></pre>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="análisis-exploratorio-y-descriptivo.html#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(maiz<span class="sc">$</span>PAE) <span class="ot">-&gt;</span> tabla3</span>
+<span id="cb67-2"><a href="análisis-exploratorio-y-descriptivo.html#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="fu">addmargins</span>(tabla3)</span></code></pre></div>
+<pre><code>
+Ausente o muy débil               Débil               Media              Fuerte          Muy fuerte                 Sum 
+                139                 254                 144                 103                   0                 640 </code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="análisis-exploratorio-y-descriptivo.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla3,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="análisis-exploratorio-y-descriptivo.html#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de proporciones de PAE:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de proporciones de PAE:</code></pre>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="análisis-exploratorio-y-descriptivo.html#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">addmargins</span>(<span class="fu">prop.table</span>(tabla3))</span></code></pre></div>
+<pre><code>
+Ausente o muy débil               Débil               Media              Fuerte          Muy fuerte                 Sum 
+          0.2171875           0.3968750           0.2250000           0.1609375           0.0000000           1.0000000 </code></pre>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="análisis-exploratorio-y-descriptivo.html#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de frecuencia y proporciones de PAE:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de frecuencia y proporciones de PAE:</code></pre>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="análisis-exploratorio-y-descriptivo.html#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">addmargins</span>(tabla3),<span class="fu">addmargins</span>(<span class="fu">prop.table</span>(tabla3)))</span></code></pre></div>
+<pre><code>                    [,1]      [,2]
+Ausente o muy débil  139 0.2171875
+Débil                254 0.3968750
+Media                144 0.2250000
+Fuerte               103 0.1609375
+Muy fuerte             0 0.0000000
+Sum                  640 1.0000000</code></pre>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="análisis-exploratorio-y-descriptivo.html#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Otras formas</span></span>
+<span id="cb78-2"><a href="análisis-exploratorio-y-descriptivo.html#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de frecuencia y proporciones de PAE:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de frecuencia y proporciones de PAE:</code></pre>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="análisis-exploratorio-y-descriptivo.html#cb80-1" aria-hidden="true" tabindex="-1"></a>summarytools<span class="sc">::</span><span class="fu">freq</span>(maiz<span class="sc">$</span>PAE, <span class="at">plain.ascii =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb80-2"><a href="análisis-exploratorio-y-descriptivo.html#cb80-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">style =</span> <span class="st">&quot;rmarkdown&quot;</span>)</span></code></pre></div>
+<pre><code>### Frequencies  
+#### maiz$PAE  
+**Type:** Ordered Factor  
+
+|                  &amp;nbsp; | Freq | % Valid | % Valid Cum. | % Total | % Total Cum. |
+|------------------------:|-----:|--------:|-------------:|--------:|-------------:|
+| **Ausente o muy débil** |  139 |   21.72 |        21.72 |   21.72 |        21.72 |
+|               **Débil** |  254 |   39.69 |        61.41 |   39.69 |        61.41 |
+|               **Media** |  144 |   22.50 |        83.91 |   22.50 |        83.91 |
+|              **Fuerte** |  103 |   16.09 |       100.00 |   16.09 |       100.00 |
+|          **Muy fuerte** |    0 |    0.00 |       100.00 |    0.00 |       100.00 |
+|              **\&lt;NA\&gt;** |    0 |         |              |    0.00 |       100.00 |
+|               **Total** |  640 |  100.00 |       100.00 |  100.00 |       100.00 |</code></pre>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="análisis-exploratorio-y-descriptivo.html#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de frecuencia y proporciones de PAE:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de frecuencia y proporciones de PAE:</code></pre>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="análisis-exploratorio-y-descriptivo.html#cb84-1" aria-hidden="true" tabindex="-1"></a>summarytools<span class="sc">::</span><span class="fu">freq</span>(maiz<span class="sc">$</span>PAE, <span class="at">plain.ascii =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb84-2"><a href="análisis-exploratorio-y-descriptivo.html#cb84-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">style =</span> <span class="st">&quot;rmarkdown&quot;</span>, <span class="at">cumul =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb84-3"><a href="análisis-exploratorio-y-descriptivo.html#cb84-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">headings =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb84-4"><a href="análisis-exploratorio-y-descriptivo.html#cb84-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">report.nas =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>
+|                  &amp;nbsp; | Freq |      % |
+|------------------------:|-----:|-------:|
+| **Ausente o muy débil** |  139 |  21.72 |
+|               **Débil** |  254 |  39.69 |
+|               **Media** |  144 |  22.50 |
+|              **Fuerte** |  103 |  16.09 |
+|          **Muy fuerte** |    0 |   0.00 |
+|               **Total** |  640 | 100.00 |</code></pre>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="análisis-exploratorio-y-descriptivo.html#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de frecuencia y proporciones de PAE:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de frecuencia y proporciones de PAE:</code></pre>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="análisis-exploratorio-y-descriptivo.html#cb88-1" aria-hidden="true" tabindex="-1"></a>summarytools<span class="sc">::</span><span class="fu">freq</span>(maiz<span class="sc">$</span>PAE, <span class="at">plain.ascii =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb88-2"><a href="análisis-exploratorio-y-descriptivo.html#cb88-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">style =</span> <span class="st">&quot;rmarkdown&quot;</span>, <span class="at">cumul =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb88-3"><a href="análisis-exploratorio-y-descriptivo.html#cb88-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">headings =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb88-4"><a href="análisis-exploratorio-y-descriptivo.html#cb88-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">report.nas =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>
+|                  &amp;nbsp; | Freq |      % | % Cum. |
+|------------------------:|-----:|-------:|-------:|
+| **Ausente o muy débil** |  139 |  21.72 |  21.72 |
+|               **Débil** |  254 |  39.69 |  61.41 |
+|               **Media** |  144 |  22.50 |  83.91 |
+|              **Fuerte** |  103 |  16.09 | 100.00 |
+|          **Muy fuerte** |    0 |   0.00 | 100.00 |
+|               **Total** |  640 | 100.00 | 100.00 |</code></pre>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="análisis-exploratorio-y-descriptivo.html#cb90-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">prop.table</span>(tabla3)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>)</span>
+<span id="cb90-2"><a href="análisis-exploratorio-y-descriptivo.html#cb90-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-3"><a href="análisis-exploratorio-y-descriptivo.html#cb90-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pie</span>(p1, <span class="at">main =</span> <span class="st">&quot;Gráfico circular&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="análisis-exploratorio-y-descriptivo.html#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pie</span>(p1, <span class="at">main =</span> <span class="st">&quot;Gráfico circular&quot;</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Ausente o muy</span><span class="sc">\n</span><span class="st">débil (21.71 %)&quot;</span>,<span class="st">&quot;Débil (39.69 %)&quot;</span>,<span class="st">&quot;Media (22.5 %)&quot;</span>,<span class="st">&quot;Fuerte (16.09 %)&quot;</span>,<span class="st">&quot;Muy fuerte</span><span class="sc">\n</span><span class="st">(0 %)&quot;</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-3.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="análisis-exploratorio-y-descriptivo.html#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla3,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;Gráfico de barras&quot;</span>,</span>
+<span id="cb92-2"><a href="análisis-exploratorio-y-descriptivo.html#cb92-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-4.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="análisis-exploratorio-y-descriptivo.html#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">prop.table</span>(tabla3)<span class="sc">*</span><span class="dv">100</span>,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-5.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="análisis-exploratorio-y-descriptivo.html#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de contingencia de PAE según los tratamientos:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de contingencia de PAE según los tratamientos:</code></pre>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="análisis-exploratorio-y-descriptivo.html#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(maiz<span class="sc">$</span>PAE,maiz<span class="sc">$</span>Tratamiento) <span class="ot">-&gt;</span> tabla4</span>
+<span id="cb96-2"><a href="análisis-exploratorio-y-descriptivo.html#cb96-2" aria-hidden="true" tabindex="-1"></a><span class="fu">addmargins</span>(tabla4)</span></code></pre></div>
+<pre><code>                     
+                       T1  T2  T3  T4  T5  T6  T7  T8 Sum
+  Ausente o muy débil   0  20   0   1  71  44   2   1 139
+  Débil                 0  34  66   0   7  36  55  56 254
+  Media                45  20  14  17   2   0  23  23 144
+  Fuerte               35   6   0  62   0   0   0   0 103
+  Muy fuerte            0   0   0   0   0   0   0   0   0
+  Sum                  80  80  80  80  80  80  80  80 640</code></pre>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="análisis-exploratorio-y-descriptivo.html#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Margenes de fila:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Margenes de fila:</code></pre>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="análisis-exploratorio-y-descriptivo.html#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">margin.table</span>(tabla4,<span class="dv">1</span>)</span></code></pre></div>
+<pre><code>
+Ausente o muy débil               Débil               Media              Fuerte          Muy fuerte 
+                139                 254                 144                 103                   0 </code></pre>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="análisis-exploratorio-y-descriptivo.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Margenes de columna:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Margenes de columna:</code></pre>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="análisis-exploratorio-y-descriptivo.html#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">margin.table</span>(tabla4,<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>
+T1 T2 T3 T4 T5 T6 T7 T8 
+80 80 80 80 80 80 80 80 </code></pre>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="análisis-exploratorio-y-descriptivo.html#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla4,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;Gráfico de barras&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-6.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="análisis-exploratorio-y-descriptivo.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de contingencia (Proporciones) de PAE según los tratamientos:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de contingencia (Proporciones) de PAE según los tratamientos:</code></pre>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="análisis-exploratorio-y-descriptivo.html#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de contingencia de PAE según la localidad:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Tabla de contingencia de PAE según la localidad:</code></pre>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="análisis-exploratorio-y-descriptivo.html#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(maiz<span class="sc">$</span>PAE,maiz<span class="sc">$</span>Localidad) <span class="ot">-&gt;</span> tabla5</span>
+<span id="cb111-2"><a href="análisis-exploratorio-y-descriptivo.html#cb111-2" aria-hidden="true" tabindex="-1"></a>tabla5</span></code></pre></div>
+<pre><code>                     
+                       L1  L2
+  Ausente o muy débil  65  74
+  Débil               127 127
+  Media                81  63
+  Fuerte               47  56
+  Muy fuerte            0   0</code></pre>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="análisis-exploratorio-y-descriptivo.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla5,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;Gráfico de barras&quot;</span>, <span class="at">beside =</span> T)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-7.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="análisis-exploratorio-y-descriptivo.html#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+</div>
+<div id="exploración-y-estadísticas-de-la-localidad-1" class="section level2 hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> Exploración y estadísticas de la localidad 1<a href="análisis-exploratorio-y-descriptivo.html#exploración-y-estadísticas-de-la-localidad-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="análisis-exploratorio-y-descriptivo.html#cb115-1" aria-hidden="true" tabindex="-1"></a>Loc1 <span class="ot">&lt;-</span> <span class="fu">subset</span>(maiz, maiz<span class="sc">$</span>Localidad<span class="sc">==</span><span class="st">&quot;L1&quot;</span>)</span>
+<span id="cb115-2"><a href="análisis-exploratorio-y-descriptivo.html#cb115-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(Loc1[,<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)])</span></code></pre></div>
+<pre><code>                  PAE            LG              AG               PM       
+ Ausente o muy débil: 65   Min.   : 9.60   Min.   : 6.800   Min.   : 22.1  
+ Débil              :127   1st Qu.:12.15   1st Qu.: 8.475   1st Qu.:199.5  
+ Media              : 81   Median :12.74   Median : 9.000   Median :231.3  
+ Fuerte             : 47   Mean   :12.76   Mean   : 9.005   Mean   :228.7  
+ Muy fuerte         :  0   3rd Qu.:13.40   3rd Qu.: 9.482   3rd Qu.:256.8  
+                           Max.   :16.62   Max.   :12.120   Max.   :356.1  </code></pre>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="análisis-exploratorio-y-descriptivo.html#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(Loc1[,3:6])</span></span></code></pre></div>
+<p><strong>Diagrama de Tukey (diagrama de cajas, box plot)</strong></p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="análisis-exploratorio-y-descriptivo.html#cb118-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb118-2"><a href="análisis-exploratorio-y-descriptivo.html#cb118-2" aria-hidden="true" tabindex="-1"></a>LGLoc1 <span class="ot">&lt;-</span> <span class="fu">with</span>(Loc1, <span class="fu">boxplot</span>(LG, <span class="at">col =</span> <span class="st">&quot;Yellow&quot;</span>, <span class="at">main =</span> <span class="st">&quot;Longitud de grano&quot;</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-21-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="análisis-exploratorio-y-descriptivo.html#cb119-1" aria-hidden="true" tabindex="-1"></a>LGLoc1</span></code></pre></div>
+<pre><code>$stats
+      [,1]
+[1,] 10.44
+[2,] 12.15
+[3,] 12.74
+[4,] 13.41
+[5,] 15.07
+
+$n
+[1] 320
+
+$conf
+         [,1]
+[1,] 12.62871
+[2,] 12.85129
+
+$out
+[1] 15.50 16.62 10.00  9.90  9.92  9.60  9.83
+
+$group
+[1] 1 1 1 1 1 1 1
+
+$names
+[1] &quot;&quot;</code></pre>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="análisis-exploratorio-y-descriptivo.html#cb121-1" aria-hidden="true" tabindex="-1"></a>AGLoc1 <span class="ot">&lt;-</span> <span class="fu">with</span>(Loc1, <span class="fu">boxplot</span>(AG, <span class="at">col =</span> <span class="st">&quot;Orange&quot;</span>, <span class="at">main =</span> <span class="st">&quot;Ancho de grano&quot;</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-21-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="análisis-exploratorio-y-descriptivo.html#cb122-1" aria-hidden="true" tabindex="-1"></a>AGLoc1</span></code></pre></div>
+<pre><code>$stats
+       [,1]
+[1,]  7.010
+[2,]  8.470
+[3,]  9.000
+[4,]  9.485
+[5,] 11.000
+
+$n
+[1] 320
+
+$conf
+        [,1]
+[1,] 8.91035
+[2,] 9.08965
+
+$out
+[1] 11.01  6.80  6.90 11.78 11.01  6.85  6.88 11.19 12.12
+
+$group
+[1] 1 1 1 1 1 1 1 1 1
+
+$names
+[1] &quot;&quot;</code></pre>
+</div>
+<div id="exploración-y-estadísticas-de-los-tratamientos-en-maíz" class="section level2 hasAnchor" number="3.5">
+<h2><span class="header-section-number">3.5</span> Exploración y estadísticas de los tratamientos en Maíz<a href="análisis-exploratorio-y-descriptivo.html#exploración-y-estadísticas-de-los-tratamientos-en-maíz" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Estadísticas</strong></p>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="análisis-exploratorio-y-descriptivo.html#cb124-1" aria-hidden="true" tabindex="-1"></a>promedios <span class="ot">&lt;-</span> <span class="fu">with</span>(maiz, <span class="fu">tapply.stat</span>(maiz[,<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>],Tratamiento,<span class="cf">function</span>(x) <span class="fu">mean</span>(x,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span>
+<span id="cb124-2"><a href="análisis-exploratorio-y-descriptivo.html#cb124-2" aria-hidden="true" tabindex="-1"></a>promedios</span></code></pre></div>
+<pre><code>  Tratamiento       LG       AG       PM
+1          T1 12.27925 9.236750 214.4975
+2          T2 12.41137 8.915375 214.7250
+3          T3 11.63850 8.380625 192.0925
+4          T4 12.24137 9.232125 248.9787
+5          T5 12.96575 7.834375 222.0712
+6          T6 12.02725 9.709500 209.6138
+7          T7 12.58475 8.583500 247.0175
+8          T8 13.42400 8.731375 248.0725</code></pre>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="análisis-exploratorio-y-descriptivo.html#cb126-1" aria-hidden="true" tabindex="-1"></a>sd <span class="ot">&lt;-</span> <span class="fu">with</span>(maiz, <span class="fu">tapply.stat</span>(maiz[,<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>],Tratamiento,<span class="cf">function</span>(x) <span class="fu">sd</span>(x,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span>
+<span id="cb126-2"><a href="análisis-exploratorio-y-descriptivo.html#cb126-2" aria-hidden="true" tabindex="-1"></a>sd</span></code></pre></div>
+<pre><code>  Tratamiento        LG        AG       PM
+1          T1 0.8252024 0.7796474 48.15737
+2          T2 1.0147367 0.6724392 40.80827
+3          T3 1.0458418 0.6713492 52.99939
+4          T4 0.7469698 0.6477198 34.69407
+5          T5 0.8486173 0.7227722 39.96212
+6          T6 1.0328270 0.9407900 43.59886
+7          T7 0.9791264 0.7983133 51.69534
+8          T8 0.7943433 0.5543493 47.92838</code></pre>
+<p><strong>Diagrama de Tukey para el ancho de grano de los tratamientos</strong></p>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="análisis-exploratorio-y-descriptivo.html#cb128-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb128-2"><a href="análisis-exploratorio-y-descriptivo.html#cb128-2" aria-hidden="true" tabindex="-1"></a>ancho <span class="ot">&lt;-</span> <span class="fu">with</span>(maiz, <span class="fu">boxplot</span>(AG <span class="sc">~</span> Tratamiento, <span class="at">col =</span> <span class="st">&quot;Green&quot;</span>,</span>
+<span id="cb128-3"><a href="análisis-exploratorio-y-descriptivo.html#cb128-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">main =</span> <span class="st">&quot;Diagrama de ancho de grano por tratamiento&quot;</span>,</span>
+<span id="cb128-4"><a href="análisis-exploratorio-y-descriptivo.html#cb128-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">las =</span> <span class="dv">2</span>, <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-23-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="análisis-exploratorio-y-descriptivo.html#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+<p><strong>Diagrama de Tukey para el longitud de grano de los tratamientos</strong></p>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="análisis-exploratorio-y-descriptivo.html#cb130-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb130-2"><a href="análisis-exploratorio-y-descriptivo.html#cb130-2" aria-hidden="true" tabindex="-1"></a>longitud <span class="ot">&lt;-</span> <span class="fu">with</span>(maiz, <span class="fu">boxplot</span>(LG <span class="sc">~</span> Tratamiento, <span class="at">col =</span> <span class="st">&quot;Red&quot;</span>,</span>
+<span id="cb130-3"><a href="análisis-exploratorio-y-descriptivo.html#cb130-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">main =</span> <span class="st">&quot;Diagrama de longitud de grano por tratamiento&quot;</span>,</span>
+<span id="cb130-4"><a href="análisis-exploratorio-y-descriptivo.html#cb130-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">las =</span> <span class="dv">2</span>, <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-24-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb131-1"><a href="análisis-exploratorio-y-descriptivo.html#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+<p><strong>Tabla de frecuencia y gráfico de líneas para Número de hileras por mazorca</strong></p>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb132-1"><a href="análisis-exploratorio-y-descriptivo.html#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importación</span></span>
+<span id="cb132-2"><a href="análisis-exploratorio-y-descriptivo.html#cb132-2" aria-hidden="true" tabindex="-1"></a>maiz2 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">&quot;datos 1.xlsx&quot;</span>, <span class="at">sheet =</span> <span class="st">&quot;Datos 2&quot;</span>)</span>
+<span id="cb132-3"><a href="análisis-exploratorio-y-descriptivo.html#cb132-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb132-4"><a href="análisis-exploratorio-y-descriptivo.html#cb132-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Etiquetado de variables</span></span>
+<span id="cb132-5"><a href="análisis-exploratorio-y-descriptivo.html#cb132-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb132-6"><a href="análisis-exploratorio-y-descriptivo.html#cb132-6" aria-hidden="true" tabindex="-1"></a>maiz2<span class="sc">$</span>PAE <span class="ot">&lt;-</span> car<span class="sc">::</span><span class="fu">recode</span>(maiz2<span class="sc">$</span>PAE, <span class="st">&quot;1=&#39;Ausente o muy débil&#39;;</span></span>
+<span id="cb132-7"><a href="análisis-exploratorio-y-descriptivo.html#cb132-7" aria-hidden="true" tabindex="-1"></a><span class="st">                        3=&#39;Débil&#39;; 5=&#39;Media&#39;; 7=&#39;Fuerte&#39;; 9=&#39;Muy fuerte&#39;&quot;</span>)</span>
+<span id="cb132-8"><a href="análisis-exploratorio-y-descriptivo.html#cb132-8" aria-hidden="true" tabindex="-1"></a>maiz2<span class="sc">$</span>PAE <span class="ot">&lt;-</span> <span class="fu">factor</span>(maiz2<span class="sc">$</span>PAE,</span>
+<span id="cb132-9"><a href="análisis-exploratorio-y-descriptivo.html#cb132-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Ausente o muy débil&quot;</span>,<span class="st">&quot;Débil&quot;</span>,<span class="st">&quot;Media&quot;</span>,<span class="st">&quot;Fuerte&quot;</span>,</span>
+<span id="cb132-10"><a href="análisis-exploratorio-y-descriptivo.html#cb132-10" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Muy fuerte&quot;</span>), <span class="at">ordered =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb132-11"><a href="análisis-exploratorio-y-descriptivo.html#cb132-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable cuantitativa discreta</span></span>
+<span id="cb132-12"><a href="análisis-exploratorio-y-descriptivo.html#cb132-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabla de frecuencias</span></span>
+<span id="cb132-13"><a href="análisis-exploratorio-y-descriptivo.html#cb132-13" aria-hidden="true" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> <span class="fu">table</span>(maiz2<span class="sc">$</span>HPP)</span>
+<span id="cb132-14"><a href="análisis-exploratorio-y-descriptivo.html#cb132-14" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">prop.table</span>(f1)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>)</span>
+<span id="cb132-15"><a href="análisis-exploratorio-y-descriptivo.html#cb132-15" aria-hidden="true" tabindex="-1"></a><span class="co"># La función que permite unir vectores</span></span>
+<span id="cb132-16"><a href="análisis-exploratorio-y-descriptivo.html#cb132-16" aria-hidden="true" tabindex="-1"></a>tabla6 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(f1,p2)</span>
+<span id="cb132-17"><a href="análisis-exploratorio-y-descriptivo.html#cb132-17" aria-hidden="true" tabindex="-1"></a>tabla6</span></code></pre></div>
+<pre><code>    f1    p2
+2    1  0.16
+8    1  0.16
+10   2  0.31
+12  45  7.03
+14 209 32.66
+15   2  0.31
+16 194 30.31
+17   1  0.16
+18 128 20.00
+19   2  0.31
+20  44  6.88
+22  11  1.72</code></pre>
+<div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb134-1"><a href="análisis-exploratorio-y-descriptivo.html#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de líneas</span></span>
+<span id="cb134-2"><a href="análisis-exploratorio-y-descriptivo.html#cb134-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">row.names</span>(tabla6)</span>
+<span id="cb134-3"><a href="análisis-exploratorio-y-descriptivo.html#cb134-3" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">plot</span>(p2, <span class="at">type =</span> <span class="st">&quot;h&quot;</span>,<span class="at">col =</span> <span class="dv">3</span>,<span class="at">main =</span> <span class="st">&quot;Gráfico de líneas&quot;</span>,<span class="at">las =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-25-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>Tabla de frecuencia y gráfico de líneas para Longitud de grano</strong></p>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="análisis-exploratorio-y-descriptivo.html#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable cuantitativa continua</span></span>
+<span id="cb135-2"><a href="análisis-exploratorio-y-descriptivo.html#cb135-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabla de frecuencias</span></span>
+<span id="cb135-3"><a href="análisis-exploratorio-y-descriptivo.html#cb135-3" aria-hidden="true" tabindex="-1"></a>h2 <span class="ot">&lt;-</span> <span class="fu">with</span>(maiz2, <span class="fu">graph.freq</span>(LG,<span class="at">plot =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-26-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="análisis-exploratorio-y-descriptivo.html#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">table.freq</span>(h2), <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code> Lower Upper  Main Frequency Percentage  CF   CPF
+   8.0   8.9  8.45         3        0.5   3   0.5
+   8.9   9.8  9.35         5        0.8   8   1.2
+   9.8  10.7 10.25        24        3.8  32   5.0
+  10.7  11.6 11.15        84       13.1 116  18.1
+  11.6  12.5 12.05       229       35.8 345  53.9
+  12.5  13.4 12.95       180       28.1 525  82.0
+  13.4  14.3 13.85        92       14.4 617  96.4
+  14.3  15.2 14.75        21        3.3 638  99.7
+  15.2  16.1 15.65         1        0.2 639  99.8
+  16.1  17.0 16.55         1        0.2 640 100.0</code></pre>
+<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="análisis-exploratorio-y-descriptivo.html#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafico</span></span>
+<span id="cb138-2"><a href="análisis-exploratorio-y-descriptivo.html#cb138-2" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">hist</span>(maiz2<span class="sc">$</span>LG)</span>
+<span id="cb138-3"><a href="análisis-exploratorio-y-descriptivo.html#cb138-3" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon.freq</span>(h)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-26-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="análisis-exploratorio-y-descriptivo.html#cb139-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">multi.hist</span>(maiz2[,<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>],<span class="at">global =</span> F)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-26-3.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="análisis-exploratorio-y-descriptivo.html#cb140-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">histBy</span>(<span class="fu">as.data.frame</span>(maiz2),<span class="st">&quot;LG&quot;</span>,<span class="st">&quot;Tratamiento&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-26-4.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="análisis-exploratorio-y-descriptivo.html#cb141-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">histBy</span>(LG<span class="sc">~</span>Localidad,<span class="at">data=</span><span class="fu">as.data.frame</span>(maiz2))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-26-5.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="análisis-exploratorio-y-descriptivo.html#cb142-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(maiz2<span class="sc">$</span>LG, maiz2<span class="sc">$</span>Localidad,mean)</span></code></pre></div>
+<pre><code>      L1       L2 
+12.76062 12.13244 </code></pre>
+<p><strong>Resumen general de un dataset</strong></p>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="análisis-exploratorio-y-descriptivo.html#cb144-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">describe</span>(maiz2)</span></code></pre></div>
+<pre><code>             vars   n   mean    sd median trimmed   mad   min    max  range  skew kurtosis   se
+Tratamiento*    1 640   4.50  2.29   4.50    4.50  2.97  1.00   8.00   7.00  0.00    -1.24 0.09
+Localidad*      2 640   1.50  0.50   1.50    1.50  0.74  1.00   2.00   1.00  0.00    -2.00 0.02
+HPP             3 640  15.80  2.34  16.00   15.71  2.97  2.00  22.00  20.00  0.02     1.54 0.09
+GPM             4 640  32.95  5.35  33.00   32.92  5.93  2.00  49.00  47.00 -0.22     1.05 0.21
+LG              5 640  12.45  1.05  12.41   12.47  0.97  8.37  16.62   8.25 -0.26     0.90 0.04
+AG              6 640   8.83  0.91   8.86    8.83  0.82  5.74  12.78   7.04  0.13     0.88 0.04
+PM              7 640 224.63 49.27 226.70  225.62 47.29 22.10 358.40 336.30 -0.23     0.22 1.95
+PAE*            8 640   2.33  0.99   2.00    2.29  1.48  1.00   4.00   3.00  0.30    -0.93 0.04</code></pre>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="análisis-exploratorio-y-descriptivo.html#cb146-1" aria-hidden="true" tabindex="-1"></a>summarytools<span class="sc">::</span><span class="fu">descr</span>(maiz2)</span></code></pre></div>
+<pre><code>Non-numerical variable(s) ignored: Tratamiento, Localidad, PAE</code></pre>
+<pre><code>Descriptive Statistics  
+maiz2  
+N: 640  
+
+                        AG      GPM      HPP       LG       PM
+----------------- -------- -------- -------- -------- --------
+             Mean     8.83    32.95    15.80    12.45   224.63
+          Std.Dev     0.91     5.35     2.34     1.05    49.27
+              Min     5.74     2.00     2.00     8.37    22.10
+               Q1     8.27    29.00    14.00    11.80   192.15
+           Median     8.86    33.00    16.00    12.41   226.70
+               Q3     9.39    37.00    18.00    13.16   256.70
+              Max    12.78    49.00    22.00    16.62   358.40
+              MAD     0.82     5.93     2.97     0.97    47.29
+              IQR     1.12     8.00     4.00     1.36    64.47
+               CV     0.10     0.16     0.15     0.08     0.22
+         Skewness     0.13    -0.22     0.02    -0.26    -0.23
+      SE.Skewness     0.10     0.10     0.10     0.10     0.10
+         Kurtosis     0.88     1.05     1.54     0.90     0.22
+          N.Valid   640.00   640.00   640.00   640.00   640.00
+        Pct.Valid   100.00   100.00   100.00   100.00   100.00</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="indicadores-estadísticos.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="análisis-exploratorio-y-descriptivo-ii.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/edit/master/3-Análisis-Exploratorio-y-Descriptivo.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/blob/master/3-Análisis-Exploratorio-y-Descriptivo.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

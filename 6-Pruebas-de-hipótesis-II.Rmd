@@ -1,22 +1,10 @@
----
-title: "Pruebas de hipótesis (parte II)"
-author: "Christian Vásquez Velasco"
-date: "14/8/2021"
-output:
-  html_document:
-    df_print: paged
----
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-options(scipen = 9999,
-        max.print = 9999)
-library(agricolae)
-library(agroforestry)
-library(dplyr)
-library(exactRankTests)
-library(kSamples)
+```{r, include = FALSE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(readxl, dplyr, agricolae, agroforestry, exactRankTests, kSamples)
 ```
+
+# Pruebas de hipótesis II
 
 ## Prueba de hipótesis para k variancias
 
@@ -32,7 +20,7 @@ $H_1: \text{Al menos un } \sigma \text{ es diferente a los demás}$
 
 $\alpha = 0.01$
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 data("bagua")
 
 dap <- bagua %>%
@@ -57,7 +45,7 @@ $H_1: \text{Al menos un } \sigma \text{ es diferente a los demás}$
 
 $\alpha = 0.01$
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 data("bagua")
 
 altura <- bagua %>%
@@ -83,7 +71,7 @@ $\alpha = 0.07$
 
 Esta prueba tiene como supuesto que la dispersión o varianza de los niveles del factor evaluado es estadísticamente similar entre los niveles.
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 data("bagua")
 
 summary(aov(lm(altura~especie, altura)))
@@ -93,7 +81,7 @@ cat("F tabular al 0.07 de alfa:",qf(0.07,3,267, lower.tail = F),".\n")
 
 # Pruebas no paramétricas
 
-## Prueba de Wilcoxon
+## Prueba U de Mann-Whitney
 
 $H_0: Mediana_{Aucatadijo} = Mediana_{Shihuahuaco}$
 
@@ -101,7 +89,7 @@ $H_1: Mediana_{Aucatadijo} \neq Mediana_{Shihuahuaco}$
 
 $\alpha = 0.05$
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 dap2 <- bagua %>%
   select(dap,especie) %>%
   filter(especie %in% c("Aucatadijo","Shihuahuaco"))
@@ -111,22 +99,14 @@ Aucatadijo <- dap2%>%
 
 Shihuahuaco <- dap2%>%
   filter(especie %in% c("Shihuahuaco"))
-
-# Sin corrección por empates
-wilcox.test(Aucatadijo$dap,Shihuahuaco$dap, mu = 0,
-            paired = F, alternative = "l")
-# Con corrección por empates
-wilcox.exact(Aucatadijo$dap,Shihuahuaco$dap, mu = 0,
-            paired = F, alternative = "l")
 ```
-*Conclusión*. A un nivel de significancia de 0.05, existe suficiente evidencia estadística para rechazar la $H_0$. Por lo tanto, podemos afirmar que el dap mediano de la especie Aucatadijo es diferente al de la especie Shihuahuaco.
 
-## Prueba U de Mann-Whitney
-
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 wilcox.exact(Aucatadijo$dap,Shihuahuaco$dap, mu = 0,
             paired = F, alternative = "t")
 ```
+
+*Conclusión*. A un nivel de significancia de 0.05, existe suficiente evidencia estadística para rechazar la $H_0$. Por lo tanto, podemos afirmar que el dap mediano de la especie Aucatadijo es diferente al de la especie Shihuahuaco.
 
 ## Prueba Mood
 
@@ -136,7 +116,7 @@ $H_1: \theta_{Aucatadijo} \neq \theta_{Shihuahuaco}$
 
 $\alpha = 0.05$
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 mood.test(Aucatadijo$dap,Shihuahuaco$dap, alternative = "t")
 ```
 *Conclusión*. A un nivel de significancia de 0.05, existe suficiente evidencia estadística para no rechazar la $H_0$. Por lo tanto, podemos afirmar que la diferencia en la dispersión del diámetro a la altura del pecho de la especie Aucatadijo es igual al de la especie Shihuahuaco.
@@ -147,7 +127,7 @@ $H_0: \text{El dap de las especies provienen de la misma distribución}$
 
 $H_1: \text{El dap de las especies no provienen de la misma distribución}$
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 kSamples::ad.test(dap$dap~dap$especie)
 
 ```
@@ -156,7 +136,7 @@ $H_0: Mediana_{Aucatadijo} = Mediana_{Bolaina} = Mediana_{Shihuahuaco} = Mediana
 
 $H_1: \text{Al menos una Mediana es diferente a las demás}$
  
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 with(dap,kruskal(y = dap,trt = especie,alpha = 0.05,group = T,console = T))
 ```
 
@@ -166,7 +146,7 @@ $H_0: Mediana_{Aucatadijo} = Mediana_{Bolaina} = Mediana_{Shihuahuaco} = Mediana
 
 $H_1: \text{Al menos una Mediana es diferente a las demás}$
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 with(dap,Median.test(y = dap,trt = especie,alpha = 0.05,group = T,console = T))
 ```
 

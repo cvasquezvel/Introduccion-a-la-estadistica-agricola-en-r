@@ -1,24 +1,7 @@
----
-title: "Medidas de asociación y Regresión"
-author: "Christian Vásquez Velasco"
-date: "14/8/2021"
-output:
-  html_document:
-    df_print: paged
----
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-options(scipen = 9999,
-        max.print = 9999)
-library(readxl)
-library(agricolae)
-library(mvnormtest)
-library(agroforestry)
-library(ggplot2)
-library(GGally)
-library(dplyr)
-library(psych)
+```{r, include = FALSE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(readxl, dplyr, agricolae, agroforestry, mvnormtest, ggplot2, GGally, psych)
 ```
 
 ```{r, echo = F, eval = T, comment=NA, message=F, warning=F}
@@ -32,13 +15,15 @@ datos$Urbano <- factor(datos$Urbano,
 
 ```
 
+# Medidas de asociación y regresión
+
 ## Correlación
 
 Creador de la medida fue Pearson.
 
 La idea es mostrar una relación conjunta de dos o más variables aleatorias en un indicador que varia entre -1 y 1, de tal manera que se pueda interpretar la realción real de las medidas.
 
-**Valor de la correlación**
+### Valor de la correlación
 
 Negativo:  relación inversa. A medida que una variable aumenta su media, la otra disminuye.
 
@@ -48,7 +33,7 @@ Positivo: relación directa. A medida que una variable aumenta su media, la otra
 
 Interpretación: Se basa en la magnitud y en signo. Si el valor está cercano a 1 o -1 es una correlación alta.
 
-**Prueba estadística**
+### Prueba estadística
 
 La hipótesis es que no existe correlación. Entonces la prueba estadística tiene que mostrar rechazando esta hipótesis y así concluir que la correlación existe.
 
@@ -58,7 +43,7 @@ $H_1: \rho \neq 0~\text{(existe relación)}$
 
 Para fundamentar la respuesta, requiere un número aceptable de pares de datos de la distribución normal bivariada para realizar la prueba que debe ser cercana a 30 observaciones. Si se tiene muchos datos, lo conveniente es extraer al azar un número aproximado a 30.
 
-**Gráfico de la dispersión**
+### Gráfico de la dispersión
 
 Permite visualizar la relación existente.
 
@@ -68,7 +53,7 @@ Permite visualizar la relación existente.
 
 Procedimientos: plot(), pairs()
 
-**Tipo de variable**
+### Tipo de variable
 
 El tipo de variable nos indica que procedimiento se debe aplicar para medir la asociación.
 
@@ -94,11 +79,11 @@ Para crear un modelo de regresión lineal simple se tomó como variable dependie
 
 *Urbano*: 0 (No) si el conteo se hizo en un área no urbana, 1 (Sí) si el conteo se hizo en un área urbana.
 
-**Dispersión y valor de la correlación**
+#### Dispersión y valor de la correlación
 
 *Dispersión entre la temperatura y el recuento*
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 op <- par(mar = c(4,4,2,2), cex = 0.8)
 with(datos,plot(Temperatura,Recuento,pch=19,bty="l"))
 with(datos,cor(Temperatura,Recuento)) -> r
@@ -107,9 +92,10 @@ v <- paste("r=",r,sep="")
 text(28,300,v,cex=2)
 par(op)
 ```
+
 *Dispersión entre la altura y el recuento*
 
-```{r, echo = F, comment=NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, fig.align='center',fig.width=6,fig.height=4}
 op <- par(mar = c(4,4,2,2), cex = 0.8)
 with(datos,plot(Altura,Recuento,pch=19,bty="l"))
 with(datos,cor(Altura,Recuento)) -> r
@@ -121,7 +107,7 @@ par(op)
 
 Nota: La correlación se expresa en valores entre -1 y 1. No utilizar porcentaje.
 
-**Prueba estadística**
+#### Prueba estadística
 
 *Prueba de hipótesis entre la temperatura y el recuento*
 
@@ -135,7 +121,7 @@ $H_1: \text{No existe distribución normal bivariada entre la temperatura y el r
 
 Se debe confirmar la existencia de distribución normal bivariada entre la temperatura y el recuento, por ello, es obligatorio no rechazar la hipótesis nula para continuar con la prueba.
 
-```{r, echo = FALSE, comment=NA, warning=F, eval=TRUE, message= FALSE}
+```{r, echo = T, comment=NA, warning=F, eval=TRUE, message= FALSE}
 mvnormtest::mshapiro.test(t(datos[,c(1,6)]))
 ```
 
@@ -147,7 +133,7 @@ $H_0: \rho = 0~\text{(no existe relación entre la temperatura y el recuento)}$
 
 $H_1: \rho \neq 0~\text{(existe relación entre la temperatura y el recuento)}$
 
-```{r, echo = FALSE, comment=NA, warning=F, eval=TRUE, message= FALSE}
+```{r, echo = T, comment=NA, warning=F, eval=TRUE, message= FALSE}
 cor <- with(datos,cor.test(Temperatura,Recuento,method="pearson",
                     conf.level = 0.97))
 with(datos,cor.test(Temperatura,Recuento,method="pearson",
@@ -190,7 +176,7 @@ $H_1: \text{No existe distribución normal bivariada entre la altura y el recuen
 
 Se debe confirmar la existencia de distribución normal bivariada entre la altura y el recuento, por ello, es obligatorio no rechazar la hipótesis nula para continuar con la prueba.
 
-```{r, echo = FALSE, comment=NA, warning=F, eval=TRUE, message= FALSE}
+```{r, echo = T, comment=NA, warning=F, eval=TRUE, message= FALSE}
 mvnormtest::mshapiro.test(t(datos[,c(2,6)]))
 ```
 
@@ -202,7 +188,7 @@ $H_0: \rho = 0~\text{(no existe relación entre la altura y el recuento)}$
 
 $H_1: \rho \neq 0~\text{(existe relación entre la altura y el recuento)}$
 
-```{r, echo = FALSE, comment=NA, warning=F, eval=TRUE, message= FALSE}
+```{r, echo = T, comment=NA, warning=F, eval=TRUE, message= FALSE}
 with(datos,cor.test(Altura,Recuento,method="pearson",
                     conf.level = 0.99))
 ```
@@ -210,17 +196,15 @@ with(datos,cor.test(Altura,Recuento,method="pearson",
 *Conclusión*. A un nivel de \alfa de 0.01, se evidencia que el valor de \rho no es estadísticamente similar a 0, por lo tanto, se concluye que existe relación entre la altura y el recuento. 
 
 
-**Otros métodos**
+## Otros métodos
 
-**Método de Spearman**
+### Método de Spearman
 
 Pearson utiliza los medidos y Spearman con datos en escala de orden (como mínimo).
 
-
 Para una mejor observarción del comportamiento de la correlación, se utilizara datos de suelo.
 
-
-```{r, echo = FALSE, comment=NA, warning=F, eval=TRUE, message= FALSE, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment=NA, warning=F, eval=TRUE, message= FALSE, fig.align='center',fig.width=6,fig.height=4}
 op <- par(mar=c(4,4,2,2),cex = 0.8)
 data(soil)
 panel.cor <- function(x,y,digits = 3, prefix = "", cex.cor, ...)
@@ -238,23 +222,23 @@ pairs(soil[6:10], upper.panel = panel.cor, lower.panel = panel.smooth)
 
 **Matriz de correlación**
 
-```{r, echo = FALSE, comment=NA}
+```{r, echo = T, comment=NA}
 r <- correlation(soil[,6:10],method = "spearman")
 r$correlation
 round(r$pvalue,4)
 ```
 Se observa que la correlación arena vs limo es alta (r = -0.8) negativamente significativa que hay una relación inversa entre ambos.
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 op <- par(mar = c(4,4,2,2),cex = 0.8)
 with(soil,plot(sand, slime, pch = 19, col="blue",
                bty ="l"))
 par(op)
 ```
 
-## Gráfico exploratorio
+### Gráfico exploratorio
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6,warning=FALSE,message=F}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6,warning=FALSE,message=F}
 datos %>%
   select_if(is.numeric)%>%
   pairs
@@ -298,7 +282,7 @@ $\hat{Y}_i$ es el valor ajustado o predicho de la variable respuesta, se obtiene
 
 $$\hat{Y}_i = \beta_0 + \beta_1 X_i$$
 
-**Aplicación**
+### Aplicación
 
 Usar las variables Altura (indendiente) y Recuento (Dependiente).
 
@@ -308,7 +292,7 @@ $$Recuento_i = \beta_0+\beta_1*Altura_i+\epsilon_i$$
 
 Teniendo en cuenta los valores repetidos es apropiado promediar, para tener valores únicos y que sean lo más distinto posible. Este procedimiento no es obligatorio.
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 op <- par(mar = c(4,4,2,2),cex = 0.8)
 recmean <- with(datos,tapply.stat(Altura,Recuento,mean))
 with(datos,plot(Altura, Recuento, pch = 19, bty = "l",
@@ -319,9 +303,9 @@ par(op)
 
 ```
 
-## Construcción del modelo
+#### Construcción del modelo
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 modelo <- lm(Recuento ~ Altura, data = recmean)
 summary(modelo)
 ```
@@ -363,7 +347,7 @@ $R^2=0.9865$ que equivale a decir que la altura explica el $98.65\%$ de la varia
 
 el p-value fue de < 0.00000000000000022, es cero, se concluye que el modelo es aceptable o tiene buenas variables regresoras.
 
-## Análisis de variancia
+#### Análisis de variancia
 
 Prueba de hipótesis del ANOVA para una regresión:
 
@@ -371,7 +355,7 @@ $H_0: \text{La variable regresora tiene una influencia no significativa sobre la
 
 $H_1: \text{La variable regresora tiene una influencia significativa sobre la variable predicha}$
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 anova(modelo)
 cat("F tabular al 0.05 de alfa:",qf(0.05,1,144,lower.tail = F),".\n")
 cat("F tabular al 0.01 de alfa:",qf(0.01,1,144,lower.tail = F),".\n")
@@ -379,18 +363,18 @@ cat("F tabular al 0.005 de alfa:",qf(0.005,1,144,lower.tail = F),".\n")
 cat("F tabular al 0.001 de alfa:",qf(0.001,1,144,lower.tail = F),".\n")
 ```
 
-## Gráfico del modelo:
+#### Gráfico del modelo:
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 op <- par(mar=c(4,4,2,2), cex = 0.8)
 with(recmean,plot(Altura, Recuento, pch = 19, bty = "l"))
 abline(modelo, col = "blue")
 par(op)
 ```
 
-## Gráfico de los supuestos del modelo:
+#### Gráfico de los supuestos del modelo:
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 op <- par(mfrow=c(2,2), cex = 0.8)
 plot(modelo)
 par(op)
@@ -420,18 +404,18 @@ En el gráfico se puede detectar los outliers, que son posibles valores influyen
 
 No hay valores extremos en el ejemplo.
 
-## Ajuste del modelo
+#### Ajuste del modelo
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 modelo1 <- lm(Recuento ~ Altura + I(Altura^2), data = recmean)
 summary(modelo1)
 ```
 
 El termino polinomial cuadrático de la Altura de planta, no posee una explicación de la variancia o no aporta en la linealidad del modelo.
 
-## La normalidad de los errores.
+#### La normalidad de los errores.
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 op <- par(mar = c(4,4,2,2), cex=0.8)
 error <- residuals(modelo)
 plot(density(error), main = "Distribución del error")
@@ -447,17 +431,17 @@ $H_1: \text{La distribución de los errores no se distribuye de forma similar a 
 
 *Conclusión*. A un nivel de significancia de 0.1, se concluye que no existe suficiente evidencia estadística para rechazar la hipótesis nula, por lo tanto, la distribución de los errores es similar a la función normal.
 
-## Predecir el recuento de escarabajos en una altura propuesta.
+#### Predecir el recuento de escarabajos en una altura propuesta.
 
 **Cálculo de los valores predichos del modelo con los datos observados**
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 pred <- predict(modelo)
 recmean$prediccion <- pred
 head(recmean)
 ```
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 ggplot(recmean, aes(x = `Recuento`, y = `prediccion`)) +
   geom_point() + labs(y = "Recuento predicho",
                       x = "Recuento real") +
@@ -468,7 +452,7 @@ ggplot(recmean, aes(x = `Recuento`, y = `prediccion`)) +
 
 Predecir el recuento de escarabajos en altura de 100, 500, y 4000 m.s.n.m. 
 
-```{r, echo = FALSE, comment=NA,fig.align='center', fig.height=4,fig.width=6}
+```{r, echo = T, comment=NA,fig.align='center', fig.height=4,fig.width=6}
 altnuevo <- c(100,500,4000)
 recnuevo <- predict(modelo, newdata = data.frame(Altura = altnuevo))
 cbind(altnuevo, recnuevo)

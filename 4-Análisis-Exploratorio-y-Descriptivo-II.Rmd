@@ -1,38 +1,32 @@
----
-title: "Análisis exploratorio y descriptivo (parte II)"
-author: "Christian Vásquez Velasco"
-date: "`r Sys.Date()`"
-output: html_document
----
 
-```{r setup, include=FALSE}
-options(scipen = 9999,
-        max.print = 9999)
+```{r, include=FALSE}
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, agricolae, summarytools, car, psych)
 ```
 
-# Escala de medida
+# Análisis exploratorio y descriptivo II
+
+## Escala de medida
 
 Es una manera de valorar los datos observados desde los datos cuantitativos o datos cualitativos.
 
-## Escala nominal
+### Escala nominal
 
 Corresponde a valores de tipo cualitativo, sin ningún orden y por lo general son pocos los niveles o valores. No se puede realizar operaciones elementales, solo permite conteo.
 
-## Escala ordinal
+### Escala ordinal
 
 Las clases o categorías que se asigna a los observado de tipo cualitativo, mantiene una cierta jerarquía sin importar su distanciamiento y son conocidos como variables seudo cuantitativas.
 
-## Escala de intervalo.
+### Escala de intervalo.
 
 Es aplicable en datos cuantitativos, no permiten todas las operaciones elementales, solo suma o resta.
 
-## Escala de razón
+### Escala de razón
 
 Es aplicable por lo general a datos cuantitativos continuos generados por instrumentos de medida.
 
-## Aplicación
+### Aplicación
 
 Para establecer la identificación y diferencias en las medidas, se utilizará el investario de maíz.
 
@@ -88,11 +82,11 @@ Su identificación de algunas medias, permite agrupar, y son considerados como f
 - Localidad
 - Pigmentación antociánica de los estigmas (PAE).
 
-## Medidas estadísticas
+### Medidas estadísticas
 
 Para el ejemplo, utilizar la moda como medida expresiva (representativa) para las variables Localidad y Tratamiento. En la variable PAE, que es ordinal, la medida más relevante y expresiva es la mediana.
 
-## Representación de las medidad en gráficos.
+### Representación de las medidas en gráficos.
 
 Es importante caracterizar el tipo de medida en su escala definida.
 
@@ -148,6 +142,7 @@ Localidad1 <- subset(maiz3,maiz3$Localidad=="L1")
 pairs(Localidad1[,c(5,6)])
 par(op)
 ```
+
 Se observa que la relación entre LG y AG es muy débil, no existe un patrón que indique una relación fuerte entre las variables LG y AG.
 
 Los histogramas y el diagráma de cajas (Tukey) permite una mejor descripción.

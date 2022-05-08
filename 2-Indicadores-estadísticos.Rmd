@@ -1,22 +1,16 @@
----
-title: "Indicadores Estadísticos"
-author: "Christian Vásquez Velasco"
-date: "`r Sys.Date()`"
-output: word_document
----
 
-```{r setup, include=FALSE}
-options(scipen = 9999,
-        max.print = 9999)
+```{r, include=FALSE}
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, agricolae, raster, car)
 ```
 
-# Importancia de los indicadores
+# Indicadores estadísticos
+
+## Importancia de los indicadores
 
 Los indicadores son utilizados para expresar en forma resumida su comportamiento, de tal manera que nos permita decidir sobre su estado y poder comparar con otros similares.
 
-**1. Indicadores de centralidad**
+## Indicadores de centralidad
 
 a) Promedio. Es el punto central de valores continuos y es representativo cuando no se tiene valores extremos.
 
@@ -25,7 +19,6 @@ $$\text{Promedio = }\sum_{i=1}^n \frac{x_i}{n}$$
 Para ilustración se utilizará el inventario de maíz en la localidad 2.
 
 ```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
-
 # Importación
 maiz2 <- read_excel("datos 1.xlsx", sheet = "Datos 2")
 
@@ -38,10 +31,15 @@ maiz2$PAE <- factor(maiz2$PAE,
                               "Muy fuerte"), ordered = TRUE)
 # Crear un subconjunto con los datos de la localidad 2
 # Loc2 <- subset(maiz2, Localidad=="L2")
+```
+
+
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 Loc2 <- maiz2[maiz2$Localidad=="L2",]
 cat("Promedio de la longitud de grano en la Localidad 2:",mean(Loc2$LG,
                                                                na.rm = TRUE), "mm.\n")
 ```
+
 El promedio de longitud de grano en la localidad 2 fue de 12.13244 mm.
 
 
@@ -56,18 +54,19 @@ $$\text{Mediana} = \left \{ \begin{array}{ll}
 
 Para ilustración se utilizará el inventario de maíz en la localidad 2.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 
 cat("Mediana de la longitud de grano en la Localidad 2:",median(Loc2$LG,
                                                                na.rm = TRUE), "mm.\n")
 ```
+
 El valor que divide a las observaciones de la longitud de grano en la Localidad 2 en dos partes iguales fue de 12.205 mm. También se puede decir que, el valor máximo obtenido por el 50 % de observaciones con menor valor de longitud de grano en la Localidad 2 fue de 12.205 mm.
 
 c) Moda. Es el valor más expresivo del conjunto, en datos cualitativos, es el más abundante. Si hay dos, se indica una población bimodal. No es frecuente en datos discretos y mucho menos en continuos. Sin embargo, es posible obtener la moda en datos continuos, después de agruparlos.
 
 $$\text{Moda = Valor más frecuente del conjunto}$$
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 longitud <- Loc2$LG
 x <- sort(longitud)
 n <- length(x)
@@ -78,13 +77,13 @@ cat("Moda de la longitud de grano en la Localidad 2:",round(moda,2),"mm.\n")
 ```
 El valor más frecuente de la longitud de grano en la Localidad 2 fue de 12.09 mm.
 
-**2. Indicadores de dispersión**
+## Indicadores de dispersión
 
 a) Rango. Es la diferencia de los valores extremos (máximo y mínimo) de los datos. Útil cuando se tiene menos de 10 observaciones.
 
 $$\text{Rango = max(x)-min(x)}$$
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 # range(x)
 # diff(range(x))
 # rango <- max(x)-min(x); rango
@@ -95,7 +94,7 @@ La diferencia entre el valor máximo y el valor mínimo de la longitud de grano 
 b) Desviación estándar (S). Medida de variación obtenida frecuentemente de una muestra de más de 10 observaciones.
 
 $$S= \sqrt {\sum_{i=1}^n \frac{(x_i-\bar{x})^2}{n-1}}$$
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 cat("Desviación estándar de la longitud de grano en la Localidad 2:",sd(x),"mm.\n")
 ```
 
@@ -105,7 +104,7 @@ c) Varianza o Variancia ($S^2$). Medida de variación obtenida frecuentemente de
 
 $$S^2 = \sum_{i=1}^n \frac{(x_i-\bar{x})^2}{n-1}$$
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 cat("Variancia de la longitud de grano en la Localidad 2:",var(x),"mm^2.\n")
 ```
 
@@ -115,7 +114,7 @@ d) Covarianza o Covariancia. Es la medida de variación conjunta que tiene dos v
 
 $$cov(x,y) = \sum_{i=1}^n \frac{(x_i-\bar{x})(y_i-\bar{y})}{n-1} $$
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 # X <- Loc2[,5:6]
 X <- Loc2[,c(5,6)]
 V <- var(X,na.rm = TRUE)
@@ -127,16 +126,17 @@ e) Rango intercuartil (IQR): Medida de variación apropiada cuando hay valores e
 
 $$IQR = Q_3-Q_1$$
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 cat("IQR de la longitud de grano en la Localidad 2:",IQR(x,na.rm = TRUE),".\n")
 ```
+
 El rango intercuartil es 1.32, lo que significa que, como la mediana fue de 12.205 mm, entonces el $50\%$ de mazorcas evaluadas de maíz está dispersa entre 12.865 y 11.545 mm. Aproximadamente su variación sería de $5.40\%$.
 
 f) Coeficiente de variación (CV). Es una medida de variación relativa, útil para comparar la variación de medidas con diferentes unidades.
 
 $$CV= \frac{S*100}{\bar{x}}$$
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 cv <- function(x){
   mean = mean(x)
   sd = sd(x)
@@ -153,7 +153,7 @@ El CV no debe ser utilizado como una medida de confiabilidad de los datos en inf
 
 La medida de variación de la longitud de grano en la localidad 2 fue de $8.39\%$, por lo cual, la desviación de los datos con respecto a la media fue homogénea o baja (normal).
 
-**3. Indicadores de la forma de los datos**
+## Indicadores de la forma de los datos
 
 Se entiende por la asimetría que puedan presentar.
 
@@ -167,7 +167,7 @@ El análisis es gráfico y cuantitativo.
 
 El gráfico de asimetría se observa en la densidad de frecuencia o histograma de frecuencia. El valor esta relacionado al promedio y la mediana.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 cat("Coeficiente de simetría de la longitud de grano en la Localidad 2:",skewness(x),".\n")
 ```
 
@@ -175,7 +175,7 @@ El valor de simetría es lejano a 0, por lo tanto, la forma de los datos en la l
 
 Gráficamente se observa su forma de la longitud de grano. Es necesario utilizar el histograma en la escala de densidad. Usar la función graph.freq() de agricolae.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 h <- graph.freq(x,frequency = 3)
 polygon.freq(h,col="red",lwd=2,frequency = 3)
 lines(density(x),col="blue")
@@ -190,9 +190,10 @@ Se observa una mayor expresión en el histograma de agricolae con el polígono d
 
 Es otra manera de expresar la forma de los datos, es frecuentemente utilizado con pocos datos, porque el proceso es manual. En R se tiene la función stem() que utiliza este procedimiento.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 stem(x)
 ```
+
 Cada dato es expresado en el gráfico con su valor real, si son muchos, será representado por un caracter, para visualizar la forma.
 
 En el ejemplo presentado, se observa que la longitud de grano en la localidad 1 tienen una distrubición asimétrica negativa.

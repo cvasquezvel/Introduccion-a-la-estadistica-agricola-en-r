@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 9 Medidas de asociación y regresión | Introducción a la estadística agrícola con R</title>
+  <meta name="description" content="Chapter 9 Medidas de asociación y regresión | Introducción a la estadística agrícola con R" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 9 Medidas de asociación y regresión | Introducción a la estadística agrícola con R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 9 Medidas de asociación y regresión | Introducción a la estadística agrícola con R" />
+  
+  
+  
+
+<meta name="author" content="Vásquez V., C.R.A." />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="muestreo-aplicado.html"/>
+<link rel="next" href="análisis-de-componentes-principales.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+<script>
+/* ========================================================================
+  * Bootstrap: transition.js v3.3.7
+* http://getbootstrap.com/javascript/#transitions
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  
+  +function ($) {
+    'use strict';
+    
+    // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+    // ============================================================
+      
+      function transitionEnd() {
+        var el = document.createElement('bootstrap')
+        
+        var transEndEventNames = {
+          WebkitTransition : 'webkitTransitionEnd',
+          MozTransition    : 'transitionend',
+          OTransition      : 'oTransitionEnd otransitionend',
+          transition       : 'transitionend'
+        }
+        
+        for (var name in transEndEventNames) {
+          if (el.style[name] !== undefined) {
+            return { end: transEndEventNames[name] }
+          }
+        }
+        
+        return false // explicit for ie8 (  ._.)
+      }
+    
+    // http://blog.alexmaccaw.com/css-transitions
+    $.fn.emulateTransitionEnd = function (duration) {
+      var called = false
+      var $el = this
+      $(this).one('bsTransitionEnd', function () { called = true })
+      var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+      setTimeout(callback, duration)
+      return this
+    }
+    
+    $(function () {
+      $.support.transition = transitionEnd()
+      
+      if (!$.support.transition) return
+      
+      $.event.special.bsTransitionEnd = {
+        bindType: $.support.transition.end,
+        delegateType: $.support.transition.end,
+        handle: function (e) {
+          if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+        }
+      }
+    })
+    
+  }(jQuery);
+</script>
+<script>
+/* ========================================================================
+  * Bootstrap: collapse.js v3.3.7
+* http://getbootstrap.com/javascript/#collapse
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  /* jshint latedef: false */
+  
+  +function ($) {
+    'use strict';
+    
+    // COLLAPSE PUBLIC CLASS DEFINITION
+    // ================================
+      
+      var Collapse = function (element, options) {
+        this.$element      = $(element)
+        this.options       = $.extend({}, Collapse.DEFAULTS, options)
+        this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                                 '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+        this.transitioning = null
+        
+        if (this.options.parent) {
+          this.$parent = this.getParent()
+        } else {
+          this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+        }
+        
+        if (this.options.toggle) this.toggle()
+      }
+      
+      Collapse.VERSION  = '3.3.7'
+      
+      Collapse.TRANSITION_DURATION = 350
+      
+      Collapse.DEFAULTS = {
+        toggle: true
+      }
+      
+      Collapse.prototype.dimension = function () {
+        var hasWidth = this.$element.hasClass('width')
+        return hasWidth ? 'width' : 'height'
+      }
+      
+      Collapse.prototype.show = function () {
+        if (this.transitioning || this.$element.hasClass('in')) return
+        
+        var activesData
+        var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+        
+        if (actives && actives.length) {
+          activesData = actives.data('bs.collapse')
+          if (activesData && activesData.transitioning) return
+        }
+        
+        var startEvent = $.Event('show.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+        
+        if (actives && actives.length) {
+          Plugin.call(actives, 'hide')
+          activesData || actives.data('bs.collapse', null)
+        }
+        
+        var dimension = this.dimension()
+        
+        this.$element
+        .removeClass('collapse')
+        .addClass('collapsing')[dimension](0)
+        .attr('aria-expanded', true)
+        
+        this.$trigger
+        .removeClass('collapsed')
+        .attr('aria-expanded', true)
+        
+        this.transitioning = 1
+        
+        var complete = function () {
+          this.$element
+          .removeClass('collapsing')
+          .addClass('collapse in')[dimension]('')
+          this.transitioning = 0
+          this.$element
+          .trigger('shown.bs.collapse')
+        }
+        
+        if (!$.support.transition) return complete.call(this)
+        
+        var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+        
+        this.$element
+        .one('bsTransitionEnd', $.proxy(complete, this))
+        .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+      }
+      
+      Collapse.prototype.hide = function () {
+        if (this.transitioning || !this.$element.hasClass('in')) return
+        
+        var startEvent = $.Event('hide.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+        
+        var dimension = this.dimension()
+        
+        this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+        
+        this.$element
+        .addClass('collapsing')
+        .removeClass('collapse in')
+        .attr('aria-expanded', false)
+        
+        this.$trigger
+        .addClass('collapsed')
+        .attr('aria-expanded', false)
+        
+        this.transitioning = 1
+        
+        var complete = function () {
+          this.transitioning = 0
+          this.$element
+          .removeClass('collapsing')
+          .addClass('collapse')
+          .trigger('hidden.bs.collapse')
+        }
+        
+        if (!$.support.transition) return complete.call(this)
+        
+        this.$element
+        [dimension](0)
+        .one('bsTransitionEnd', $.proxy(complete, this))
+        .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+      }
+      
+      Collapse.prototype.toggle = function () {
+        this[this.$element.hasClass('in') ? 'hide' : 'show']()
+      }
+      
+      Collapse.prototype.getParent = function () {
+        return $(this.options.parent)
+        .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+        .each($.proxy(function (i, element) {
+          var $element = $(element)
+          this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+        }, this))
+        .end()
+      }
+      
+      Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+        var isOpen = $element.hasClass('in')
+        
+        $element.attr('aria-expanded', isOpen)
+        $trigger
+        .toggleClass('collapsed', !isOpen)
+        .attr('aria-expanded', isOpen)
+      }
+      
+      function getTargetFromTrigger($trigger) {
+        var href
+        var target = $trigger.attr('data-target')
+        || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+                                                                
+                                                                return $(target)
+      }
+      
+      
+      // COLLAPSE PLUGIN DEFINITION
+      // ==========================
+        
+        function Plugin(option) {
+          return this.each(function () {
+            var $this   = $(this)
+            var data    = $this.data('bs.collapse')
+            var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+            
+            if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+            if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+            if (typeof option == 'string') data[option]()
+          })
+        }
+      
+      var old = $.fn.collapse
+      
+      $.fn.collapse             = Plugin
+      $.fn.collapse.Constructor = Collapse
+      
+      
+      // COLLAPSE NO CONFLICT
+      // ====================
+        
+        $.fn.collapse.noConflict = function () {
+          $.fn.collapse = old
+          return this
+        }
+      
+      
+      // COLLAPSE DATA-API
+      // =================
+        
+        $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+          var $this   = $(this)
+          
+          if (!$this.attr('data-target')) e.preventDefault()
+          
+          var $target = getTargetFromTrigger($this)
+          var data    = $target.data('bs.collapse')
+          var option  = data ? 'toggle' : $this.data()
+          
+          Plugin.call($target, option)
+        })
+      
+  }(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+  
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+  
+  // index for unique code element ids
+  var currentIndex = 1;
+  
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+    
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+    
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+    .attr('data-toggle', 'collapse')
+    .attr('data-target', '#' + id)
+    .attr('aria-expanded', show)
+    .attr('aria-controls', id);
+    
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+    
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+    
+    div.before(buttonRow);
+    
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+  
+}
+</script>
+<script>
+/* ========================================================================
+  * Bootstrap: dropdown.js v3.3.7
+* http://getbootstrap.com/javascript/#dropdowns
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  
+  +function ($) {
+    'use strict';
+    
+    // DROPDOWN CLASS DEFINITION
+    // =========================
+      
+      var backdrop = '.dropdown-backdrop'
+      var toggle   = '[data-toggle="dropdown"]'
+      var Dropdown = function (element) {
+        $(element).on('click.bs.dropdown', this.toggle)
+      }
+      
+      Dropdown.VERSION = '3.3.7'
+      
+      function getParent($this) {
+        var selector = $this.attr('data-target')
+        
+        if (!selector) {
+          selector = $this.attr('href')
+          selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+        }
+        
+        var $parent = selector && $(selector)
+        
+        return $parent && $parent.length ? $parent : $this.parent()
+      }
+      
+      function clearMenus(e) {
+        if (e && e.which === 3) return
+        $(backdrop).remove()
+        $(toggle).each(function () {
+          var $this         = $(this)
+          var $parent       = getParent($this)
+          var relatedTarget = { relatedTarget: this }
+          
+          if (!$parent.hasClass('open')) return
+          
+          if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+          
+          $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+          
+          if (e.isDefaultPrevented()) return
+          
+          $this.attr('aria-expanded', 'false')
+          $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+        })
+      }
+      
+      Dropdown.prototype.toggle = function (e) {
+        var $this = $(this)
+        
+        if ($this.is('.disabled, :disabled')) return
+        
+        var $parent  = getParent($this)
+        var isActive = $parent.hasClass('open')
+        
+        clearMenus()
+        
+        if (!isActive) {
+          if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+            // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+.open > .dropdown-menu {
+    display: block;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+<script>
+document.write('<div class="btn-group pull-right" style="position: absolute; top: 20%; right: 2%; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>')
+</script>
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Introducción a la estadística agrícola en R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Conceptos básicos</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#población-n"><i class="fa fa-check"></i><b>1.1</b> Población (N)</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#muestra-n"><i class="fa fa-check"></i><b>1.2</b> Muestra (n)</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#unidad-elemental"><i class="fa fa-check"></i><b>1.3</b> Unidad elemental</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#variable"><i class="fa fa-check"></i><b>1.4</b> Variable</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="index.html"><a href="index.html#variable-cualitativa"><i class="fa fa-check"></i><b>1.4.1</b> Variable cualitativa</a></li>
+<li class="chapter" data-level="1.4.2" data-path="index.html"><a href="index.html#variable-cuantitativa"><i class="fa fa-check"></i><b>1.4.2</b> Variable cuantitativa</a></li>
+<li class="chapter" data-level="1.4.3" data-path="index.html"><a href="index.html#otra-forma-de-clasificación-de-variables"><i class="fa fa-check"></i><b>1.4.3</b> Otra forma de clasificación de variables</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#observación"><i class="fa fa-check"></i><b>1.5</b> Observación</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#parámetro"><i class="fa fa-check"></i><b>1.6</b> Parámetro</a></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#estadístico"><i class="fa fa-check"></i><b>1.7</b> Estadístico</a></li>
+<li class="chapter" data-level="1.8" data-path="index.html"><a href="index.html#deficinión-de-estadística"><i class="fa fa-check"></i><b>1.8</b> Deficinión de Estadística</a></li>
+<li class="chapter" data-level="1.9" data-path="index.html"><a href="index.html#división-de-la-estadística"><i class="fa fa-check"></i><b>1.9</b> División de la Estadística</a>
+<ul>
+<li class="chapter" data-level="1.9.1" data-path="index.html"><a href="index.html#descriptiva"><i class="fa fa-check"></i><b>1.9.1</b> Descriptiva</a></li>
+<li class="chapter" data-level="1.9.2" data-path="index.html"><a href="index.html#inferencial"><i class="fa fa-check"></i><b>1.9.2</b> Inferencial</a></li>
+<li class="chapter" data-level="1.9.3" data-path="index.html"><a href="index.html#paramétrica"><i class="fa fa-check"></i><b>1.9.3</b> Paramétrica</a></li>
+<li class="chapter" data-level="1.9.4" data-path="index.html"><a href="index.html#no-paramétrica"><i class="fa fa-check"></i><b>1.9.4</b> No paramétrica</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html"><i class="fa fa-check"></i><b>2</b> Indicadores estadísticos</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#importancia-de-los-indicadores"><i class="fa fa-check"></i><b>2.1</b> Importancia de los indicadores</a></li>
+<li class="chapter" data-level="2.2" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-centralidad"><i class="fa fa-check"></i><b>2.2</b> Indicadores de centralidad</a></li>
+<li class="chapter" data-level="2.3" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-dispersión"><i class="fa fa-check"></i><b>2.3</b> Indicadores de dispersión</a></li>
+<li class="chapter" data-level="2.4" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-la-forma-de-los-datos"><i class="fa fa-check"></i><b>2.4</b> Indicadores de la forma de los datos</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html"><i class="fa fa-check"></i><b>3</b> Análisis exploratorio y descriptivo</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#caso-investigación-en-maíz"><i class="fa fa-check"></i><b>3.1</b> Caso: Investigación en Maíz</a></li>
+<li class="chapter" data-level="3.2" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#resumen-general-de-los-datos"><i class="fa fa-check"></i><b>3.2</b> Resumen general de los datos</a></li>
+<li class="chapter" data-level="3.3" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#pigmentación-antociánica-de-los-estigmas"><i class="fa fa-check"></i><b>3.3</b> Pigmentación Antociánica de los estigmas</a></li>
+<li class="chapter" data-level="3.4" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#exploración-y-estadísticas-de-la-localidad-1"><i class="fa fa-check"></i><b>3.4</b> Exploración y estadísticas de la localidad 1</a></li>
+<li class="chapter" data-level="3.5" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#exploración-y-estadísticas-de-los-tratamientos-en-maíz"><i class="fa fa-check"></i><b>3.5</b> Exploración y estadísticas de los tratamientos en Maíz</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html"><i class="fa fa-check"></i><b>4</b> Análisis exploratorio y descriptivo II</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-medida"><i class="fa fa-check"></i><b>4.1</b> Escala de medida</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-nominal"><i class="fa fa-check"></i><b>4.1.1</b> Escala nominal</a></li>
+<li class="chapter" data-level="4.1.2" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-ordinal"><i class="fa fa-check"></i><b>4.1.2</b> Escala ordinal</a></li>
+<li class="chapter" data-level="4.1.3" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-intervalo."><i class="fa fa-check"></i><b>4.1.3</b> Escala de intervalo.</a></li>
+<li class="chapter" data-level="4.1.4" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-razón"><i class="fa fa-check"></i><b>4.1.4</b> Escala de razón</a></li>
+<li class="chapter" data-level="4.1.5" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#aplicación"><i class="fa fa-check"></i><b>4.1.5</b> Aplicación</a></li>
+<li class="chapter" data-level="4.1.6" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#medidas-estadísticas"><i class="fa fa-check"></i><b>4.1.6</b> Medidas estadísticas</a></li>
+<li class="chapter" data-level="4.1.7" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#representación-de-las-medidas-en-gráficos."><i class="fa fa-check"></i><b>4.1.7</b> Representación de las medidas en gráficos.</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html"><i class="fa fa-check"></i><b>5</b> Pruebas de hipótesis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-sobre-la-media-poblacional"><i class="fa fa-check"></i><b>5.1</b> Prueba sobre la media poblacional</a></li>
+<li class="chapter" data-level="5.2" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-una-cola-superior"><i class="fa fa-check"></i><b>5.2</b> Prueba de una cola superior</a></li>
+<li class="chapter" data-level="5.3" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-una-cola-inferior"><i class="fa fa-check"></i><b>5.3</b> Prueba de una cola inferior</a></li>
+<li class="chapter" data-level="5.4" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#limites-de-confianza"><i class="fa fa-check"></i><b>5.4</b> Limites de confianza</a></li>
+<li class="chapter" data-level="5.5" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-dos-colas"><i class="fa fa-check"></i><b>5.5</b> Prueba de dos colas</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html"><i class="fa fa-check"></i><b>6</b> Pruebas de hipótesis II</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-hipótesis-para-k-variancias"><i class="fa fa-check"></i><b>6.1</b> Prueba de hipótesis para k variancias</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-barttlet"><i class="fa fa-check"></i><b>6.1.1</b> Prueba de Barttlet</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-k-medias"><i class="fa fa-check"></i><b>6.2</b> Prueba de k medias</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html"><i class="fa fa-check"></i><b>7</b> Pruebas no paramétricas</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-u-de-mann-whitney"><i class="fa fa-check"></i><b>7.1</b> Prueba U de Mann-Whitney</a></li>
+<li class="chapter" data-level="7.2" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-mood"><i class="fa fa-check"></i><b>7.2</b> Prueba Mood</a></li>
+<li class="chapter" data-level="7.3" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-kruskal-wallis"><i class="fa fa-check"></i><b>7.3</b> Prueba Kruskal Wallis</a></li>
+<li class="chapter" data-level="7.4" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-de-la-mediana"><i class="fa fa-check"></i><b>7.4</b> Prueba de la Mediana</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html"><i class="fa fa-check"></i><b>8</b> Muestreo aplicado</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#estimar-una-respuesta-cuantitativa"><i class="fa fa-check"></i><b>8.1</b> Estimar una respuesta cuantitativa</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#muestreo-piloto-para-tener-una-idea-de-la-variación"><i class="fa fa-check"></i><b>8.1.1</b> Muestreo piloto para tener una idea de la variación</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#estimar-una-respuesta-cualitativa"><i class="fa fa-check"></i><b>8.2</b> Estimar una respuesta cualitativa</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html"><i class="fa fa-check"></i><b>9</b> Medidas de asociación y regresión</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#correlación"><i class="fa fa-check"></i><b>9.1</b> Correlación</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#valor-de-la-correlación"><i class="fa fa-check"></i><b>9.1.1</b> Valor de la correlación</a></li>
+<li class="chapter" data-level="9.1.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#prueba-estadística"><i class="fa fa-check"></i><b>9.1.2</b> Prueba estadística</a></li>
+<li class="chapter" data-level="9.1.3" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#gráfico-de-la-dispersión"><i class="fa fa-check"></i><b>9.1.3</b> Gráfico de la dispersión</a></li>
+<li class="chapter" data-level="9.1.4" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#tipo-de-variable"><i class="fa fa-check"></i><b>9.1.4</b> Tipo de variable</a></li>
+<li class="chapter" data-level="9.1.5" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#aplicación-1"><i class="fa fa-check"></i><b>9.1.5</b> Aplicación</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#otros-métodos"><i class="fa fa-check"></i><b>9.2</b> Otros métodos</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#método-de-spearman"><i class="fa fa-check"></i><b>9.2.1</b> Método de Spearman</a></li>
+<li class="chapter" data-level="9.2.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#gráfico-exploratorio"><i class="fa fa-check"></i><b>9.2.2</b> Gráfico exploratorio</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#regresión"><i class="fa fa-check"></i><b>9.3</b> Regresión</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#aplicación-2"><i class="fa fa-check"></i><b>9.3.1</b> Aplicación</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html"><i class="fa fa-check"></i><b>10</b> Análisis de componentes principales</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#introducción"><i class="fa fa-check"></i><b>10.1</b> Introducción</a></li>
+<li class="chapter" data-level="10.2" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#que-es-un-componente"><i class="fa fa-check"></i><b>10.2</b> ¿Que es un componente?</a></li>
+<li class="chapter" data-level="10.3" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#cómo-se-seleccionan-los-componentes-principales"><i class="fa fa-check"></i><b>10.3</b> ¿Cómo se seleccionan los componentes principales?</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#caso-maíz"><i class="fa fa-check"></i><b>10.3.1</b> Caso Maíz</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introducción a la estadística agrícola con R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="medidas-de-asociación-y-regresión" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Medidas de asociación y regresión<a href="medidas-de-asociación-y-regresión.html#medidas-de-asociación-y-regresión" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="correlación" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> Correlación<a href="medidas-de-asociación-y-regresión.html#correlación" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Creador de la medida fue Pearson.</p>
+<p>La idea es mostrar una relación conjunta de dos o más variables aleatorias en un indicador que varia entre -1 y 1, de tal manera que se pueda interpretar la realción real de las medidas.</p>
+<div id="valor-de-la-correlación" class="section level3 hasAnchor" number="9.1.1">
+<h3><span class="header-section-number">9.1.1</span> Valor de la correlación<a href="medidas-de-asociación-y-regresión.html#valor-de-la-correlación" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Negativo: relación inversa. A medida que una variable aumenta su media, la otra disminuye.</p>
+<p>Positivo: relación directa. A medida que una variable aumenta su media, la otra también aumenta.</p>
+<p>0: neutro, no hay relación.</p>
+<p>Interpretación: Se basa en la magnitud y en signo. Si el valor está cercano a 1 o -1 es una correlación alta.</p>
+</div>
+<div id="prueba-estadística" class="section level3 hasAnchor" number="9.1.2">
+<h3><span class="header-section-number">9.1.2</span> Prueba estadística<a href="medidas-de-asociación-y-regresión.html#prueba-estadística" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>La hipótesis es que no existe correlación. Entonces la prueba estadística tiene que mostrar rechazando esta hipótesis y así concluir que la correlación existe.</p>
+<p><span class="math inline">\(H_0: \rho = 0~\text{(no existe relación)}\)</span></p>
+<p><span class="math inline">\(H_1: \rho \neq 0~\text{(existe relación)}\)</span></p>
+<p>Para fundamentar la respuesta, requiere un número aceptable de pares de datos de la distribución normal bivariada para realizar la prueba que debe ser cercana a 30 observaciones. Si se tiene muchos datos, lo conveniente es extraer al azar un número aproximado a 30.</p>
+</div>
+<div id="gráfico-de-la-dispersión" class="section level3 hasAnchor" number="9.1.3">
+<h3><span class="header-section-number">9.1.3</span> Gráfico de la dispersión<a href="medidas-de-asociación-y-regresión.html#gráfico-de-la-dispersión" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Permite visualizar la relación existente.</p>
+<ul>
+<li><p>Totalmente disperso, no hay relación. La variancia entre las variables es aleatoria.</p></li>
+<li><p>Muestra tendencia (+) o (-) indica que hay relación, se traduce como asociación y en estadística se describe como correlación.</p></li>
+</ul>
+<p>Procedimientos: plot(), pairs()</p>
+</div>
+<div id="tipo-de-variable" class="section level3 hasAnchor" number="9.1.4">
+<h3><span class="header-section-number">9.1.4</span> Tipo de variable<a href="medidas-de-asociación-y-regresión.html#tipo-de-variable" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>El tipo de variable nos indica que procedimiento se debe aplicar para medir la asociación.</p>
+<ul>
+<li><p>Pearson: Variables cuantitativas, observadas de instrumentos de medición. Necesita de cumplimiento del supuesto de normalidad bivariada.</p></li>
+<li><p>Spearman: Variables cuantitativas ordinales (escala jerárquica) cuanto menos (se puede utilizar en variables cuantitativas discretas y continuas). No necesita de cumplimiento del supuesto de normalidad bivariada.</p></li>
+<li><p>Kendall: Variables cuantitatitas ordinales (escala jerárquica) cuyo objetivo es establecer concordancia en las medidas.</p></li>
+<li><p>Cramer: Variables cualitativas nominales u, elaborado ordinal. Requiere una tabla de contingencia obtenida de una encuesta.</p></li>
+</ul>
+</div>
+<div id="aplicación-1" class="section level3 hasAnchor" number="9.1.5">
+<h3><span class="header-section-number">9.1.5</span> Aplicación<a href="medidas-de-asociación-y-regresión.html#aplicación-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Para crear un modelo de regresión lineal simple se tomó como variable dependiente al <em>Recuento de escarabajos en un área</em>. Las posibles variables predictoras fueron:</p>
+<p><em>Temperatura</em>: Temperatura (°C) ambiental.</p>
+<p><em>Altura</em>: Altura (m.s.n.m.) de la observación.</p>
+<p><em>Humedad</em>: Humedad relativa (%) ambiental.</p>
+<p><em>Machos</em>: Género predominante en el área (0 si predominan hembras, 1 si predominan machos).</p>
+<p><em>Urbano</em>: 0 (No) si el conteo se hizo en un área no urbana, 1 (Sí) si el conteo se hizo en un área urbana.</p>
+<div id="dispersión-y-valor-de-la-correlación" class="section level4 hasAnchor" number="9.1.5.1">
+<h4><span class="header-section-number">9.1.5.1</span> Dispersión y valor de la correlación<a href="medidas-de-asociación-y-regresión.html#dispersión-y-valor-de-la-correlación" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><em>Dispersión entre la temperatura y el recuento</em></p>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="medidas-de-asociación-y-regresión.html#cb208-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb208-2"><a href="medidas-de-asociación-y-regresión.html#cb208-2" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(datos,<span class="fu">plot</span>(Temperatura,Recuento,<span class="at">pch=</span><span class="dv">19</span>,<span class="at">bty=</span><span class="st">&quot;l&quot;</span>))</span>
+<span id="cb208-3"><a href="medidas-de-asociación-y-regresión.html#cb208-3" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(datos,<span class="fu">cor</span>(Temperatura,Recuento)) <span class="ot">-&gt;</span> r</span>
+<span id="cb208-4"><a href="medidas-de-asociación-y-regresión.html#cb208-4" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">round</span>(r,<span class="dv">3</span>)</span>
+<span id="cb208-5"><a href="medidas-de-asociación-y-regresión.html#cb208-5" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;r=&quot;</span>,r,<span class="at">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb208-6"><a href="medidas-de-asociación-y-regresión.html#cb208-6" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">28</span>,<span class="dv">300</span>,v,<span class="at">cex=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-66-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="medidas-de-asociación-y-regresión.html#cb209-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+<p><em>Dispersión entre la altura y el recuento</em></p>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="medidas-de-asociación-y-regresión.html#cb210-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb210-2"><a href="medidas-de-asociación-y-regresión.html#cb210-2" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(datos,<span class="fu">plot</span>(Altura,Recuento,<span class="at">pch=</span><span class="dv">19</span>,<span class="at">bty=</span><span class="st">&quot;l&quot;</span>))</span>
+<span id="cb210-3"><a href="medidas-de-asociación-y-regresión.html#cb210-3" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(datos,<span class="fu">cor</span>(Altura,Recuento)) <span class="ot">-&gt;</span> r</span>
+<span id="cb210-4"><a href="medidas-de-asociación-y-regresión.html#cb210-4" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">round</span>(r,<span class="dv">3</span>)</span>
+<span id="cb210-5"><a href="medidas-de-asociación-y-regresión.html#cb210-5" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;r=&quot;</span>,r,<span class="at">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb210-6"><a href="medidas-de-asociación-y-regresión.html#cb210-6" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">100</span>,<span class="dv">300</span>,v,<span class="at">cex=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-67-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="medidas-de-asociación-y-regresión.html#cb211-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+<p>Nota: La correlación se expresa en valores entre -1 y 1. No utilizar porcentaje.</p>
+</div>
+<div id="prueba-estadística-1" class="section level4 hasAnchor" number="9.1.5.2">
+<h4><span class="header-section-number">9.1.5.2</span> Prueba estadística<a href="medidas-de-asociación-y-regresión.html#prueba-estadística-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><em>Prueba de hipótesis entre la temperatura y el recuento</em></p>
+<p>En primer lugar se comprueba que exista normalidad bivariada entre la Temperatura y el Recuento.</p>
+<p>Se genera la hipótesis estadística de la prueba de normalidad bivariada (supuesto de la prueba de hipótesis de correlación de pearson).</p>
+<p><span class="math inline">\(H_0: \text{Existe distribución normal bivariada entre la temperatura y el recuento}\)</span></p>
+<p><span class="math inline">\(H_1: \text{No existe distribución normal bivariada entre la temperatura y el recuento}\)</span></p>
+<p>Se debe confirmar la existencia de distribución normal bivariada entre la temperatura y el recuento, por ello, es obligatorio no rechazar la hipótesis nula para continuar con la prueba.</p>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="medidas-de-asociación-y-regresión.html#cb212-1" aria-hidden="true" tabindex="-1"></a>mvnormtest<span class="sc">::</span><span class="fu">mshapiro.test</span>(<span class="fu">t</span>(datos[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">6</span>)]))</span></code></pre></div>
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  Z
+W = 0.98964, p-value = 0.1583</code></pre>
+<p><em>Conclusión</em>. Con una significancia de 0.1, existe suficiente evidencia estadística para concluir que hay normalidad bivariada en la distribución entre la temperatura y el recuento. Se puede continuar con la prueba de hipótesis de la correlación.</p>
+<p>Antes de realizar la prueba de hipótesis de la correlación de Pearson, se contruyó la siguiente hipótesis</p>
+<p><span class="math inline">\(H_0: \rho = 0~\text{(no existe relación entre la temperatura y el recuento)}\)</span></p>
+<p><span class="math inline">\(H_1: \rho \neq 0~\text{(existe relación entre la temperatura y el recuento)}\)</span></p>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="medidas-de-asociación-y-regresión.html#cb214-1" aria-hidden="true" tabindex="-1"></a>cor <span class="ot">&lt;-</span> <span class="fu">with</span>(datos,<span class="fu">cor.test</span>(Temperatura,Recuento,<span class="at">method=</span><span class="st">&quot;pearson&quot;</span>,</span>
+<span id="cb214-2"><a href="medidas-de-asociación-y-regresión.html#cb214-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">conf.level =</span> <span class="fl">0.97</span>))</span>
+<span id="cb214-3"><a href="medidas-de-asociación-y-regresión.html#cb214-3" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(datos,<span class="fu">cor.test</span>(Temperatura,Recuento,<span class="at">method=</span><span class="st">&quot;pearson&quot;</span>,</span>
+<span id="cb214-4"><a href="medidas-de-asociación-y-regresión.html#cb214-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">conf.level =</span> <span class="fl">0.97</span>))</span></code></pre></div>
+<pre><code>
+    Pearson&#39;s product-moment correlation
+
+data:  Temperatura and Recuento
+t = 1.0103, df = 198, p-value = 0.3136
+alternative hypothesis: true correlation is not equal to 0
+97 percent confidence interval:
+ -0.08268398  0.22256378
+sample estimates:
+       cor 
+0.07161654 </code></pre>
+<p><em>Conclusión</em>. A un nivel de <span class="math inline">\(\alpha\)</span> de 0.03, se evidencia que el valor de <span class="math inline">\(\rho\)</span> es estadísticamente similar a 0, por lo tanto, se concluye que no existe relación entre la temperatura y el recuento.</p>
+<p>En el análisis se tiene:</p>
+<p>valor de t: Estadístico de la prueba.</p>
+<p>p-value: En términos de riesgo, indica la probabilidad de rechazar la hipótesis nula siendo esta verdadera. En nuestro caso la probabilidad fue de 0.3135711 nos indica que existe una probabilidad de error de equivocarnos de 31.4%.</p>
+<p>En teoría el p-value es la probabilidad de rechazar la <span class="math inline">\(H_0\)</span> siendo esta verdadera. En correlación la <span class="math inline">\(H_0\)</span> es planteada como la no existencia de correlación, es decir = 0.</p>
+<p>Alternativamente se tiene los límites de confianza. Para no rechazar la <span class="math inline">\(H_0\)</span> mediante los límites de confianza, estos deben encerrar al valor de 0 (cero incluido en el intervalo).</p>
+<p>Alternativa de la hipótesis:</p>
+<p>1: hipótesis de un solo ladom solo menor o mayor.</p>
+<p>Si el interés es probar que la correlación sea buena y mayor de 0.6, entonces la hipótesis nula será:</p>
+<p><span class="math inline">\(H_0: \rho \le 0.6\)</span> cuya alternante será <span class="math inline">\(H_1: \rho &gt; 0.6\)</span></p>
+<p>2 colas: hipótesis de ambos lados (diferencia de cero).</p>
+<p><span class="math inline">\(H_0: \rho = 0.6\)</span> cuya alternante será <span class="math inline">\(H_1: \rho \neq 0.6\)</span></p>
+<p><em>Prueba de hipótesis entre la altura y el recuento</em></p>
+<p>En primer lugar se comprueba que exista normalidad bivariada entre la altura y el Recuento.</p>
+<p>Se genera la hipótesis estadística de la prueba de normalidad bivariada (supuesto de la prueba de hipótesis de correlación de pearson).</p>
+<p><span class="math inline">\(H_0: \text{Existe distribución normal bivariada entre la altura y el recuento}\)</span></p>
+<p><span class="math inline">\(H_1: \text{No existe distribución normal bivariada entre la altura y el recuento}\)</span></p>
+<p>Se debe confirmar la existencia de distribución normal bivariada entre la altura y el recuento, por ello, es obligatorio no rechazar la hipótesis nula para continuar con la prueba.</p>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="medidas-de-asociación-y-regresión.html#cb216-1" aria-hidden="true" tabindex="-1"></a>mvnormtest<span class="sc">::</span><span class="fu">mshapiro.test</span>(<span class="fu">t</span>(datos[,<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">6</span>)]))</span></code></pre></div>
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  Z
+W = 0.99128, p-value = 0.2729</code></pre>
+<p><em>Conclusión</em>. Con una significancia de 0.1, existe suficiente evidencia estadística para concluir que hay normalidad bivariada en la distribución entre la altura y el recuento. Se puede continuar con la prueba de hipótesis de la correlación.</p>
+<p>Antes de realizar la prueba de hipótesis de la correlación de Pearson, se contruyó la siguiente hipótesis:</p>
+<p><span class="math inline">\(H_0: \rho = 0~\text{(no existe relación entre la altura y el recuento)}\)</span></p>
+<p><span class="math inline">\(H_1: \rho \neq 0~\text{(existe relación entre la altura y el recuento)}\)</span></p>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="medidas-de-asociación-y-regresión.html#cb218-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(datos,<span class="fu">cor.test</span>(Altura,Recuento,<span class="at">method=</span><span class="st">&quot;pearson&quot;</span>,</span>
+<span id="cb218-2"><a href="medidas-de-asociación-y-regresión.html#cb218-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">conf.level =</span> <span class="fl">0.99</span>))</span></code></pre></div>
+<pre><code>
+    Pearson&#39;s product-moment correlation
+
+data:  Altura and Recuento
+t = 107.04, df = 198, p-value &lt; 0.00000000000000022
+alternative hypothesis: true correlation is not equal to 0
+99 percent confidence interval:
+ 0.9877111 0.9940831
+sample estimates:
+      cor 
+0.9914704 </code></pre>
+<p><em>Conclusión</em>. A un nivel de de 0.01, se evidencia que el valor de no es estadísticamente similar a 0, por lo tanto, se concluye que existe relación entre la altura y el recuento.</p>
+</div>
+</div>
+</div>
+<div id="otros-métodos" class="section level2 hasAnchor" number="9.2">
+<h2><span class="header-section-number">9.2</span> Otros métodos<a href="medidas-de-asociación-y-regresión.html#otros-métodos" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="método-de-spearman" class="section level3 hasAnchor" number="9.2.1">
+<h3><span class="header-section-number">9.2.1</span> Método de Spearman<a href="medidas-de-asociación-y-regresión.html#método-de-spearman" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Pearson utiliza los medidos y Spearman con datos en escala de orden (como mínimo).</p>
+<p>Para una mejor observarción del comportamiento de la correlación, se utilizara datos de suelo.</p>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="medidas-de-asociación-y-regresión.html#cb220-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>),<span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb220-2"><a href="medidas-de-asociación-y-regresión.html#cb220-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(soil)</span>
+<span id="cb220-3"><a href="medidas-de-asociación-y-regresión.html#cb220-3" aria-hidden="true" tabindex="-1"></a>panel.cor <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y,<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">prefix =</span> <span class="st">&quot;&quot;</span>, cex.cor, ...)</span>
+<span id="cb220-4"><a href="medidas-de-asociación-y-regresión.html#cb220-4" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb220-5"><a href="medidas-de-asociación-y-regresión.html#cb220-5" aria-hidden="true" tabindex="-1"></a>  usr <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="st">&quot;usr&quot;</span>); <span class="fu">on.exit</span>(<span class="fu">par</span>(usr))</span>
+<span id="cb220-6"><a href="medidas-de-asociación-y-regresión.html#cb220-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">par</span>(<span class="at">usr =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb220-7"><a href="medidas-de-asociación-y-regresión.html#cb220-7" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">cor</span>(x,y))</span>
+<span id="cb220-8"><a href="medidas-de-asociación-y-regresión.html#cb220-8" aria-hidden="true" tabindex="-1"></a>  txt <span class="ot">&lt;-</span> <span class="fu">format</span>(<span class="fu">c</span>(r, <span class="fl">0.123456789</span>), <span class="at">digits =</span> digits)[<span class="dv">1</span>]</span>
+<span id="cb220-9"><a href="medidas-de-asociación-y-regresión.html#cb220-9" aria-hidden="true" tabindex="-1"></a>  txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(prefix,txt)</span>
+<span id="cb220-10"><a href="medidas-de-asociación-y-regresión.html#cb220-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">missing</span>(cex.cor)) cex.cor <span class="ot">&lt;-</span> <span class="fl">0.8</span><span class="sc">/</span><span class="fu">strwidth</span>(txt)</span>
+<span id="cb220-11"><a href="medidas-de-asociación-y-regresión.html#cb220-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">text</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,txt,<span class="at">cex=</span>cex.cor<span class="sc">*</span>r)</span>
+<span id="cb220-12"><a href="medidas-de-asociación-y-regresión.html#cb220-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb220-13"><a href="medidas-de-asociación-y-regresión.html#cb220-13" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(soil[<span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>], <span class="at">upper.panel =</span> panel.cor, <span class="at">lower.panel =</span> panel.smooth)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-72-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>Matriz de correlación</strong></p>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="medidas-de-asociación-y-regresión.html#cb221-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">correlation</span>(soil[,<span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>],<span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span>
+<span id="cb221-2"><a href="medidas-de-asociación-y-regresión.html#cb221-2" aria-hidden="true" tabindex="-1"></a>r<span class="sc">$</span>correlation</span></code></pre></div>
+<pre><code>        CIC     P     K  sand slime
+CIC    1.00  0.67  0.62 -0.54  0.52
+P      0.67  1.00  0.69 -0.20  0.34
+K      0.62  0.69  1.00 -0.41  0.39
+sand  -0.54 -0.20 -0.41  1.00 -0.80
+slime  0.52  0.34  0.39 -0.80  1.00</code></pre>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="medidas-de-asociación-y-regresión.html#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(r<span class="sc">$</span>pvalue,<span class="dv">4</span>)</span></code></pre></div>
+<pre><code>         CIC      P      K   sand  slime
+CIC   1.0000 0.0122 0.0252 0.0588 0.0668
+P     0.0122 1.0000 0.0095 0.5047 0.2500
+K     0.0252 0.0095 1.0000 0.1611 0.1869
+sand  0.0588 0.5047 0.1611 1.0000 0.0011
+slime 0.0668 0.2500 0.1869 0.0011 1.0000</code></pre>
+<p>Se observa que la correlación arena vs limo es alta (r = -0.8) negativamente significativa que hay una relación inversa entre ambos.</p>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="medidas-de-asociación-y-regresión.html#cb225-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>),<span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb225-2"><a href="medidas-de-asociación-y-regresión.html#cb225-2" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(soil,<span class="fu">plot</span>(sand, slime, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col=</span><span class="st">&quot;blue&quot;</span>,</span>
+<span id="cb225-3"><a href="medidas-de-asociación-y-regresión.html#cb225-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">bty =</span><span class="st">&quot;l&quot;</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-74-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="medidas-de-asociación-y-regresión.html#cb226-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+</div>
+<div id="gráfico-exploratorio" class="section level3 hasAnchor" number="9.2.2">
+<h3><span class="header-section-number">9.2.2</span> Gráfico exploratorio<a href="medidas-de-asociación-y-regresión.html#gráfico-exploratorio" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="medidas-de-asociación-y-regresión.html#cb227-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
+<span id="cb227-2"><a href="medidas-de-asociación-y-regresión.html#cb227-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_if</span>(is.numeric)<span class="sc">%&gt;%</span></span>
+<span id="cb227-3"><a href="medidas-de-asociación-y-regresión.html#cb227-3" aria-hidden="true" tabindex="-1"></a>  pairs</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-75-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="medidas-de-asociación-y-regresión.html#cb228-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
+<span id="cb228-2"><a href="medidas-de-asociación-y-regresión.html#cb228-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_if</span>(is.numeric)<span class="sc">%&gt;%</span></span>
+<span id="cb228-3"><a href="medidas-de-asociación-y-regresión.html#cb228-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairs.panels</span>(<span class="at">stars =</span> T,<span class="at">smooth =</span> F, <span class="at">lm =</span> T)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-75-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="medidas-de-asociación-y-regresión.html#cb229-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">%&gt;%</span></span>
+<span id="cb229-2"><a href="medidas-de-asociación-y-regresión.html#cb229-2" aria-hidden="true" tabindex="-1"></a>  ggpairs <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-75-3.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="medidas-de-asociación-y-regresión.html#cb230-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">%&gt;%</span></span>
+<span id="cb230-2"><a href="medidas-de-asociación-y-regresión.html#cb230-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggpairs</span>(<span class="at">upper =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">&quot;density&quot;</span>, <span class="at">combo =</span> <span class="st">&quot;box_no_facet&quot;</span>),</span>
+<span id="cb230-3"><a href="medidas-de-asociación-y-regresión.html#cb230-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">lower =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="st">&quot;points&quot;</span>,</span>
+<span id="cb230-4"><a href="medidas-de-asociación-y-regresión.html#cb230-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">combo =</span> <span class="st">&quot;dot_no_facet&quot;</span>)) <span class="sc">+</span> <span class="fu">theme_test</span>()</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-75-4.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="regresión" class="section level2 hasAnchor" number="9.3">
+<h2><span class="header-section-number">9.3</span> Regresión<a href="medidas-de-asociación-y-regresión.html#regresión" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Se busca construir un modelo lineal simple, que permita predecir la respuesta mediante un modelo lineal de primer grado. Se entiende que la variable respuesta (dependiente) expuesta a ser predicha, debe ser aleatoria y la variable explicativa (independiente) debe ser fija no sujeta a error.</p>
+<p>Para estimar un mejor modelo de regresión, se debe utilizar observaciones lo más diferentes para contemplar el dominio de la respuesta.</p>
+<p><span class="math display">\[Y_i=\beta_0 + \beta_1 X_i + \epsilon_i\]</span></p>
+<p><span class="math inline">\(X_i\)</span>: Variable independiente (en este ejercicio es la altura).</p>
+<p><span class="math inline">\(Y_i\)</span>: Variable respuesta, dependiente de <span class="math inline">\(X_i\)</span> (en este ejercicio es el recuento).</p>
+<p><span class="math inline">\(\beta_0\)</span>: parámetro intercepto. Tiene unidades de la variable respuesta. Es el valor (media condicional) que tomará el recuento cuando la altura sea cero.</p>
+<p><span class="math inline">\(\beta_1\)</span>: parámetro pendiente, tasa de cambio de <span class="math inline">\(Y\)</span> al aumentar una unidad en <span class="math inline">\(X\)</span>, las unidades de este parámetro es la razón entre <span class="math inline">\(Y\)</span> y <span class="math inline">\(X\)</span>.</p>
+<p><span class="math inline">\(\epsilon_i\)</span>: Error aleatorio del modelo. Es un vector de errores o residuos que se calcula con la diferencia entre el valor real y observado de la variable respuesta con el valor ajustado o predicho de esta variable.</p>
+<p><span class="math display">\[\epsilon_i = Y_i - \hat{Y}_i\]</span></p>
+<p>donde:</p>
+<p><span class="math inline">\(\hat{Y}_i\)</span> es el valor ajustado o predicho de la variable respuesta, se obtiene de la siguiente manera:</p>
+<p><span class="math display">\[\hat{Y}_i = \beta_0 + \beta_1 X_i\]</span></p>
+<div id="aplicación-2" class="section level3 hasAnchor" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> Aplicación<a href="medidas-de-asociación-y-regresión.html#aplicación-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Usar las variables Altura (indendiente) y Recuento (Dependiente).</p>
+<p>A continuación presentamos el modelo de regresión lineal.</p>
+<p><span class="math display">\[Recuento_i = \beta_0+\beta_1*Altura_i+\epsilon_i\]</span></p>
+<p>Teniendo en cuenta los valores repetidos es apropiado promediar, para tener valores únicos y que sean lo más distinto posible. Este procedimiento no es obligatorio.</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="medidas-de-asociación-y-regresión.html#cb231-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>),<span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb231-2"><a href="medidas-de-asociación-y-regresión.html#cb231-2" aria-hidden="true" tabindex="-1"></a>recmean <span class="ot">&lt;-</span> <span class="fu">with</span>(datos,<span class="fu">tapply.stat</span>(Altura,Recuento,mean))</span>
+<span id="cb231-3"><a href="medidas-de-asociación-y-regresión.html#cb231-3" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(datos,<span class="fu">plot</span>(Altura, Recuento, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">bty =</span> <span class="st">&quot;l&quot;</span>,</span>
+<span id="cb231-4"><a href="medidas-de-asociación-y-regresión.html#cb231-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">main =</span> <span class="st">&quot;Recuento sin promediar según la altura&quot;</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-76-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="medidas-de-asociación-y-regresión.html#cb232-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(recmean,<span class="fu">plot</span>(Altura, Recuento, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">bty =</span> <span class="st">&quot;l&quot;</span>,</span>
+<span id="cb232-2"><a href="medidas-de-asociación-y-regresión.html#cb232-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">main =</span> <span class="st">&quot;Recuento promediado según la altura&quot;</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-76-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="medidas-de-asociación-y-regresión.html#cb233-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+<div id="construcción-del-modelo" class="section level4 hasAnchor" number="9.3.1.1">
+<h4><span class="header-section-number">9.3.1.1</span> Construcción del modelo<a href="medidas-de-asociación-y-regresión.html#construcción-del-modelo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="medidas-de-asociación-y-regresión.html#cb234-1" aria-hidden="true" tabindex="-1"></a>modelo <span class="ot">&lt;-</span> <span class="fu">lm</span>(Recuento <span class="sc">~</span> Altura, <span class="at">data =</span> recmean)</span>
+<span id="cb234-2"><a href="medidas-de-asociación-y-regresión.html#cb234-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo)</span></code></pre></div>
+<pre><code>
+Call:
+lm(formula = Recuento ~ Altura, data = recmean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-18.9829  -5.7816  -0.5109   6.3318  25.2946 
+
+Coefficients:
+             Estimate Std. Error t value            Pr(&gt;|t|)    
+(Intercept) 59.501813   1.505497   39.52 &lt;0.0000000000000002 ***
+Altura       0.537036   0.005229  102.70 &lt;0.0000000000000002 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 8.698 on 144 degrees of freedom
+Multiple R-squared:  0.9865,    Adjusted R-squared:  0.9864 
+F-statistic: 1.055e+04 on 1 and 144 DF,  p-value: &lt; 0.00000000000000022</code></pre>
+<p>Hipótesis generadas:</p>
+<ul>
+<li>Para el <span class="math inline">\(\beta_0\)</span> (intercepto).</li>
+</ul>
+<p><span class="math inline">\(H_0: \beta_0 = 0\)</span></p>
+<p><span class="math inline">\(H_1: \beta_0 \neq 0\)</span></p>
+<ul>
+<li>Para el <span class="math inline">\(\beta_1\)</span> (pendiente).</li>
+</ul>
+<p><span class="math inline">\(H_0: \beta_1 = 0\)</span></p>
+<p><span class="math inline">\(H_1: \beta_1 \neq 0\)</span></p>
+<p>En el resumen se tiene la descripción del modelo.</p>
+<ol style="list-style-type: decimal">
+<li>La estimación de los parámetros con su significación estadística.</li>
+<li>Las estadísticas de los errores.</li>
+<li>Error estándar del modelo = raíz cuadrada del cuadrado medio del error.</li>
+<li><span class="math inline">\(R^2\)</span> mide el grado de determinación del modelo (importancia o explicación de la variancia de la varible independiente sobre la dependiente) solo para modelo de regresión lineal simple.</li>
+<li><span class="math inline">\(R^2\)</span> ajustado, mide el grado de determinación del modelo lineal de muchas variables. Es una medida penalizada por el tamaño de muestra.</li>
+<li>Prueba del modelo mediante la prueba de F para la acaptación del modelo.</li>
+</ol>
+<p>De acuerdo a nuestro análisis</p>
+<p><span class="math inline">\(\hat \beta_0 = -105.89891\)</span></p>
+<p><span class="math inline">\(\hat \beta_1 = 1.83699\)</span></p>
+<p>El intercepto no es interpretable, porque el dominio de la variable recuento no considera valores menores a 0.</p>
+<p>Ambos coeficientes son significativos según el pvalue.</p>
+<p><span class="math inline">\(R^2=0.9865\)</span> que equivale a decir que la altura explica el <span class="math inline">\(98.65\%\)</span> de la variancia del recuento.</p>
+<p>el p-value fue de &lt; 0.00000000000000022, es cero, se concluye que el modelo es aceptable o tiene buenas variables regresoras.</p>
+</div>
+<div id="análisis-de-variancia" class="section level4 hasAnchor" number="9.3.1.2">
+<h4><span class="header-section-number">9.3.1.2</span> Análisis de variancia<a href="medidas-de-asociación-y-regresión.html#análisis-de-variancia" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Prueba de hipótesis del ANOVA para una regresión:</p>
+<p><span class="math inline">\(H_0: \text{La variable regresora tiene una influencia no significativa sobre la variable predicha}\)</span></p>
+<p><span class="math inline">\(H_1: \text{La variable regresora tiene una influencia significativa sobre la variable predicha}\)</span></p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="medidas-de-asociación-y-regresión.html#cb236-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(modelo)</span></code></pre></div>
+<pre><code>Analysis of Variance Table
+
+Response: Recuento
+           Df Sum Sq Mean Sq F value                Pr(&gt;F)    
+Altura      1 798016  798016   10548 &lt; 0.00000000000000022 ***
+Residuals 144  10894      76                                  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="medidas-de-asociación-y-regresión.html#cb238-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F tabular al 0.05 de alfa:&quot;</span>,<span class="fu">qf</span>(<span class="fl">0.05</span>,<span class="dv">1</span>,<span class="dv">144</span>,<span class="at">lower.tail =</span> F),<span class="st">&quot;.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>F tabular al 0.05 de alfa: 3.906849 .</code></pre>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="medidas-de-asociación-y-regresión.html#cb240-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F tabular al 0.01 de alfa:&quot;</span>,<span class="fu">qf</span>(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">144</span>,<span class="at">lower.tail =</span> F),<span class="st">&quot;.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>F tabular al 0.01 de alfa: 6.814199 .</code></pre>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="medidas-de-asociación-y-regresión.html#cb242-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F tabular al 0.005 de alfa:&quot;</span>,<span class="fu">qf</span>(<span class="fl">0.005</span>,<span class="dv">1</span>,<span class="dv">144</span>,<span class="at">lower.tail =</span> F),<span class="st">&quot;.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>F tabular al 0.005 de alfa: 8.127817 .</code></pre>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="medidas-de-asociación-y-regresión.html#cb244-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F tabular al 0.001 de alfa:&quot;</span>,<span class="fu">qf</span>(<span class="fl">0.001</span>,<span class="dv">1</span>,<span class="dv">144</span>,<span class="at">lower.tail =</span> F),<span class="st">&quot;.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>F tabular al 0.001 de alfa: 11.28538 .</code></pre>
+</div>
+<div id="gráfico-del-modelo" class="section level4 hasAnchor" number="9.3.1.3">
+<h4><span class="header-section-number">9.3.1.3</span> Gráfico del modelo:<a href="medidas-de-asociación-y-regresión.html#gráfico-del-modelo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="medidas-de-asociación-y-regresión.html#cb246-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb246-2"><a href="medidas-de-asociación-y-regresión.html#cb246-2" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(recmean,<span class="fu">plot</span>(Altura, Recuento, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">bty =</span> <span class="st">&quot;l&quot;</span>))</span>
+<span id="cb246-3"><a href="medidas-de-asociación-y-regresión.html#cb246-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(modelo, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-79-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="medidas-de-asociación-y-regresión.html#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+</div>
+<div id="gráfico-de-los-supuestos-del-modelo" class="section level4 hasAnchor" number="9.3.1.4">
+<h4><span class="header-section-number">9.3.1.4</span> Gráfico de los supuestos del modelo:<a href="medidas-de-asociación-y-regresión.html#gráfico-de-los-supuestos-del-modelo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="medidas-de-asociación-y-regresión.html#cb248-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb248-2"><a href="medidas-de-asociación-y-regresión.html#cb248-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(modelo)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-80-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="medidas-de-asociación-y-regresión.html#cb249-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+<p><strong>1. Falta de ajuste</strong></p>
+<p>Se analiza, si falta ajustar mejor el modelo, la línea roja es la que nos permite entender si se debe agregar algunos términos más en el modelo.</p>
+<p>Hay posibilidad de hacer un ajuste en el modelo.</p>
+<p><strong>2. La normalidad</strong></p>
+<p>Los puntos deben estar sobre la línea (perfecta normalidad en los errores).</p>
+<p>Se puede hacer un gráfico de normalidad y una prueba de hipótesis.</p>
+<p><strong>3. La magnitud del error</strong></p>
+<p>Es un gráfico estándar para detectar errores muy grandes. Es tolerable valores menores a 1.5.</p>
+<p>Exsiten tres posibles valores con errores críticos.</p>
+<p><strong>4. Valores extremos</strong></p>
+<p>En el gráfico se puede detectar los outliers, que son posibles valores influyentes en el comportamiento del modelo.</p>
+<p>No hay valores extremos en el ejemplo.</p>
+</div>
+<div id="ajuste-del-modelo" class="section level4 hasAnchor" number="9.3.1.5">
+<h4><span class="header-section-number">9.3.1.5</span> Ajuste del modelo<a href="medidas-de-asociación-y-regresión.html#ajuste-del-modelo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="medidas-de-asociación-y-regresión.html#cb250-1" aria-hidden="true" tabindex="-1"></a>modelo1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Recuento <span class="sc">~</span> Altura <span class="sc">+</span> <span class="fu">I</span>(Altura<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> recmean)</span>
+<span id="cb250-2"><a href="medidas-de-asociación-y-regresión.html#cb250-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo1)</span></code></pre></div>
+<pre><code>
+Call:
+lm(formula = Recuento ~ Altura + I(Altura^2), data = recmean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-19.7192  -5.8774  -0.4817   6.0545  25.3046 
+
+Coefficients:
+              Estimate Std. Error t value            Pr(&gt;|t|)    
+(Intercept) 57.2889837  2.7238017  21.033 &lt;0.0000000000000002 ***
+Altura       0.5598169  0.0239453  23.379 &lt;0.0000000000000002 ***
+I(Altura^2) -0.0000428  0.0000439  -0.975               0.331    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 8.7 on 143 degrees of freedom
+Multiple R-squared:  0.9866,    Adjusted R-squared:  0.9864 
+F-statistic:  5273 on 2 and 143 DF,  p-value: &lt; 0.00000000000000022</code></pre>
+<p>El termino polinomial cuadrático de la Altura de planta, no posee una explicación de la variancia o no aporta en la linealidad del modelo.</p>
+</div>
+<div id="la-normalidad-de-los-errores." class="section level4 hasAnchor" number="9.3.1.6">
+<h4><span class="header-section-number">9.3.1.6</span> La normalidad de los errores.<a href="medidas-de-asociación-y-regresión.html#la-normalidad-de-los-errores." class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="medidas-de-asociación-y-regresión.html#cb252-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">cex=</span><span class="fl">0.8</span>)</span>
+<span id="cb252-2"><a href="medidas-de-asociación-y-regresión.html#cb252-2" aria-hidden="true" tabindex="-1"></a>error <span class="ot">&lt;-</span> <span class="fu">residuals</span>(modelo)</span>
+<span id="cb252-3"><a href="medidas-de-asociación-y-regresión.html#cb252-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(error), <span class="at">main =</span> <span class="st">&quot;Distribución del error&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-82-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="medidas-de-asociación-y-regresión.html#cb253-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(error)</span></code></pre></div>
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  error
+W = 0.98802, p-value = 0.2423</code></pre>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="medidas-de-asociación-y-regresión.html#cb255-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
+<p>Prueba de hipótesis de la normalidad:</p>
+<p><span class="math inline">\(H_0: \text{La distribución de los errores se distribuye de forma similar a la función normal o gaussiana}\)</span></p>
+<p><span class="math inline">\(H_1: \text{La distribución de los errores no se distribuye de forma similar a la función normal o gaussiana}\)</span></p>
+<p><em>Conclusión</em>. A un nivel de significancia de 0.1, se concluye que no existe suficiente evidencia estadística para rechazar la hipótesis nula, por lo tanto, la distribución de los errores es similar a la función normal.</p>
+</div>
+<div id="predecir-el-recuento-de-escarabajos-en-una-altura-propuesta." class="section level4 hasAnchor" number="9.3.1.7">
+<h4><span class="header-section-number">9.3.1.7</span> Predecir el recuento de escarabajos en una altura propuesta.<a href="medidas-de-asociación-y-regresión.html#predecir-el-recuento-de-escarabajos-en-una-altura-propuesta." class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><strong>Cálculo de los valores predichos del modelo con los datos observados</strong></p>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="medidas-de-asociación-y-regresión.html#cb256-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(modelo)</span>
+<span id="cb256-2"><a href="medidas-de-asociación-y-regresión.html#cb256-2" aria-hidden="true" tabindex="-1"></a>recmean<span class="sc">$</span>prediccion <span class="ot">&lt;-</span> pred</span>
+<span id="cb256-3"><a href="medidas-de-asociación-y-regresión.html#cb256-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(recmean)</span></code></pre></div>
+<pre><code>  Recuento Altura prediccion
+1       67     42   82.05732
+2       68     39   80.44621
+3       69     39   80.44621
+4       72     25   72.92771
+5       83     67   95.48321
+6       84     30   75.61289</code></pre>
+<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="medidas-de-asociación-y-regresión.html#cb258-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(recmean, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Recuento</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">prediccion</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb258-2"><a href="medidas-de-asociación-y-regresión.html#cb258-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Recuento predicho&quot;</span>,</span>
+<span id="cb258-3"><a href="medidas-de-asociación-y-regresión.html#cb258-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">x =</span> <span class="st">&quot;Recuento real&quot;</span>) <span class="sc">+</span></span>
+<span id="cb258-4"><a href="medidas-de-asociación-y-regresión.html#cb258-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-84-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><strong>Cálculo de una predicción en un valor estacionario</strong></p>
+<p>Predecir el recuento de escarabajos en altura de 100, 500, y 4000 m.s.n.m.</p>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="medidas-de-asociación-y-regresión.html#cb259-1" aria-hidden="true" tabindex="-1"></a>altnuevo <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">100</span>,<span class="dv">500</span>,<span class="dv">4000</span>)</span>
+<span id="cb259-2"><a href="medidas-de-asociación-y-regresión.html#cb259-2" aria-hidden="true" tabindex="-1"></a>recnuevo <span class="ot">&lt;-</span> <span class="fu">predict</span>(modelo, <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">Altura =</span> altnuevo))</span>
+<span id="cb259-3"><a href="medidas-de-asociación-y-regresión.html#cb259-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(altnuevo, recnuevo)</span></code></pre></div>
+<pre><code>  altnuevo  recnuevo
+1      100  113.2054
+2      500  328.0197
+3     4000 2207.6450</code></pre>
+
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="muestreo-aplicado.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="análisis-de-componentes-principales.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/edit/master/8-Medidas-de-asociación-y-Regresión.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/blob/master/8-Medidas-de-asociación-y-Regresión.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

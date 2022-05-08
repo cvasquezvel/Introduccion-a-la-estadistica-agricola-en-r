@@ -1,21 +1,10 @@
----
-title: "Muestreo aplicado"
-author: "Christian Vásquez Velasco"
-date: "14/8/2021"
-output:
-  html_document:
-    df_print: paged
----
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-options(scipen = 9999,
-        max.print = 9999)
-library(agricolae)
-library(agroforestry)
+```{r, include = FALSE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(readxl, dplyr, agricolae, agroforestry)
 ```
 
-# Introducción
+# Muestreo aplicado
 
 El muestreo es una técnica estadística que permite extraer individuos de una población con la condición de representar en pequeño la ocurrencia en la población, desde parámetros hasta características particulares de interés.
 
@@ -27,7 +16,7 @@ Hay dos tipos de muestreo:
 
 El primero requiere un ingrediente aleatorio y el no probabilístico es completamente dirigido, realizado en forma personalizada por el observador.
 
-**Estimar una respuesta cuantitativa**
+## Estimar una respuesta cuantitativa
 
 En el caso de de muestreo probabilístico, en un muestreo aleatorio, el tamaño de la muestra si es obtenida bajo los criterios de confianza, tolerancia y variabilidad, esta será considerada como una muestra con tamaño óptimo.
 
@@ -45,15 +34,15 @@ $$n_1 = \frac{n_0}{1+\frac{n_0}{N}}$$
 
 Aplicar en el inventario de Isabelita, estimar el diámetro (DAP) de la especie SHIHUAHUACO.
 
-```{r, echo = TRUE, comment=NA}
+```{r, echo = TRUE, comment=NA,warning=FALSE}
 data("Isabelita")
 SHI <- subset(Isabelita, especie == "SHIHUAHUACO")
 head(SHI[,1:10])
 ```
 
-**Muestreo piloto para tener una idea de la variación**
+### Muestreo piloto para tener una idea de la variación
 
-```{r}
+```{r, echo = TRUE, comment=NA,warning=FALSE}
 set.seed(123)
 n0 <- sample(1:949,6)
 n1 <- SHI[n0,]
@@ -87,6 +76,7 @@ n <- n/(1+n/N)
 n <- round(n+0.5,0)
 cat("Tamaño de muestra ótpimo para DAP:", n, "\n")
 ```
+
 **Estimar DAP**
 
 ```{r,echo = TRUE,comment=NA,warning=FALSE}
@@ -95,7 +85,7 @@ muestra <- SHI[n0,]
 summary(muestra$dap)
 ```
 
-**Estimar una respuesta cualitativa**
+## Estimar una respuesta cualitativa
 
 El interés pueder ser, conocer el número y las especies que hay en la localidad en base a una muestra.
 

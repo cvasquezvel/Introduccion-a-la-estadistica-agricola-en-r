@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Pruebas de hipótesis | Introducción a la estadística agrícola con R</title>
+  <meta name="description" content="Chapter 5 Pruebas de hipótesis | Introducción a la estadística agrícola con R" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Pruebas de hipótesis | Introducción a la estadística agrícola con R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Pruebas de hipótesis | Introducción a la estadística agrícola con R" />
+  
+  
+  
+
+<meta name="author" content="Vásquez V., C.R.A." />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="análisis-exploratorio-y-descriptivo-ii.html"/>
+<link rel="next" href="pruebas-de-hipótesis-ii.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+<script>
+/* ========================================================================
+  * Bootstrap: transition.js v3.3.7
+* http://getbootstrap.com/javascript/#transitions
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  
+  +function ($) {
+    'use strict';
+    
+    // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+    // ============================================================
+      
+      function transitionEnd() {
+        var el = document.createElement('bootstrap')
+        
+        var transEndEventNames = {
+          WebkitTransition : 'webkitTransitionEnd',
+          MozTransition    : 'transitionend',
+          OTransition      : 'oTransitionEnd otransitionend',
+          transition       : 'transitionend'
+        }
+        
+        for (var name in transEndEventNames) {
+          if (el.style[name] !== undefined) {
+            return { end: transEndEventNames[name] }
+          }
+        }
+        
+        return false // explicit for ie8 (  ._.)
+      }
+    
+    // http://blog.alexmaccaw.com/css-transitions
+    $.fn.emulateTransitionEnd = function (duration) {
+      var called = false
+      var $el = this
+      $(this).one('bsTransitionEnd', function () { called = true })
+      var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+      setTimeout(callback, duration)
+      return this
+    }
+    
+    $(function () {
+      $.support.transition = transitionEnd()
+      
+      if (!$.support.transition) return
+      
+      $.event.special.bsTransitionEnd = {
+        bindType: $.support.transition.end,
+        delegateType: $.support.transition.end,
+        handle: function (e) {
+          if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+        }
+      }
+    })
+    
+  }(jQuery);
+</script>
+<script>
+/* ========================================================================
+  * Bootstrap: collapse.js v3.3.7
+* http://getbootstrap.com/javascript/#collapse
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  /* jshint latedef: false */
+  
+  +function ($) {
+    'use strict';
+    
+    // COLLAPSE PUBLIC CLASS DEFINITION
+    // ================================
+      
+      var Collapse = function (element, options) {
+        this.$element      = $(element)
+        this.options       = $.extend({}, Collapse.DEFAULTS, options)
+        this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                                 '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+        this.transitioning = null
+        
+        if (this.options.parent) {
+          this.$parent = this.getParent()
+        } else {
+          this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+        }
+        
+        if (this.options.toggle) this.toggle()
+      }
+      
+      Collapse.VERSION  = '3.3.7'
+      
+      Collapse.TRANSITION_DURATION = 350
+      
+      Collapse.DEFAULTS = {
+        toggle: true
+      }
+      
+      Collapse.prototype.dimension = function () {
+        var hasWidth = this.$element.hasClass('width')
+        return hasWidth ? 'width' : 'height'
+      }
+      
+      Collapse.prototype.show = function () {
+        if (this.transitioning || this.$element.hasClass('in')) return
+        
+        var activesData
+        var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+        
+        if (actives && actives.length) {
+          activesData = actives.data('bs.collapse')
+          if (activesData && activesData.transitioning) return
+        }
+        
+        var startEvent = $.Event('show.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+        
+        if (actives && actives.length) {
+          Plugin.call(actives, 'hide')
+          activesData || actives.data('bs.collapse', null)
+        }
+        
+        var dimension = this.dimension()
+        
+        this.$element
+        .removeClass('collapse')
+        .addClass('collapsing')[dimension](0)
+        .attr('aria-expanded', true)
+        
+        this.$trigger
+        .removeClass('collapsed')
+        .attr('aria-expanded', true)
+        
+        this.transitioning = 1
+        
+        var complete = function () {
+          this.$element
+          .removeClass('collapsing')
+          .addClass('collapse in')[dimension]('')
+          this.transitioning = 0
+          this.$element
+          .trigger('shown.bs.collapse')
+        }
+        
+        if (!$.support.transition) return complete.call(this)
+        
+        var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+        
+        this.$element
+        .one('bsTransitionEnd', $.proxy(complete, this))
+        .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+      }
+      
+      Collapse.prototype.hide = function () {
+        if (this.transitioning || !this.$element.hasClass('in')) return
+        
+        var startEvent = $.Event('hide.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+        
+        var dimension = this.dimension()
+        
+        this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+        
+        this.$element
+        .addClass('collapsing')
+        .removeClass('collapse in')
+        .attr('aria-expanded', false)
+        
+        this.$trigger
+        .addClass('collapsed')
+        .attr('aria-expanded', false)
+        
+        this.transitioning = 1
+        
+        var complete = function () {
+          this.transitioning = 0
+          this.$element
+          .removeClass('collapsing')
+          .addClass('collapse')
+          .trigger('hidden.bs.collapse')
+        }
+        
+        if (!$.support.transition) return complete.call(this)
+        
+        this.$element
+        [dimension](0)
+        .one('bsTransitionEnd', $.proxy(complete, this))
+        .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+      }
+      
+      Collapse.prototype.toggle = function () {
+        this[this.$element.hasClass('in') ? 'hide' : 'show']()
+      }
+      
+      Collapse.prototype.getParent = function () {
+        return $(this.options.parent)
+        .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+        .each($.proxy(function (i, element) {
+          var $element = $(element)
+          this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+        }, this))
+        .end()
+      }
+      
+      Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+        var isOpen = $element.hasClass('in')
+        
+        $element.attr('aria-expanded', isOpen)
+        $trigger
+        .toggleClass('collapsed', !isOpen)
+        .attr('aria-expanded', isOpen)
+      }
+      
+      function getTargetFromTrigger($trigger) {
+        var href
+        var target = $trigger.attr('data-target')
+        || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+                                                                
+                                                                return $(target)
+      }
+      
+      
+      // COLLAPSE PLUGIN DEFINITION
+      // ==========================
+        
+        function Plugin(option) {
+          return this.each(function () {
+            var $this   = $(this)
+            var data    = $this.data('bs.collapse')
+            var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+            
+            if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+            if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+            if (typeof option == 'string') data[option]()
+          })
+        }
+      
+      var old = $.fn.collapse
+      
+      $.fn.collapse             = Plugin
+      $.fn.collapse.Constructor = Collapse
+      
+      
+      // COLLAPSE NO CONFLICT
+      // ====================
+        
+        $.fn.collapse.noConflict = function () {
+          $.fn.collapse = old
+          return this
+        }
+      
+      
+      // COLLAPSE DATA-API
+      // =================
+        
+        $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+          var $this   = $(this)
+          
+          if (!$this.attr('data-target')) e.preventDefault()
+          
+          var $target = getTargetFromTrigger($this)
+          var data    = $target.data('bs.collapse')
+          var option  = data ? 'toggle' : $this.data()
+          
+          Plugin.call($target, option)
+        })
+      
+  }(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+  
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+  
+  // index for unique code element ids
+  var currentIndex = 1;
+  
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+    
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+    
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+    .attr('data-toggle', 'collapse')
+    .attr('data-target', '#' + id)
+    .attr('aria-expanded', show)
+    .attr('aria-controls', id);
+    
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+    
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+    
+    div.before(buttonRow);
+    
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+  
+}
+</script>
+<script>
+/* ========================================================================
+  * Bootstrap: dropdown.js v3.3.7
+* http://getbootstrap.com/javascript/#dropdowns
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  
+  +function ($) {
+    'use strict';
+    
+    // DROPDOWN CLASS DEFINITION
+    // =========================
+      
+      var backdrop = '.dropdown-backdrop'
+      var toggle   = '[data-toggle="dropdown"]'
+      var Dropdown = function (element) {
+        $(element).on('click.bs.dropdown', this.toggle)
+      }
+      
+      Dropdown.VERSION = '3.3.7'
+      
+      function getParent($this) {
+        var selector = $this.attr('data-target')
+        
+        if (!selector) {
+          selector = $this.attr('href')
+          selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+        }
+        
+        var $parent = selector && $(selector)
+        
+        return $parent && $parent.length ? $parent : $this.parent()
+      }
+      
+      function clearMenus(e) {
+        if (e && e.which === 3) return
+        $(backdrop).remove()
+        $(toggle).each(function () {
+          var $this         = $(this)
+          var $parent       = getParent($this)
+          var relatedTarget = { relatedTarget: this }
+          
+          if (!$parent.hasClass('open')) return
+          
+          if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+          
+          $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+          
+          if (e.isDefaultPrevented()) return
+          
+          $this.attr('aria-expanded', 'false')
+          $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+        })
+      }
+      
+      Dropdown.prototype.toggle = function (e) {
+        var $this = $(this)
+        
+        if ($this.is('.disabled, :disabled')) return
+        
+        var $parent  = getParent($this)
+        var isActive = $parent.hasClass('open')
+        
+        clearMenus()
+        
+        if (!isActive) {
+          if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+            // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+.open > .dropdown-menu {
+    display: block;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+<script>
+document.write('<div class="btn-group pull-right" style="position: absolute; top: 20%; right: 2%; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>')
+</script>
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Introducción a la estadística agrícola en R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Conceptos básicos</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#población-n"><i class="fa fa-check"></i><b>1.1</b> Población (N)</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#muestra-n"><i class="fa fa-check"></i><b>1.2</b> Muestra (n)</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#unidad-elemental"><i class="fa fa-check"></i><b>1.3</b> Unidad elemental</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#variable"><i class="fa fa-check"></i><b>1.4</b> Variable</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="index.html"><a href="index.html#variable-cualitativa"><i class="fa fa-check"></i><b>1.4.1</b> Variable cualitativa</a></li>
+<li class="chapter" data-level="1.4.2" data-path="index.html"><a href="index.html#variable-cuantitativa"><i class="fa fa-check"></i><b>1.4.2</b> Variable cuantitativa</a></li>
+<li class="chapter" data-level="1.4.3" data-path="index.html"><a href="index.html#otra-forma-de-clasificación-de-variables"><i class="fa fa-check"></i><b>1.4.3</b> Otra forma de clasificación de variables</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#observación"><i class="fa fa-check"></i><b>1.5</b> Observación</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#parámetro"><i class="fa fa-check"></i><b>1.6</b> Parámetro</a></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#estadístico"><i class="fa fa-check"></i><b>1.7</b> Estadístico</a></li>
+<li class="chapter" data-level="1.8" data-path="index.html"><a href="index.html#deficinión-de-estadística"><i class="fa fa-check"></i><b>1.8</b> Deficinión de Estadística</a></li>
+<li class="chapter" data-level="1.9" data-path="index.html"><a href="index.html#división-de-la-estadística"><i class="fa fa-check"></i><b>1.9</b> División de la Estadística</a>
+<ul>
+<li class="chapter" data-level="1.9.1" data-path="index.html"><a href="index.html#descriptiva"><i class="fa fa-check"></i><b>1.9.1</b> Descriptiva</a></li>
+<li class="chapter" data-level="1.9.2" data-path="index.html"><a href="index.html#inferencial"><i class="fa fa-check"></i><b>1.9.2</b> Inferencial</a></li>
+<li class="chapter" data-level="1.9.3" data-path="index.html"><a href="index.html#paramétrica"><i class="fa fa-check"></i><b>1.9.3</b> Paramétrica</a></li>
+<li class="chapter" data-level="1.9.4" data-path="index.html"><a href="index.html#no-paramétrica"><i class="fa fa-check"></i><b>1.9.4</b> No paramétrica</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html"><i class="fa fa-check"></i><b>2</b> Indicadores estadísticos</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#importancia-de-los-indicadores"><i class="fa fa-check"></i><b>2.1</b> Importancia de los indicadores</a></li>
+<li class="chapter" data-level="2.2" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-centralidad"><i class="fa fa-check"></i><b>2.2</b> Indicadores de centralidad</a></li>
+<li class="chapter" data-level="2.3" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-dispersión"><i class="fa fa-check"></i><b>2.3</b> Indicadores de dispersión</a></li>
+<li class="chapter" data-level="2.4" data-path="indicadores-estadísticos.html"><a href="indicadores-estadísticos.html#indicadores-de-la-forma-de-los-datos"><i class="fa fa-check"></i><b>2.4</b> Indicadores de la forma de los datos</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html"><i class="fa fa-check"></i><b>3</b> Análisis exploratorio y descriptivo</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#caso-investigación-en-maíz"><i class="fa fa-check"></i><b>3.1</b> Caso: Investigación en Maíz</a></li>
+<li class="chapter" data-level="3.2" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#resumen-general-de-los-datos"><i class="fa fa-check"></i><b>3.2</b> Resumen general de los datos</a></li>
+<li class="chapter" data-level="3.3" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#pigmentación-antociánica-de-los-estigmas"><i class="fa fa-check"></i><b>3.3</b> Pigmentación Antociánica de los estigmas</a></li>
+<li class="chapter" data-level="3.4" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#exploración-y-estadísticas-de-la-localidad-1"><i class="fa fa-check"></i><b>3.4</b> Exploración y estadísticas de la localidad 1</a></li>
+<li class="chapter" data-level="3.5" data-path="análisis-exploratorio-y-descriptivo.html"><a href="análisis-exploratorio-y-descriptivo.html#exploración-y-estadísticas-de-los-tratamientos-en-maíz"><i class="fa fa-check"></i><b>3.5</b> Exploración y estadísticas de los tratamientos en Maíz</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html"><i class="fa fa-check"></i><b>4</b> Análisis exploratorio y descriptivo II</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-medida"><i class="fa fa-check"></i><b>4.1</b> Escala de medida</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-nominal"><i class="fa fa-check"></i><b>4.1.1</b> Escala nominal</a></li>
+<li class="chapter" data-level="4.1.2" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-ordinal"><i class="fa fa-check"></i><b>4.1.2</b> Escala ordinal</a></li>
+<li class="chapter" data-level="4.1.3" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-intervalo."><i class="fa fa-check"></i><b>4.1.3</b> Escala de intervalo.</a></li>
+<li class="chapter" data-level="4.1.4" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#escala-de-razón"><i class="fa fa-check"></i><b>4.1.4</b> Escala de razón</a></li>
+<li class="chapter" data-level="4.1.5" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#aplicación"><i class="fa fa-check"></i><b>4.1.5</b> Aplicación</a></li>
+<li class="chapter" data-level="4.1.6" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#medidas-estadísticas"><i class="fa fa-check"></i><b>4.1.6</b> Medidas estadísticas</a></li>
+<li class="chapter" data-level="4.1.7" data-path="análisis-exploratorio-y-descriptivo-ii.html"><a href="análisis-exploratorio-y-descriptivo-ii.html#representación-de-las-medidas-en-gráficos."><i class="fa fa-check"></i><b>4.1.7</b> Representación de las medidas en gráficos.</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html"><i class="fa fa-check"></i><b>5</b> Pruebas de hipótesis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-sobre-la-media-poblacional"><i class="fa fa-check"></i><b>5.1</b> Prueba sobre la media poblacional</a></li>
+<li class="chapter" data-level="5.2" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-una-cola-superior"><i class="fa fa-check"></i><b>5.2</b> Prueba de una cola superior</a></li>
+<li class="chapter" data-level="5.3" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-una-cola-inferior"><i class="fa fa-check"></i><b>5.3</b> Prueba de una cola inferior</a></li>
+<li class="chapter" data-level="5.4" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#limites-de-confianza"><i class="fa fa-check"></i><b>5.4</b> Limites de confianza</a></li>
+<li class="chapter" data-level="5.5" data-path="pruebas-de-hipótesis.html"><a href="pruebas-de-hipótesis.html#prueba-de-dos-colas"><i class="fa fa-check"></i><b>5.5</b> Prueba de dos colas</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html"><i class="fa fa-check"></i><b>6</b> Pruebas de hipótesis II</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-hipótesis-para-k-variancias"><i class="fa fa-check"></i><b>6.1</b> Prueba de hipótesis para k variancias</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-barttlet"><i class="fa fa-check"></i><b>6.1.1</b> Prueba de Barttlet</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pruebas-de-hipótesis-ii.html"><a href="pruebas-de-hipótesis-ii.html#prueba-de-k-medias"><i class="fa fa-check"></i><b>6.2</b> Prueba de k medias</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html"><i class="fa fa-check"></i><b>7</b> Pruebas no paramétricas</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-u-de-mann-whitney"><i class="fa fa-check"></i><b>7.1</b> Prueba U de Mann-Whitney</a></li>
+<li class="chapter" data-level="7.2" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-mood"><i class="fa fa-check"></i><b>7.2</b> Prueba Mood</a></li>
+<li class="chapter" data-level="7.3" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-kruskal-wallis"><i class="fa fa-check"></i><b>7.3</b> Prueba Kruskal Wallis</a></li>
+<li class="chapter" data-level="7.4" data-path="pruebas-no-paramétricas.html"><a href="pruebas-no-paramétricas.html#prueba-de-la-mediana"><i class="fa fa-check"></i><b>7.4</b> Prueba de la Mediana</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html"><i class="fa fa-check"></i><b>8</b> Muestreo aplicado</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#estimar-una-respuesta-cuantitativa"><i class="fa fa-check"></i><b>8.1</b> Estimar una respuesta cuantitativa</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#muestreo-piloto-para-tener-una-idea-de-la-variación"><i class="fa fa-check"></i><b>8.1.1</b> Muestreo piloto para tener una idea de la variación</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="muestreo-aplicado.html"><a href="muestreo-aplicado.html#estimar-una-respuesta-cualitativa"><i class="fa fa-check"></i><b>8.2</b> Estimar una respuesta cualitativa</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html"><i class="fa fa-check"></i><b>9</b> Medidas de asociación y regresión</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#correlación"><i class="fa fa-check"></i><b>9.1</b> Correlación</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#valor-de-la-correlación"><i class="fa fa-check"></i><b>9.1.1</b> Valor de la correlación</a></li>
+<li class="chapter" data-level="9.1.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#prueba-estadística"><i class="fa fa-check"></i><b>9.1.2</b> Prueba estadística</a></li>
+<li class="chapter" data-level="9.1.3" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#gráfico-de-la-dispersión"><i class="fa fa-check"></i><b>9.1.3</b> Gráfico de la dispersión</a></li>
+<li class="chapter" data-level="9.1.4" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#tipo-de-variable"><i class="fa fa-check"></i><b>9.1.4</b> Tipo de variable</a></li>
+<li class="chapter" data-level="9.1.5" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#aplicación-1"><i class="fa fa-check"></i><b>9.1.5</b> Aplicación</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#otros-métodos"><i class="fa fa-check"></i><b>9.2</b> Otros métodos</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#método-de-spearman"><i class="fa fa-check"></i><b>9.2.1</b> Método de Spearman</a></li>
+<li class="chapter" data-level="9.2.2" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#gráfico-exploratorio"><i class="fa fa-check"></i><b>9.2.2</b> Gráfico exploratorio</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#regresión"><i class="fa fa-check"></i><b>9.3</b> Regresión</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="medidas-de-asociación-y-regresión.html"><a href="medidas-de-asociación-y-regresión.html#aplicación-2"><i class="fa fa-check"></i><b>9.3.1</b> Aplicación</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html"><i class="fa fa-check"></i><b>10</b> Análisis de componentes principales</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#introducción"><i class="fa fa-check"></i><b>10.1</b> Introducción</a></li>
+<li class="chapter" data-level="10.2" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#que-es-un-componente"><i class="fa fa-check"></i><b>10.2</b> ¿Que es un componente?</a></li>
+<li class="chapter" data-level="10.3" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#cómo-se-seleccionan-los-componentes-principales"><i class="fa fa-check"></i><b>10.3</b> ¿Cómo se seleccionan los componentes principales?</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="análisis-de-componentes-principales.html"><a href="análisis-de-componentes-principales.html#caso-maíz"><i class="fa fa-check"></i><b>10.3.1</b> Caso Maíz</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introducción a la estadística agrícola con R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="pruebas-de-hipótesis" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Pruebas de hipótesis<a href="pruebas-de-hipótesis.html#pruebas-de-hipótesis" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="prueba-sobre-la-media-poblacional" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Prueba sobre la media poblacional<a href="pruebas-de-hipótesis.html#prueba-sobre-la-media-poblacional" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>La media poblacional es un parámetro que mide la centralidad de los datos. Lo que se investiga a través de la hipótesis, es probar si hay cambios en la medida central.</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="pruebas-de-hipótesis.html#cb152-1" aria-hidden="true" tabindex="-1"></a>T1 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T1&quot;</span>,]</span>
+<span id="cb152-2"><a href="pruebas-de-hipótesis.html#cb152-2" aria-hidden="true" tabindex="-1"></a>T2 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T2&quot;</span>,]</span>
+<span id="cb152-3"><a href="pruebas-de-hipótesis.html#cb152-3" aria-hidden="true" tabindex="-1"></a>T3 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T3&quot;</span>,]</span></code></pre></div>
+</div>
+<div id="prueba-de-una-cola-superior" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Prueba de una cola superior<a href="pruebas-de-hipótesis.html#prueba-de-una-cola-superior" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>El interés del investigador es probar que la media del Longitud de grano es superior a la actual.</p>
+<p>Prueba la hipótesis que la media de LG del tratamiento 1 es superior a 15 mm.</p>
+<p><span class="math inline">\(H_0: \mu \le 15~mm\)</span></p>
+<p><span class="math inline">\(H_1: \mu &gt; 15~mm\)</span></p>
+<p><span class="math inline">\(\alpha = 0.05\)</span></p>
+<p>Utilice la prueba de t-student</p>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="pruebas-de-hipótesis.html#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T1<span class="sc">$</span>LG, <span class="at">mu =</span> <span class="dv">15</span>, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>)</span></code></pre></div>
+<pre><code>
+    One Sample t-test
+
+data:  T1$LG
+t = -29.49, df = 79, p-value = 1
+alternative hypothesis: true mean is greater than 15
+95 percent confidence interval:
+ 12.12569      Inf
+sample estimates:
+mean of x 
+ 12.27925 </code></pre>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="pruebas-de-hipótesis.html#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valor critico de la prueba</span></span>
+<span id="cb155-2"><a href="pruebas-de-hipótesis.html#cb155-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.95</span>,<span class="dv">79</span>)</span></code></pre></div>
+<pre><code>[1] 1.664371</code></pre>
+<p>Se observó que la media de la longitud de grano en el tratamiento 1 fue de 12.28 mm.</p>
+<p><strong>Conclusión</strong>, con un alfa de 0.05, existe suficiente evidencia estadística para no rechazar la <span class="math inline">\(H_0\)</span> (hipótesis nula), por lo tanto, se concluye que la media de la longitud de grano en el tratamiento 1 es menor o igual a 15 mm.</p>
+<p>No hay ninguna evidencia estadística para sospechar que la media de LG en el tratamiento 1 sea mayor o superior a 15 mm, debido a que el pvalor obtenido por la prueba fue de 1 (superior al nivel de incertibumbre fijado para este experimento).</p>
+</div>
+<div id="prueba-de-una-cola-inferior" class="section level2 hasAnchor" number="5.3">
+<h2><span class="header-section-number">5.3</span> Prueba de una cola inferior<a href="pruebas-de-hipótesis.html#prueba-de-una-cola-inferior" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>El interés del investigador es probar que la media del ancho de grano es inferior a la actual.</p>
+<p>Prueba la hipótesis que la media de AG del tratamiento 3 es inferior a 9 mm.</p>
+<p><span class="math inline">\(H_0: \mu \ge 9~mm\)</span></p>
+<p><span class="math inline">\(H_1: \mu &lt; 9~mm\)</span></p>
+<p><span class="math inline">\(\alpha = 0.08\)</span></p>
+<p>Utilice la prueba de t-student</p>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="pruebas-de-hipótesis.html#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T3<span class="sc">$</span>AG, <span class="at">mu =</span> <span class="dv">9</span>, <span class="at">alternative =</span> <span class="st">&quot;less&quot;</span>)</span></code></pre></div>
+<pre><code>
+    One Sample t-test
+
+data:  T3$AG
+t = -8.2518, df = 79, p-value = 0.000000000001407
+alternative hypothesis: true mean is less than 9
+95 percent confidence interval:
+     -Inf 8.505551
+sample estimates:
+mean of x 
+ 8.380625 </code></pre>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="pruebas-de-hipótesis.html#cb159-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valor critico de la prueba</span></span>
+<span id="cb159-2"><a href="pruebas-de-hipótesis.html#cb159-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.08</span>,<span class="dv">79</span>)</span></code></pre></div>
+<pre><code>[1] -1.418424</code></pre>
+<p>Se observó que el valor crítico de la prueba fue de t = -1.418424. Si se logra obtener un valor de t calculado menor a el t crítico o tabular de la prueba, entonces se rechaza la hipótesis nula.</p>
+<p>El valor calculado de t fue de -88.189 (menor a -1.418424), obteniendo un p valor &lt; 0.001 (p &lt; 0.00000000000000022). Teniendo en cuenta que el nivel de alfa designado para la prueba fue de 0.08, entonces el t calculado está situado en la zona de rechazo de la hipótesis nula.</p>
+<p>La media calculada del ancho de grano en el tratamiento 3, fue de 8.38 mm.</p>
+<p><strong>Conclusión</strong> se rechaza la hipótesis nula, con un nivel de significancia de 0.08, por lo tanto, hay suficiente evidencia estadística para afirmar que la media del AG en el tratamiento 3 es menor a 9 mm.</p>
+<p><em>Consideraciones</em></p>
+<p>Existen niveles de incertidumbre o niveles de significancia (<span class="math inline">\(\alpha\)</span>), que ayudan a saber cuanta probabilidad de tolerancia de cometer un error de tipo I, estamos dispuestos a aceptar.</p>
+<p>Existes cinco niveles de significancia ampliamente usados:</p>
+<p>No se rechaza la hipótesis nula cuando:
+- No significativo (n.s.): Cuando el p valor obtenido es mayor a 0.1.</p>
+<p>El criterio de rechazo de hipótesis nula, dependerá del investigador:
+- Marginal (m): Cuando el p valor obtenido es mayor a 0.05 y menor igual a 0.1.</p>
+<p>Se rechaza la hipótesis nula:
+- Significativo (<em>): Cuando el p valor obtenido es menor igual a 0.05.
+- Altamente significativo (<strong>): Cuando el p valor obtenido es menor igual a 0.01.
+- Muy altamente significativo (</strong></em>): Cuando el p valor obtenido es menor igual a 0.001.</p>
+<p>En experimentos agrícolas, es común utilizar un p valor de 0.05, pero, según el nivel de confianza de las conclusiones que se desean tomar, se puede optar por otros valores de significancia.</p>
+</div>
+<div id="limites-de-confianza" class="section level2 hasAnchor" number="5.4">
+<h2><span class="header-section-number">5.4</span> Limites de confianza<a href="pruebas-de-hipótesis.html#limites-de-confianza" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es una estimación del parámetro por intervalo, es mejor que una estimación puntual.</p>
+<p>Halle los límites de confianza al 95 % del ancho de grano del tratamiento 1.</p>
+<p>Utilice t-student.</p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="pruebas-de-hipótesis.html#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>))</span></code></pre></div>
+<pre><code>
+    One Sample t-test
+
+data:  AG
+t = 105.97, df = 79, p-value &lt; 0.00000000000000022
+alternative hypothesis: true mean is not equal to 0
+95 percent confidence interval:
+ 9.063248 9.410252
+sample estimates:
+mean of x 
+  9.23675 </code></pre>
+<p>El valor medio del ancho de grano en el tratamiento 1 fue de <span class="math inline">\(9.23675 mm\)</span>, su límite inferior fue de <span class="math inline">\(9.063248\)</span> y su límite superior fue de <span class="math inline">\(9.410252\)</span> al 95 % de confianza.</p>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="pruebas-de-hipótesis.html#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">alternative =</span> <span class="st">&quot;less&quot;</span>))</span></code></pre></div>
+<pre><code>
+    One Sample t-test
+
+data:  AG
+t = 105.97, df = 79, p-value = 1
+alternative hypothesis: true mean is less than 0
+95 percent confidence interval:
+     -Inf 9.381829
+sample estimates:
+mean of x 
+  9.23675 </code></pre>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="pruebas-de-hipótesis.html#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>))</span></code></pre></div>
+<pre><code>
+    One Sample t-test
+
+data:  AG
+t = 105.97, df = 79, p-value &lt; 0.00000000000000022
+alternative hypothesis: true mean is greater than 0
+95 percent confidence interval:
+ 9.091671      Inf
+sample estimates:
+mean of x 
+  9.23675 </code></pre>
+</div>
+<div id="prueba-de-dos-colas" class="section level2 hasAnchor" number="5.5">
+<h2><span class="header-section-number">5.5</span> Prueba de dos colas<a href="pruebas-de-hipótesis.html#prueba-de-dos-colas" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Prueba la hipótesis que la media de la longitud de grano en el tratamiento 1 es diferente a la media de la longitud de grano en el tratamiento 3.</p>
+<p><span class="math inline">\(H_0: \mu_{T1} = \mu_{T3}\)</span></p>
+<p><span class="math inline">\(H_1: \mu_{T1} \neq \mu_{T3}\)</span></p>
+<p><span class="math inline">\(H_0: \mu_{T1} - \mu_{T3} = 0\)</span></p>
+<p><span class="math inline">\(H_1: \mu_{T1} - \mu_{T3} \neq 0\)</span></p>
+<p><span class="math inline">\(\alpha = 0.03\)</span></p>
+<p>Utilice la prueba de t-student</p>
+<p>Primero realice la prueba de homogeneidad de variancia</p>
+<p><span class="math inline">\(H_0: \sigma_{T1} = \sigma_{T3}\)</span></p>
+<p><span class="math inline">\(H_1: \sigma_{T1} \neq \sigma_{T3}\)</span></p>
+<p><span class="math inline">\(H_0: \frac{\sigma_{T1}}{\sigma_{T3}} = 1\)</span></p>
+<p><span class="math inline">\(H_1: \frac{\sigma_{T1}}{\sigma_{T3}} \neq 1\)</span></p>
+<p><span class="math inline">\(\alpha = 0.1\)</span></p>
+<p>Utilice la prueba de F</p>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="pruebas-de-hipótesis.html#cb167-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(T1<span class="sc">$</span>LG,T3<span class="sc">$</span>LG, <span class="at">conf.level =</span> <span class="fl">0.90</span>)</span></code></pre></div>
+<pre><code>
+    F test to compare two variances
+
+data:  T1$LG and T3$LG
+F = 0.62257, num df = 79, denom df = 79, p-value = 0.03664
+alternative hypothesis: true ratio of variances is not equal to 1
+90 percent confidence interval:
+ 0.4290184 0.9034454
+sample estimates:
+ratio of variances 
+         0.6225711 </code></pre>
+<p>Se rechaza la hipótesis nula, dado que el p.valor = 0.03664, es menor a 0.1, lo mínimo para no rechazar la hipótesis que concluye que las <em>variancias son equivalentes</em>.</p>
+<p><strong>Conclusión</strong>
+A un nivel de significancia de 0.1, existe suficiente evidencia estadística para rechazar la hipótesis nula, por lo tanto, las variancias de longitud de grano de los tratamientos 1 y 3 no son equivalentes, entonces las variancias no son estadísticamente iguales.</p>
+<p>En la prueba de t-student debemos considerar estos resultados para realizar un ajuste de la prueba.</p>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="pruebas-de-hipótesis.html#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T1<span class="sc">$</span>LG,T3<span class="sc">$</span>LG, <span class="at">conf.level =</span> <span class="fl">0.97</span>, <span class="at">alternative =</span> <span class="st">&quot;two.sided&quot;</span>, <span class="at">var =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>
+    Welch Two Sample t-test
+
+data:  T1$LG and T3$LG
+t = 4.302, df = 149.89, p-value = 0.0000304
+alternative hypothesis: true difference in means is not equal to 0
+97 percent confidence interval:
+ 0.3144217 0.9670783
+sample estimates:
+mean of x mean of y 
+ 12.27925  11.63850 </code></pre>
+<p>La media de la longitud de grano del tratamiento 1 fue de <span class="math inline">\(12.27925\)</span> mm y en el tratamiento 3 fue de <span class="math inline">\(11.63850\)</span> mm.</p>
+<p>La diferencia de las medias fue de <span class="math inline">\(0.64075\)</span> mm, que tuvo un intervalo de confianza al <span class="math inline">\(97\%\)</span> con un valor superior de <span class="math inline">\(0.9670783\)</span> mm y un valor inferior de <span class="math inline">\(0.3144217\)</span> mm.</p>
+<p>El p valor fue de 0.0000304, menor al <span class="math inline">\(\alpha\)</span> de 0.03, por lo tanto se rechaza la hipótesis nula.</p>
+<p><strong>Conclusión</strong></p>
+<p>Con un nivel de significancia de 0.03, existe suficiente evidencia estadística para rechazar la hipótesis nula, por lo tanto, la diferencia de medias de la longitud de grano de los tratamientos 1 y 3 fue diferente estadísticamente de 0. Entonces, se puede concluir además, que el tratatamiento 1 posee una media estadísticamente diferente al tratamiento 3 con respecto a la longitud de grano.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="análisis-exploratorio-y-descriptivo-ii.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="pruebas-de-hipótesis-ii.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/edit/master/5-Pruebas-de-hipótesis.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/blob/master/5-Pruebas-de-hipótesis.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
