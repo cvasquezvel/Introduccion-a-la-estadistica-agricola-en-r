@@ -15,7 +15,7 @@ datos$Urbano <- factor(datos$Urbano,
 
 ```
 
-# 08. Medidas de asociación y regresión
+# Medidas de asociación y regresión
 
 ## Correlación
 

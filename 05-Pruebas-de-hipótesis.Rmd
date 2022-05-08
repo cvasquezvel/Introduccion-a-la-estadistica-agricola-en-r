@@ -4,7 +4,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, dplyr)
 ```
 
-# 05. Pruebas de hipótesis
+# Pruebas de hipótesis
 
 ## Prueba sobre la media poblacional
 

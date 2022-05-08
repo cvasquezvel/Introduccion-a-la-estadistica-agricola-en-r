@@ -4,7 +4,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, agricolae, summarytools, car, psych)
 ```
 
-# 04. Análisis exploratorio y descriptivo II
+# Análisis exploratorio y descriptivo II
 
 ## Escala de medida
 
@@ -92,7 +92,7 @@ Es importante caracterizar el tipo de medida en su escala definida.
 
 Distribución de los tratamientos
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 
 op <- par(mar = c(4,10,2,2))
 tratamientos <- table(maiz3$Tratamiento)
@@ -108,7 +108,7 @@ par(op)
 En el caso de la escala ordinal, debe tener presente el orden (ascendente o descendente).
 
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 
 op <- par(mar = c(4,4,2,2))
 PAE <- table(maiz3$PAE)
@@ -121,7 +121,7 @@ En el caso de variable discreta en datos agrupados, el gráfico debe ser de lín
 
 Para este caso simulamos datos de un comportamiento binomial, como número de frutos de mango defectuosos en 30 cajas de 5 unidades observadas cada una (probabilidad de éxito de 0.3)
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 
 op <- par(mar = c(4,4,2,2))
 x <- rbinom(30,5,0.3)
@@ -135,7 +135,7 @@ En el caso de variables continuas que corresponden a la escala de razón, los, l
 
 Para mostrar estos gráficos se utilizará la longitud y el ancho de los granos en el inventario muestreado.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 
 op <- par(mar = c(4,4,2,2))
 Localidad1 <- subset(maiz3,maiz3$Localidad=="L1")
@@ -147,7 +147,7 @@ Se observa que la relación entre LG y AG es muy débil, no existe un patrón qu
 
 Los histogramas y el diagráma de cajas (Tukey) permite una mejor descripción.
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 op <- par(mar = c(4,4,2,2))
 h1 <- hist(Localidad1$LG, main = "Longitud de grano en la localidad 1")
 h2 <- hist(Localidad1$AG, main = "Ancho de grano en la localidad 1")
@@ -156,7 +156,7 @@ par(op)
 
 **Diagráma de cajas para la Longitud de grano y el ancho de grano de todos los tratamientos**
 
-```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 op <- par(mar = c(4,4,2,2))
 b1 <- boxplot(LG ~ Tratamiento, data = Localidad1, xlab = "", main = "Longitud de grano en la localidad 1")
 b2 <- boxplot(AG ~ Tratamiento, data = Localidad1, xlab = "", main = "Ancho de grano en la localidad 1")

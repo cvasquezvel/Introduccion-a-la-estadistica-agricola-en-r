@@ -4,7 +4,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, agricolae, summarytools, car, psych)
 ```
 
-# 03. Análisis exploratorio y descriptivo
+# Análisis exploratorio y descriptivo
 
 ## Caso: Investigación en Maíz
 

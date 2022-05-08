@@ -1,3 +1,3 @@
-# 10. Agradecimientos
+# Agradecimientos
 
 Un gran agradecimiento al Mg. Felipe de Mendiburu, por la creación del paquete agricolae y su excelente labor como docente en la Universidad Nacional Agraria La Molina. Mucho de este material ha sido creado gracias a su gran facilidad para explicar los métodos estadísticos aplicados a la agricultura.

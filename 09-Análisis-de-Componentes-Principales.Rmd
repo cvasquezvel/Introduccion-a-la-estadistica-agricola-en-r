@@ -5,7 +5,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, dplyr, factoextra, FactoMineR, ade4, ggplot2, corrplot, ggcorrplot)
 ```
 
-# 09. Análisis de componentes principales
+# Análisis de componentes principales
 
 ## Introducción
 

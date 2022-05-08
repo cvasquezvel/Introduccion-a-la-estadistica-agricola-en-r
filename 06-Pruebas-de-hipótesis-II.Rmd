@@ -4,7 +4,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, dplyr, agricolae, agroforestry, exactRankTests, kSamples)
 ```
 
-# 06. Pruebas de hipótesis II
+# Pruebas de hipótesis II
 
 ## Prueba de hipótesis para k variancias
 
