@@ -835,44 +835,44 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><span class="math inline">\(H_0: \sigma_{Aucatadijo} = \sigma_{Bolaina} = \sigma_{Shihuahuaco} = \sigma_{Tornillo}\)</span></p>
 <p><span class="math inline">\(H_1: \text{Al menos un } \sigma \text{ es diferente a los demás}\)</span></p>
 <p><span class="math inline">\(\alpha = 0.01\)</span></p>
-<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="pruebas-de-hipótesis-ii.html#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;bagua&quot;</span>)</span>
-<span id="cb185-2"><a href="pruebas-de-hipótesis-ii.html#cb185-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb185-3"><a href="pruebas-de-hipótesis-ii.html#cb185-3" aria-hidden="true" tabindex="-1"></a>dap <span class="ot">&lt;-</span> bagua <span class="sc">%&gt;%</span></span>
-<span id="cb185-4"><a href="pruebas-de-hipótesis-ii.html#cb185-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(dap,especie) <span class="sc">%&gt;%</span></span>
-<span id="cb185-5"><a href="pruebas-de-hipótesis-ii.html#cb185-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Aucatadijo&quot;</span>,<span class="st">&quot;Bolaina&quot;</span>,<span class="st">&quot;Shihuahuaco&quot;</span>,<span class="st">&quot;Tornillo&quot;</span>))</span>
-<span id="cb185-6"><a href="pruebas-de-hipótesis-ii.html#cb185-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb185-7"><a href="pruebas-de-hipótesis-ii.html#cb185-7" aria-hidden="true" tabindex="-1"></a>dap<span class="sc">$</span>especie <span class="ot">&lt;-</span> dap<span class="sc">$</span>especie <span class="sc">%&gt;%</span> as.character <span class="sc">%&gt;%</span> as.factor</span>
-<span id="cb185-8"><a href="pruebas-de-hipótesis-ii.html#cb185-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb185-9"><a href="pruebas-de-hipótesis-ii.html#cb185-9" aria-hidden="true" tabindex="-1"></a><span class="co"># bartlett.test(especie$dap, especie$especie)</span></span>
-<span id="cb185-10"><a href="pruebas-de-hipótesis-ii.html#cb185-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(dap<span class="sc">$</span>dap<span class="sc">~</span>dap<span class="sc">$</span>especie)</span></code></pre></div>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="pruebas-de-hipótesis-ii.html#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;bagua&quot;</span>)</span>
+<span id="cb186-2"><a href="pruebas-de-hipótesis-ii.html#cb186-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb186-3"><a href="pruebas-de-hipótesis-ii.html#cb186-3" aria-hidden="true" tabindex="-1"></a>dap <span class="ot">&lt;-</span> bagua <span class="sc">%&gt;%</span></span>
+<span id="cb186-4"><a href="pruebas-de-hipótesis-ii.html#cb186-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(dap,especie) <span class="sc">%&gt;%</span></span>
+<span id="cb186-5"><a href="pruebas-de-hipótesis-ii.html#cb186-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Aucatadijo&quot;</span>,<span class="st">&quot;Bolaina&quot;</span>,<span class="st">&quot;Shihuahuaco&quot;</span>,<span class="st">&quot;Tornillo&quot;</span>))</span>
+<span id="cb186-6"><a href="pruebas-de-hipótesis-ii.html#cb186-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb186-7"><a href="pruebas-de-hipótesis-ii.html#cb186-7" aria-hidden="true" tabindex="-1"></a>dap<span class="sc">$</span>especie <span class="ot">&lt;-</span> dap<span class="sc">$</span>especie <span class="sc">%&gt;%</span> as.character <span class="sc">%&gt;%</span> as.factor</span>
+<span id="cb186-8"><a href="pruebas-de-hipótesis-ii.html#cb186-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb186-9"><a href="pruebas-de-hipótesis-ii.html#cb186-9" aria-hidden="true" tabindex="-1"></a><span class="co"># bartlett.test(especie$dap, especie$especie)</span></span>
+<span id="cb186-10"><a href="pruebas-de-hipótesis-ii.html#cb186-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(dap<span class="sc">$</span>dap<span class="sc">~</span>dap<span class="sc">$</span>especie)</span></code></pre></div>
 <pre><code>
     Bartlett test of homogeneity of variances
 
 data:  dap$dap by dap$especie
 Bartlett&#39;s K-squared = 58.08, df = 3, p-value = 0.000000000001512</code></pre>
-<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="pruebas-de-hipótesis-ii.html#cb187-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(dap<span class="sc">$</span>dap<span class="sc">~</span>dap<span class="sc">$</span>especie)</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-47-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="pruebas-de-hipótesis-ii.html#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(dap<span class="sc">$</span>dap<span class="sc">~</span>dap<span class="sc">$</span>especie)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-48-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><em>Conclusión</em>. A un nivel de significancia de 0.01, existe suficiente evidencia estadística para rechazar <span class="math inline">\(H_0\)</span>. Por lo tanto, se puede afirmar que la varianza del diámetro a la altura del pecho es diferente el al menos una de las especies.</p>
 <p><strong>Con Altura</strong></p>
 <p><span class="math inline">\(H_0: \sigma_{Aucatadijo} = \sigma_{Bolaina} = \sigma_{Shihuahuaco} = \sigma_{Tornillo}\)</span></p>
 <p><span class="math inline">\(H_1: \text{Al menos un } \sigma \text{ es diferente a los demás}\)</span></p>
 <p><span class="math inline">\(\alpha = 0.01\)</span></p>
-<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="pruebas-de-hipótesis-ii.html#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;bagua&quot;</span>)</span>
-<span id="cb188-2"><a href="pruebas-de-hipótesis-ii.html#cb188-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb188-3"><a href="pruebas-de-hipótesis-ii.html#cb188-3" aria-hidden="true" tabindex="-1"></a>altura <span class="ot">&lt;-</span> bagua <span class="sc">%&gt;%</span></span>
-<span id="cb188-4"><a href="pruebas-de-hipótesis-ii.html#cb188-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(altura,especie) <span class="sc">%&gt;%</span></span>
-<span id="cb188-5"><a href="pruebas-de-hipótesis-ii.html#cb188-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Aucatadijo&quot;</span>,<span class="st">&quot;Bolaina&quot;</span>,<span class="st">&quot;Shihuahuaco&quot;</span>,<span class="st">&quot;Tornillo&quot;</span>)) </span>
-<span id="cb188-6"><a href="pruebas-de-hipótesis-ii.html#cb188-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb188-7"><a href="pruebas-de-hipótesis-ii.html#cb188-7" aria-hidden="true" tabindex="-1"></a>altura<span class="sc">$</span>especie <span class="ot">&lt;-</span> altura<span class="sc">$</span>especie <span class="sc">%&gt;%</span> as.character <span class="sc">%&gt;%</span> as.factor</span>
-<span id="cb188-8"><a href="pruebas-de-hipótesis-ii.html#cb188-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb188-9"><a href="pruebas-de-hipótesis-ii.html#cb188-9" aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(altura<span class="sc">$</span>altura<span class="sc">~</span>altura<span class="sc">$</span>especie)</span></code></pre></div>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="pruebas-de-hipótesis-ii.html#cb189-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;bagua&quot;</span>)</span>
+<span id="cb189-2"><a href="pruebas-de-hipótesis-ii.html#cb189-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-3"><a href="pruebas-de-hipótesis-ii.html#cb189-3" aria-hidden="true" tabindex="-1"></a>altura <span class="ot">&lt;-</span> bagua <span class="sc">%&gt;%</span></span>
+<span id="cb189-4"><a href="pruebas-de-hipótesis-ii.html#cb189-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(altura,especie) <span class="sc">%&gt;%</span></span>
+<span id="cb189-5"><a href="pruebas-de-hipótesis-ii.html#cb189-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Aucatadijo&quot;</span>,<span class="st">&quot;Bolaina&quot;</span>,<span class="st">&quot;Shihuahuaco&quot;</span>,<span class="st">&quot;Tornillo&quot;</span>)) </span>
+<span id="cb189-6"><a href="pruebas-de-hipótesis-ii.html#cb189-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-7"><a href="pruebas-de-hipótesis-ii.html#cb189-7" aria-hidden="true" tabindex="-1"></a>altura<span class="sc">$</span>especie <span class="ot">&lt;-</span> altura<span class="sc">$</span>especie <span class="sc">%&gt;%</span> as.character <span class="sc">%&gt;%</span> as.factor</span>
+<span id="cb189-8"><a href="pruebas-de-hipótesis-ii.html#cb189-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-9"><a href="pruebas-de-hipótesis-ii.html#cb189-9" aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(altura<span class="sc">$</span>altura<span class="sc">~</span>altura<span class="sc">$</span>especie)</span></code></pre></div>
 <pre><code>
     Bartlett test of homogeneity of variances
 
 data:  altura$altura by altura$especie
 Bartlett&#39;s K-squared = 0.22799, df = 3, p-value = 0.9729</code></pre>
-<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="pruebas-de-hipótesis-ii.html#cb190-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(altura<span class="sc">$</span>altura<span class="sc">~</span>altura<span class="sc">$</span>especie)</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-48-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="pruebas-de-hipótesis-ii.html#cb191-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(altura<span class="sc">$</span>altura<span class="sc">~</span>altura<span class="sc">$</span>especie)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-49-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><em>Conclusión</em>. A un nivel de significancia de 0.01, existe suficiente evidencia estadística para no rechazar <span class="math inline">\(H_0\)</span>. Por lo tanto, se puede afirmar que la varianza de la altura del árbol no es diferente entre las especies.</p>
 </div>
 </div>
@@ -882,13 +882,13 @@ Bartlett&#39;s K-squared = 0.22799, df = 3, p-value = 0.9729</code></pre>
 <p><span class="math inline">\(H_1: \text{Al menos un } \mu \text{ es diferente a los demás}\)</span></p>
 <p><span class="math inline">\(\alpha = 0.07\)</span></p>
 <p>Esta prueba tiene como supuesto que la dispersión o varianza de los niveles del factor evaluado es estadísticamente similar entre los niveles.</p>
-<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="pruebas-de-hipótesis-ii.html#cb191-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;bagua&quot;</span>)</span>
-<span id="cb191-2"><a href="pruebas-de-hipótesis-ii.html#cb191-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb191-3"><a href="pruebas-de-hipótesis-ii.html#cb191-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(<span class="fu">lm</span>(altura<span class="sc">~</span>especie, altura)))</span></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="pruebas-de-hipótesis-ii.html#cb192-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;bagua&quot;</span>)</span>
+<span id="cb192-2"><a href="pruebas-de-hipótesis-ii.html#cb192-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-3"><a href="pruebas-de-hipótesis-ii.html#cb192-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(<span class="fu">lm</span>(altura<span class="sc">~</span>especie, altura)))</span></code></pre></div>
 <pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)
 especie       3   1.43  0.4753   1.366  0.253
 Residuals   267  92.89  0.3479               </code></pre>
-<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="pruebas-de-hipótesis-ii.html#cb193-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F tabular al 0.07 de alfa:&quot;</span>,<span class="fu">qf</span>(<span class="fl">0.07</span>,<span class="dv">3</span>,<span class="dv">267</span>, <span class="at">lower.tail =</span> F),<span class="st">&quot;.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="pruebas-de-hipótesis-ii.html#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F tabular al 0.07 de alfa:&quot;</span>,<span class="fu">qf</span>(<span class="fl">0.07</span>,<span class="dv">3</span>,<span class="dv">267</span>, <span class="at">lower.tail =</span> F),<span class="st">&quot;.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
 <pre><code>F tabular al 0.07 de alfa: 2.380331 .</code></pre>
 <p><em>Conclusión</em>. A un nivel de significancia de 0.07, existe suficiente evidencia estadística para no rechazar <span class="math inline">\(H_0\)</span>. Por lo tanto puede afirmar que la altura de planta es estadísticamente similar entre las especies “Aucatadijo”, “Bolaina”, “Shihuahuaco” y “Tornillo”.</p>
 </div>
@@ -899,17 +899,17 @@ Residuals   267  92.89  0.3479               </code></pre>
 <p><span class="math inline">\(H_0: Mediana_{Aucatadijo} = Mediana_{Shihuahuaco}\)</span></p>
 <p><span class="math inline">\(H_1: Mediana_{Aucatadijo} \neq Mediana_{Shihuahuaco}\)</span></p>
 <p><span class="math inline">\(\alpha = 0.05\)</span></p>
-<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="pruebas-de-hipótesis-ii.html#cb195-1" aria-hidden="true" tabindex="-1"></a>dap2 <span class="ot">&lt;-</span> bagua <span class="sc">%&gt;%</span></span>
-<span id="cb195-2"><a href="pruebas-de-hipótesis-ii.html#cb195-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(dap,especie) <span class="sc">%&gt;%</span></span>
-<span id="cb195-3"><a href="pruebas-de-hipótesis-ii.html#cb195-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Aucatadijo&quot;</span>,<span class="st">&quot;Shihuahuaco&quot;</span>))</span>
-<span id="cb195-4"><a href="pruebas-de-hipótesis-ii.html#cb195-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-5"><a href="pruebas-de-hipótesis-ii.html#cb195-5" aria-hidden="true" tabindex="-1"></a>Aucatadijo <span class="ot">&lt;-</span> dap2<span class="sc">%&gt;%</span></span>
-<span id="cb195-6"><a href="pruebas-de-hipótesis-ii.html#cb195-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Aucatadijo&quot;</span>))</span>
-<span id="cb195-7"><a href="pruebas-de-hipótesis-ii.html#cb195-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-8"><a href="pruebas-de-hipótesis-ii.html#cb195-8" aria-hidden="true" tabindex="-1"></a>Shihuahuaco <span class="ot">&lt;-</span> dap2<span class="sc">%&gt;%</span></span>
-<span id="cb195-9"><a href="pruebas-de-hipótesis-ii.html#cb195-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Shihuahuaco&quot;</span>))</span></code></pre></div>
-<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="pruebas-de-hipótesis-ii.html#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.exact</span>(Aucatadijo<span class="sc">$</span>dap,Shihuahuaco<span class="sc">$</span>dap, <span class="at">mu =</span> <span class="dv">0</span>,</span>
-<span id="cb196-2"><a href="pruebas-de-hipótesis-ii.html#cb196-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">paired =</span> F, <span class="at">alternative =</span> <span class="st">&quot;t&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="pruebas-de-hipótesis-ii.html#cb196-1" aria-hidden="true" tabindex="-1"></a>dap2 <span class="ot">&lt;-</span> bagua <span class="sc">%&gt;%</span></span>
+<span id="cb196-2"><a href="pruebas-de-hipótesis-ii.html#cb196-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(dap,especie) <span class="sc">%&gt;%</span></span>
+<span id="cb196-3"><a href="pruebas-de-hipótesis-ii.html#cb196-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Aucatadijo&quot;</span>,<span class="st">&quot;Shihuahuaco&quot;</span>))</span>
+<span id="cb196-4"><a href="pruebas-de-hipótesis-ii.html#cb196-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-5"><a href="pruebas-de-hipótesis-ii.html#cb196-5" aria-hidden="true" tabindex="-1"></a>Aucatadijo <span class="ot">&lt;-</span> dap2<span class="sc">%&gt;%</span></span>
+<span id="cb196-6"><a href="pruebas-de-hipótesis-ii.html#cb196-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Aucatadijo&quot;</span>))</span>
+<span id="cb196-7"><a href="pruebas-de-hipótesis-ii.html#cb196-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-8"><a href="pruebas-de-hipótesis-ii.html#cb196-8" aria-hidden="true" tabindex="-1"></a>Shihuahuaco <span class="ot">&lt;-</span> dap2<span class="sc">%&gt;%</span></span>
+<span id="cb196-9"><a href="pruebas-de-hipótesis-ii.html#cb196-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(especie <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Shihuahuaco&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="pruebas-de-hipótesis-ii.html#cb197-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.exact</span>(Aucatadijo<span class="sc">$</span>dap,Shihuahuaco<span class="sc">$</span>dap, <span class="at">mu =</span> <span class="dv">0</span>,</span>
+<span id="cb197-2"><a href="pruebas-de-hipótesis-ii.html#cb197-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">paired =</span> F, <span class="at">alternative =</span> <span class="st">&quot;t&quot;</span>)</span></code></pre></div>
 <pre><code>
     Asymptotic Wilcoxon rank sum test
 
@@ -923,7 +923,7 @@ alternative hypothesis: true mu is not equal to 0</code></pre>
 <p><span class="math inline">\(H_0: \theta_{Aucatadijo} = \theta_{Shihuahuaco}\)</span></p>
 <p><span class="math inline">\(H_1: \theta_{Aucatadijo} \neq \theta_{Shihuahuaco}\)</span></p>
 <p><span class="math inline">\(\alpha = 0.05\)</span></p>
-<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="pruebas-de-hipótesis-ii.html#cb198-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mood.test</span>(Aucatadijo<span class="sc">$</span>dap,Shihuahuaco<span class="sc">$</span>dap, <span class="at">alternative =</span> <span class="st">&quot;t&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="pruebas-de-hipótesis-ii.html#cb199-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mood.test</span>(Aucatadijo<span class="sc">$</span>dap,Shihuahuaco<span class="sc">$</span>dap, <span class="at">alternative =</span> <span class="st">&quot;t&quot;</span>)</span></code></pre></div>
 <pre><code>
     Mood two-sample test of scale
 
@@ -936,7 +936,7 @@ alternative hypothesis: two.sided</code></pre>
 <h3><span class="header-section-number">6.3.3</span> Prueba Kruskal Wallis<a href="pruebas-de-hipótesis-ii.html#prueba-kruskal-wallis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><span class="math inline">\(H_0: \text{El dap de las especies provienen de la misma distribución}\)</span></p>
 <p><span class="math inline">\(H_1: \text{El dap de las especies no provienen de la misma distribución}\)</span></p>
-<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="pruebas-de-hipótesis-ii.html#cb200-1" aria-hidden="true" tabindex="-1"></a>kSamples<span class="sc">::</span><span class="fu">ad.test</span>(dap<span class="sc">$</span>dap<span class="sc">~</span>dap<span class="sc">$</span>especie)</span></code></pre></div>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="pruebas-de-hipótesis-ii.html#cb201-1" aria-hidden="true" tabindex="-1"></a>kSamples<span class="sc">::</span><span class="fu">ad.test</span>(dap<span class="sc">$</span>dap<span class="sc">~</span>dap<span class="sc">$</span>especie)</span></code></pre></div>
 <pre><code>
 
  Anderson-Darling k-sample test.
@@ -957,7 +957,7 @@ version 1: 121 90.46 0.000000000000000000000000000000000000000000000000000000000
 version 2: 126 94.39 0.0000000000000000000000000000000000000000000000000000000000002719</code></pre>
 <p><span class="math inline">\(H_0: Mediana_{Aucatadijo} = Mediana_{Bolaina} = Mediana_{Shihuahuaco} = Mediana_{Tornillo}\)</span></p>
 <p><span class="math inline">\(H_1: \text{Al menos una Mediana es diferente a las demás}\)</span></p>
-<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="pruebas-de-hipótesis-ii.html#cb202-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(dap,<span class="fu">kruskal</span>(<span class="at">y =</span> dap,<span class="at">trt =</span> especie,<span class="at">alpha =</span> <span class="fl">0.05</span>,<span class="at">group =</span> T,<span class="at">console =</span> T))</span></code></pre></div>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="pruebas-de-hipótesis-ii.html#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(dap,<span class="fu">kruskal</span>(<span class="at">y =</span> dap,<span class="at">trt =</span> especie,<span class="at">alpha =</span> <span class="fl">0.05</span>,<span class="at">group =</span> T,<span class="at">console =</span> T))</span></code></pre></div>
 <pre><code>
 Study: dap ~ especie
 Kruskal-Wallis test&#39;s
@@ -993,7 +993,7 @@ Bolaina      51.22472      c</code></pre>
 <h3><span class="header-section-number">6.3.4</span> Prueba de la Mediana<a href="pruebas-de-hipótesis-ii.html#prueba-de-la-mediana" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><span class="math inline">\(H_0: Mediana_{Aucatadijo} = Mediana_{Bolaina} = Mediana_{Shihuahuaco} = Mediana_{Tornillo}\)</span></p>
 <p><span class="math inline">\(H_1: \text{Al menos una Mediana es diferente a las demás}\)</span></p>
-<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="pruebas-de-hipótesis-ii.html#cb204-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(dap,<span class="fu">Median.test</span>(<span class="at">y =</span> dap,<span class="at">trt =</span> especie,<span class="at">alpha =</span> <span class="fl">0.05</span>,<span class="at">group =</span> T,<span class="at">console =</span> T))</span></code></pre></div>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="pruebas-de-hipótesis-ii.html#cb205-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(dap,<span class="fu">Median.test</span>(<span class="at">y =</span> dap,<span class="at">trt =</span> especie,<span class="at">alpha =</span> <span class="fl">0.05</span>,<span class="at">group =</span> T,<span class="at">console =</span> T))</span></code></pre></div>
 <pre><code>
 The Median Test for dap ~ especie 
 

@@ -179,8 +179,7 @@ par(op)
 
 **Tabla de frecuencia y gráfico de líneas para Número de hileras por mazorca**
 
-```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
-
+```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 # Importación
 maiz2 <- read_excel("datos 1.xlsx", sheet = "Datos 2")
 
@@ -191,6 +190,10 @@ maiz2$PAE <- car::recode(maiz2$PAE, "1='Ausente o muy débil';
 maiz2$PAE <- factor(maiz2$PAE,
                    levels = c("Ausente o muy débil","Débil","Media","Fuerte",
                               "Muy fuerte"), ordered = TRUE)
+```
+
+
+```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 # Variable cuantitativa discreta
 # Tabla de frecuencias
 f1 <- table(maiz2$HPP)

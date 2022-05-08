@@ -849,31 +849,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="aplicación-caso-maíz" class="section level2 hasAnchor" number="9.4">
 <h2><span class="header-section-number">9.4</span> Aplicación: Caso Maíz<a href="análisis-de-componentes-principales.html#aplicación-caso-maíz" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="análisis-de-componentes-principales.html#cb275-1" aria-hidden="true" tabindex="-1"></a>Tratamiento <span class="ot">&lt;-</span> <span class="fu">factor</span>(maiz<span class="sc">$</span>Tratamiento)</span>
-<span id="cb275-2"><a href="análisis-de-componentes-principales.html#cb275-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb275-3"><a href="análisis-de-componentes-principales.html#cb275-3" aria-hidden="true" tabindex="-1"></a>data.PCA <span class="ot">&lt;-</span> maiz<span class="sc">%&gt;%</span></span>
-<span id="cb275-4"><a href="análisis-de-componentes-principales.html#cb275-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(HPP, GPM, LG, AG, PM)</span></code></pre></div>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="análisis-de-componentes-principales.html#cb276-1" aria-hidden="true" tabindex="-1"></a>Tratamiento <span class="ot">&lt;-</span> <span class="fu">factor</span>(maiz<span class="sc">$</span>Tratamiento)</span>
+<span id="cb276-2"><a href="análisis-de-componentes-principales.html#cb276-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb276-3"><a href="análisis-de-componentes-principales.html#cb276-3" aria-hidden="true" tabindex="-1"></a>data.PCA <span class="ot">&lt;-</span> maiz<span class="sc">%&gt;%</span></span>
+<span id="cb276-4"><a href="análisis-de-componentes-principales.html#cb276-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(HPP, GPM, LG, AG, PM)</span></code></pre></div>
 <div id="correlación-de-variables" class="section level3 hasAnchor" number="9.4.1">
 <h3><span class="header-section-number">9.4.1</span> Correlación de variables<a href="análisis-de-componentes-principales.html#correlación-de-variables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="análisis-de-componentes-principales.html#cb276-1" aria-hidden="true" tabindex="-1"></a>cor <span class="ot">&lt;-</span> <span class="fu">cor</span>(data.PCA)</span>
-<span id="cb276-2"><a href="análisis-de-componentes-principales.html#cb276-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb276-3"><a href="análisis-de-componentes-principales.html#cb276-3" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(cor)</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-89-1.png" width="576" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="análisis-de-componentes-principales.html#cb277-1" aria-hidden="true" tabindex="-1"></a>p.mat <span class="ot">&lt;-</span> <span class="fu">cor_pmat</span>(data.PCA)</span>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="análisis-de-componentes-principales.html#cb277-1" aria-hidden="true" tabindex="-1"></a>cor <span class="ot">&lt;-</span> <span class="fu">cor</span>(data.PCA)</span>
 <span id="cb277-2"><a href="análisis-de-componentes-principales.html#cb277-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb277-3"><a href="análisis-de-componentes-principales.html#cb277-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(cor, <span class="at">hc.order =</span> F,</span>
-<span id="cb277-4"><a href="análisis-de-componentes-principales.html#cb277-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type =</span> <span class="st">&quot;lower&quot;</span>, <span class="at">p.mat =</span> p.mat) </span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-89-2.png" width="576" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="análisis-de-componentes-principales.html#cb278-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(cor, <span class="at">hc.order =</span> F,</span>
-<span id="cb278-2"><a href="análisis-de-componentes-principales.html#cb278-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type =</span> <span class="st">&quot;lower&quot;</span>, <span class="at">p.mat =</span> p.mat,</span>
-<span id="cb278-3"><a href="análisis-de-componentes-principales.html#cb278-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">insig =</span> <span class="st">&quot;blank&quot;</span>)</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-89-3.png" width="576" style="display: block; margin: auto;" /></p>
+<span id="cb277-3"><a href="análisis-de-componentes-principales.html#cb277-3" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(cor)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-90-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="análisis-de-componentes-principales.html#cb278-1" aria-hidden="true" tabindex="-1"></a>p.mat <span class="ot">&lt;-</span> <span class="fu">cor_pmat</span>(data.PCA)</span>
+<span id="cb278-2"><a href="análisis-de-componentes-principales.html#cb278-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb278-3"><a href="análisis-de-componentes-principales.html#cb278-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(cor, <span class="at">hc.order =</span> F,</span>
+<span id="cb278-4"><a href="análisis-de-componentes-principales.html#cb278-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type =</span> <span class="st">&quot;lower&quot;</span>, <span class="at">p.mat =</span> p.mat) </span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-90-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="análisis-de-componentes-principales.html#cb279-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(cor, <span class="at">hc.order =</span> F,</span>
+<span id="cb279-2"><a href="análisis-de-componentes-principales.html#cb279-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type =</span> <span class="st">&quot;lower&quot;</span>, <span class="at">p.mat =</span> p.mat,</span>
+<span id="cb279-3"><a href="análisis-de-componentes-principales.html#cb279-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">insig =</span> <span class="st">&quot;blank&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-90-3.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="análisis-de-componentes-principales-1" class="section level3 hasAnchor" number="9.4.2">
 <h3><span class="header-section-number">9.4.2</span> Análisis de componentes principales<a href="análisis-de-componentes-principales.html#análisis-de-componentes-principales-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Forma 1</strong></p>
-<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="análisis-de-componentes-principales.html#cb279-1" aria-hidden="true" tabindex="-1"></a>acp <span class="ot">&lt;-</span> FactoMineR<span class="sc">::</span><span class="fu">PCA</span>(data.PCA, <span class="at">scale.unit =</span> T, <span class="at">ncp =</span> <span class="dv">5</span>, <span class="at">graph =</span> F)</span>
-<span id="cb279-2"><a href="análisis-de-componentes-principales.html#cb279-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(acp)</span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="análisis-de-componentes-principales.html#cb280-1" aria-hidden="true" tabindex="-1"></a>acp <span class="ot">&lt;-</span> FactoMineR<span class="sc">::</span><span class="fu">PCA</span>(data.PCA, <span class="at">scale.unit =</span> T, <span class="at">ncp =</span> <span class="dv">5</span>, <span class="at">graph =</span> F)</span>
+<span id="cb280-2"><a href="análisis-de-componentes-principales.html#cb280-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(acp)</span></code></pre></div>
 <pre><code>
 Call:
 FactoMineR::PCA(X = data.PCA, scale.unit = T, ncp = 5, graph = F) 
@@ -905,35 +905,35 @@ GPM |  0.417 10.104  0.174 |  0.099  0.638  0.010 |  0.870 73.208  0.758 |
 LG  | -0.160  1.489  0.026 |  0.833 45.139  0.693 | -0.285  7.853  0.081 |
 AG  |  0.842 41.218  0.709 |  0.185  2.223  0.034 | -0.356 12.240  0.127 |
 PM  |  0.109  0.689  0.012 |  0.876 49.945  0.767 |  0.218  4.578  0.047 |</code></pre>
-<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="análisis-de-componentes-principales.html#cb281-1" aria-hidden="true" tabindex="-1"></a><span class="co">#acp$ind$contrib</span></span>
-<span id="cb281-2"><a href="análisis-de-componentes-principales.html#cb281-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(acp<span class="sc">$</span>ind<span class="sc">$</span>contrib)</span></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="análisis-de-componentes-principales.html#cb282-1" aria-hidden="true" tabindex="-1"></a><span class="co">#acp$ind$contrib</span></span>
+<span id="cb282-2"><a href="análisis-de-componentes-principales.html#cb282-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(acp<span class="sc">$</span>ind<span class="sc">$</span>contrib)</span></code></pre></div>
 <pre><code>Dim.1 Dim.2 Dim.3 Dim.4 Dim.5 
   100   100   100   100   100 </code></pre>
-<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="análisis-de-componentes-principales.html#cb283-1" aria-hidden="true" tabindex="-1"></a><span class="co"># acp$ind$cos2</span></span>
-<span id="cb283-2"><a href="análisis-de-componentes-principales.html#cb283-2" aria-hidden="true" tabindex="-1"></a><span class="co"># rowSums(acp$ind$cos2)</span></span>
-<span id="cb283-3"><a href="análisis-de-componentes-principales.html#cb283-3" aria-hidden="true" tabindex="-1"></a><span class="co"># acp$ind$coord</span></span>
-<span id="cb283-4"><a href="análisis-de-componentes-principales.html#cb283-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb283-5"><a href="análisis-de-componentes-principales.html#cb283-5" aria-hidden="true" tabindex="-1"></a>acp<span class="sc">$</span>var<span class="sc">$</span>contrib</span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="análisis-de-componentes-principales.html#cb284-1" aria-hidden="true" tabindex="-1"></a><span class="co"># acp$ind$cos2</span></span>
+<span id="cb284-2"><a href="análisis-de-componentes-principales.html#cb284-2" aria-hidden="true" tabindex="-1"></a><span class="co"># rowSums(acp$ind$cos2)</span></span>
+<span id="cb284-3"><a href="análisis-de-componentes-principales.html#cb284-3" aria-hidden="true" tabindex="-1"></a><span class="co"># acp$ind$coord</span></span>
+<span id="cb284-4"><a href="análisis-de-componentes-principales.html#cb284-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb284-5"><a href="análisis-de-componentes-principales.html#cb284-5" aria-hidden="true" tabindex="-1"></a>acp<span class="sc">$</span>var<span class="sc">$</span>contrib</span></code></pre></div>
 <pre><code>         Dim.1      Dim.2     Dim.3     Dim.4      Dim.5
 HPP 46.5002070  2.0560761  2.121562  8.544112 40.7780426
 GPM 10.1043069  0.6377917 73.207820  9.069750  6.9803323
 LG   1.4889320 45.1390575  7.852844 44.729023  0.7901433
 AG  41.2175394  2.2225611 12.239575  6.793278 37.5270458
 PM   0.6890147 49.9445136  4.578199 30.863836 13.9244361</code></pre>
-<div class="sourceCode" id="cb285"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb285-1"><a href="análisis-de-componentes-principales.html#cb285-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(acp<span class="sc">$</span>var<span class="sc">$</span>contrib)</span></code></pre></div>
+<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="análisis-de-componentes-principales.html#cb286-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(acp<span class="sc">$</span>var<span class="sc">$</span>contrib)</span></code></pre></div>
 <pre><code>Dim.1 Dim.2 Dim.3 Dim.4 Dim.5 
   100   100   100   100   100 </code></pre>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="análisis-de-componentes-principales.html#cb287-1" aria-hidden="true" tabindex="-1"></a>acp<span class="sc">$</span>var<span class="sc">$</span>cos2</span></code></pre></div>
+<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="análisis-de-componentes-principales.html#cb288-1" aria-hidden="true" tabindex="-1"></a>acp<span class="sc">$</span>var<span class="sc">$</span>cos2</span></code></pre></div>
 <pre><code>         Dim.1       Dim.2      Dim.3      Dim.4       Dim.5
 HPP 0.79947101 0.031574032 0.02195741 0.03779034 0.109207203
 GPM 0.17372182 0.009794217 0.75767480 0.04011522 0.018693947
 LG  0.02559898 0.693175734 0.08127413 0.19783508 0.002116074
 AG  0.70864691 0.034130651 0.12667523 0.03004646 0.100500747
 PM  0.01184613 0.766970487 0.04738273 0.13650979 0.037290871</code></pre>
-<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="análisis-de-componentes-principales.html#cb289-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(acp<span class="sc">$</span>var<span class="sc">$</span>cos2)</span></code></pre></div>
+<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="análisis-de-componentes-principales.html#cb290-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(acp<span class="sc">$</span>var<span class="sc">$</span>cos2)</span></code></pre></div>
 <pre><code>HPP GPM  LG  AG  PM 
   1   1   1   1   1 </code></pre>
-<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="análisis-de-componentes-principales.html#cb291-1" aria-hidden="true" tabindex="-1"></a>acp<span class="sc">$</span>var<span class="sc">$</span>coord</span></code></pre></div>
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="análisis-de-componentes-principales.html#cb292-1" aria-hidden="true" tabindex="-1"></a>acp<span class="sc">$</span>var<span class="sc">$</span>coord</span></code></pre></div>
 <pre><code>         Dim.1      Dim.2      Dim.3      Dim.4      Dim.5
 HPP -0.8941314 0.17769083  0.1481803  0.1943974  0.3304651
 GPM  0.4167995 0.09896574  0.8704452 -0.2002878  0.1367258
@@ -941,8 +941,8 @@ LG  -0.1599968 0.83257176 -0.2850862 -0.4447866  0.0460008
 AG   0.8418117 0.18474483 -0.3559146  0.1733391  0.3170185
 PM   0.1088399 0.87576851  0.2176757  0.3694723 -0.1931084</code></pre>
 <p><strong>Forma 2</strong></p>
-<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="análisis-de-componentes-principales.html#cb293-1" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> ade4<span class="sc">::</span><span class="fu">dudi.pca</span>(data.PCA, <span class="at">scannf =</span> F, <span class="at">scale =</span> T, <span class="at">nf =</span> <span class="dv">5</span>)</span>
-<span id="cb293-2"><a href="análisis-de-componentes-principales.html#cb293-2" aria-hidden="true" tabindex="-1"></a>pca</span></code></pre></div>
+<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="análisis-de-componentes-principales.html#cb294-1" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> ade4<span class="sc">::</span><span class="fu">dudi.pca</span>(data.PCA, <span class="at">scannf =</span> F, <span class="at">scale =</span> T, <span class="at">nf =</span> <span class="dv">5</span>)</span>
+<span id="cb294-2"><a href="análisis-de-componentes-principales.html#cb294-2" aria-hidden="true" tabindex="-1"></a>pca</span></code></pre></div>
 <pre><code>Duality diagramm
 class: pca dudi
 $call: ade4::dudi.pca(df = data.PCA, scale = T, scannf = F, nf = 5)
@@ -962,17 +962,17 @@ eigen values: 1.719 1.536 1.035 0.4423 0.2678
 4 $co        5    5    column coordinates  
 5 $c1        5    5    column normed scores
 other elements: cent norm </code></pre>
-<div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb295-1"><a href="análisis-de-componentes-principales.html#cb295-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pca$l1 # scores normalizados</span></span>
-<span id="cb295-2"><a href="análisis-de-componentes-principales.html#cb295-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pca$li # scores</span></span>
-<span id="cb295-3"><a href="análisis-de-componentes-principales.html#cb295-3" aria-hidden="true" tabindex="-1"></a>pca<span class="sc">$</span>co <span class="co"># coordenadas de variables</span></span></code></pre></div>
+<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="análisis-de-componentes-principales.html#cb296-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pca$l1 # scores normalizados</span></span>
+<span id="cb296-2"><a href="análisis-de-componentes-principales.html#cb296-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pca$li # scores</span></span>
+<span id="cb296-3"><a href="análisis-de-componentes-principales.html#cb296-3" aria-hidden="true" tabindex="-1"></a>pca<span class="sc">$</span>co <span class="co"># coordenadas de variables</span></span></code></pre></div>
 <pre><code>         Comp1      Comp2      Comp3      Comp4      Comp5
 HPP  0.8941314 0.17769083  0.1481803 -0.1943974 -0.3304651
 GPM -0.4167995 0.09896574  0.8704452  0.2002878 -0.1367258
 LG   0.1599968 0.83257176 -0.2850862  0.4447866 -0.0460008
 AG  -0.8418117 0.18474483 -0.3559146 -0.1733391 -0.3170185
 PM  -0.1088399 0.87576851  0.2176757 -0.3694723  0.1931084</code></pre>
-<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="análisis-de-componentes-principales.html#cb297-1" aria-hidden="true" tabindex="-1"></a><span class="co"># autovalores</span></span>
-<span id="cb297-2"><a href="análisis-de-componentes-principales.html#cb297-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pca)</span></code></pre></div>
+<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="análisis-de-componentes-principales.html#cb298-1" aria-hidden="true" tabindex="-1"></a><span class="co"># autovalores</span></span>
+<span id="cb298-2"><a href="análisis-de-componentes-principales.html#cb298-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pca)</span></code></pre></div>
 <pre><code>Class: pca dudi
 Call: ade4::dudi.pca(df = data.PCA, scale = T, scannf = F, nf = 5)
 
@@ -992,18 +992,18 @@ Cumulative projected inertia (%):
 </div>
 <div id="gráfico-de-sedimentación" class="section level3 hasAnchor" number="9.4.3">
 <h3><span class="header-section-number">9.4.3</span> Gráfico de sedimentación<a href="análisis-de-componentes-principales.html#gráfico-de-sedimentación" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="análisis-de-componentes-principales.html#cb299-1" aria-hidden="true" tabindex="-1"></a><span class="co"># primera forma</span></span>
-<span id="cb299-2"><a href="análisis-de-componentes-principales.html#cb299-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb299-3"><a href="análisis-de-componentes-principales.html#cb299-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pca<span class="sc">$</span>eig, <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">pch =</span> <span class="dv">20</span>, <span class="at">col =</span><span class="st">&quot;blue&quot;</span>)</span>
-<span id="cb299-4"><a href="análisis-de-componentes-principales.html#cb299-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-92-1.png" width="576" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="análisis-de-componentes-principales.html#cb300-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_eig</span>(pca, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>)<span class="sc">+</span></span>
-<span id="cb300-2"><a href="análisis-de-componentes-principales.html#cb300-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_test</span>()</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-92-2.png" width="576" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="análisis-de-componentes-principales.html#cb301-1" aria-hidden="true" tabindex="-1"></a><span class="co"># segunda forma</span></span>
-<span id="cb301-2"><a href="análisis-de-componentes-principales.html#cb301-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb301-3"><a href="análisis-de-componentes-principales.html#cb301-3" aria-hidden="true" tabindex="-1"></a>eig.val <span class="ot">&lt;-</span> <span class="fu">get_eigenvalue</span>(pca)</span>
-<span id="cb301-4"><a href="análisis-de-componentes-principales.html#cb301-4" aria-hidden="true" tabindex="-1"></a>eig.val</span></code></pre></div>
+<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="análisis-de-componentes-principales.html#cb300-1" aria-hidden="true" tabindex="-1"></a><span class="co"># primera forma</span></span>
+<span id="cb300-2"><a href="análisis-de-componentes-principales.html#cb300-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb300-3"><a href="análisis-de-componentes-principales.html#cb300-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pca<span class="sc">$</span>eig, <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">pch =</span> <span class="dv">20</span>, <span class="at">col =</span><span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb300-4"><a href="análisis-de-componentes-principales.html#cb300-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-93-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="análisis-de-componentes-principales.html#cb301-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_eig</span>(pca, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>)<span class="sc">+</span></span>
+<span id="cb301-2"><a href="análisis-de-componentes-principales.html#cb301-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_test</span>()</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-93-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb302"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb302-1"><a href="análisis-de-componentes-principales.html#cb302-1" aria-hidden="true" tabindex="-1"></a><span class="co"># segunda forma</span></span>
+<span id="cb302-2"><a href="análisis-de-componentes-principales.html#cb302-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb302-3"><a href="análisis-de-componentes-principales.html#cb302-3" aria-hidden="true" tabindex="-1"></a>eig.val <span class="ot">&lt;-</span> <span class="fu">get_eigenvalue</span>(pca)</span>
+<span id="cb302-4"><a href="análisis-de-componentes-principales.html#cb302-4" aria-hidden="true" tabindex="-1"></a>eig.val</span></code></pre></div>
 <pre><code>      eigenvalue variance.percent cumulative.variance.percent
 Dim.1  1.7192848        34.385697                    34.38570
 Dim.2  1.5356451        30.712902                    65.09860
@@ -1013,41 +1013,41 @@ Dim.5  0.2678088         5.356177                   100.00000</code></pre>
 </div>
 <div id="correlación-entre-variables-y-componentes" class="section level3 hasAnchor" number="9.4.4">
 <h3><span class="header-section-number">9.4.4</span> Correlación entre variables y componentes<a href="análisis-de-componentes-principales.html#correlación-entre-variables-y-componentes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="análisis-de-componentes-principales.html#cb303-1" aria-hidden="true" tabindex="-1"></a>pca<span class="sc">$</span>co</span></code></pre></div>
+<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="análisis-de-componentes-principales.html#cb304-1" aria-hidden="true" tabindex="-1"></a>pca<span class="sc">$</span>co</span></code></pre></div>
 <pre><code>         Comp1      Comp2      Comp3      Comp4      Comp5
 HPP  0.8941314 0.17769083  0.1481803 -0.1943974 -0.3304651
 GPM -0.4167995 0.09896574  0.8704452  0.2002878 -0.1367258
 LG   0.1599968 0.83257176 -0.2850862  0.4447866 -0.0460008
 AG  -0.8418117 0.18474483 -0.3559146 -0.1733391 -0.3170185
 PM  -0.1088399 0.87576851  0.2176757 -0.3694723  0.1931084</code></pre>
-<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="análisis-de-componentes-principales.html#cb305-1" aria-hidden="true" tabindex="-1"></a>corpca <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data.PCA,pca<span class="sc">$</span>li)</span>
-<span id="cb305-2"><a href="análisis-de-componentes-principales.html#cb305-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb305-3"><a href="análisis-de-componentes-principales.html#cb305-3" aria-hidden="true" tabindex="-1"></a>i <span class="ot">=</span> <span class="fu">cor</span>(corpca, <span class="at">method=</span><span class="st">&quot;pearson&quot;</span>)</span>
-<span id="cb305-4"><a href="análisis-de-componentes-principales.html#cb305-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb305-5"><a href="análisis-de-componentes-principales.html#cb305-5" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(i[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>], <span class="at">sig.level =</span> <span class="fl">0.05</span>)</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-93-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb306"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb306-1"><a href="análisis-de-componentes-principales.html#cb306-1" aria-hidden="true" tabindex="-1"></a>corpca <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data.PCA,pca<span class="sc">$</span>li)</span>
+<span id="cb306-2"><a href="análisis-de-componentes-principales.html#cb306-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb306-3"><a href="análisis-de-componentes-principales.html#cb306-3" aria-hidden="true" tabindex="-1"></a>i <span class="ot">=</span> <span class="fu">cor</span>(corpca, <span class="at">method=</span><span class="st">&quot;pearson&quot;</span>)</span>
+<span id="cb306-4"><a href="análisis-de-componentes-principales.html#cb306-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb306-5"><a href="análisis-de-componentes-principales.html#cb306-5" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(i[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>], <span class="at">sig.level =</span> <span class="fl">0.05</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-94-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="gráfico-de-variables-sobre-el-círculo-de-correlaciones" class="section level3 hasAnchor" number="9.4.5">
 <h3><span class="header-section-number">9.4.5</span> Gráfico de variables sobre el círculo de correlaciones<a href="análisis-de-componentes-principales.html#gráfico-de-variables-sobre-el-círculo-de-correlaciones" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb306"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb306-1"><a href="análisis-de-componentes-principales.html#cb306-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_var</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-94-1.png" width="576" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="análisis-de-componentes-principales.html#cb307-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_var</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span></code></pre></div>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-94-2.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="análisis-de-componentes-principales.html#cb307-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_var</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-95-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb308"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb308-1"><a href="análisis-de-componentes-principales.html#cb308-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_var</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>, <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-95-2.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="gráfico-de-individuos-sobre-el-primer-plano-de-componentes" class="section level3 hasAnchor" number="9.4.6">
 <h3><span class="header-section-number">9.4.6</span> Gráfico de individuos sobre el primer plano de componentes<a href="análisis-de-componentes-principales.html#gráfico-de-individuos-sobre-el-primer-plano-de-componentes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb308"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb308-1"><a href="análisis-de-componentes-principales.html#cb308-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>,<span class="at">geom.ind =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>,<span class="st">&quot;point&quot;</span>),<span class="at">habillage =</span> Tratamiento)</span></code></pre></div>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="análisis-de-componentes-principales.html#cb309-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>,<span class="at">geom.ind =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>,<span class="st">&quot;point&quot;</span>),<span class="at">habillage =</span> Tratamiento)</span></code></pre></div>
 <pre><code>Warning: ggrepel: 594 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-95-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-96-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 <div id="gráfico-de-individuos-sobre-el-primer-plano-con-biplot" class="section level3 hasAnchor" number="9.4.7">
 <h3><span class="header-section-number">9.4.7</span> Gráfico de individuos sobre el primer plano con biplot<a href="análisis-de-componentes-principales.html#gráfico-de-individuos-sobre-el-primer-plano-con-biplot" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="análisis-de-componentes-principales.html#cb310-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_biplot</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>,<span class="at">habillage =</span> Tratamiento)</span></code></pre></div>
+<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="análisis-de-componentes-principales.html#cb311-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_biplot</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>,<span class="at">habillage =</span> Tratamiento)</span></code></pre></div>
 <pre><code>Warning: ggrepel: 600 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-96-1.png" width="576" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="análisis-de-componentes-principales.html#cb312-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_biplot</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>,<span class="at">habillage =</span> Tratamiento, <span class="at">addEllipses =</span> T)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-97-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="análisis-de-componentes-principales.html#cb313-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_biplot</span>(pca,<span class="at">repel =</span> <span class="cn">TRUE</span>,<span class="at">habillage =</span> Tratamiento, <span class="at">addEllipses =</span> T)</span></code></pre></div>
 <pre><code>Warning: ggrepel: 600 unlabeled data points (too many overlaps). Consider increasing max.overlaps</code></pre>
-<p><img src="bookdownproj_files/figure-html/unnamed-chunk-96-2.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-97-2.png" width="576" style="display: block; margin: auto;" /></p>
 
 </div>
 </div>
