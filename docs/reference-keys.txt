@@ -19,7 +19,6 @@ descriptiva
 inferencial
 paramétrica
 no-paramétrica
-agradecimientos
 indicadores-estadísticos
 importancia-de-los-indicadores
 indicadores-de-centralidad
@@ -92,3 +91,4 @@ correlación-entre-variables-y-componentes
 gráfico-de-variables-sobre-el-círculo-de-correlaciones
 gráfico-de-individuos-sobre-el-primer-plano-de-componentes
 gráfico-de-individuos-sobre-el-primer-plano-con-biplot
+agradecimientos
