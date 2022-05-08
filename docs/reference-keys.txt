@@ -19,6 +19,7 @@ descriptiva
 inferencial
 paramétrica
 no-paramétrica
+agradecimientos
 indicadores-estadísticos
 importancia-de-los-indicadores
 indicadores-de-centralidad
