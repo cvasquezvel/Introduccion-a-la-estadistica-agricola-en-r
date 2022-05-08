@@ -9,7 +9,7 @@ output:
   bookdown::gitbook:
     includes:
       in_header: header.html
-subtitle: Recuento de escarabajos en un área
+subtitle: Un manual básico de R, apoyado de teorías básicas de la estadística con ejemplos aplicados a la agricultura.
 institute: InkaStats - Data Science Solutions S.A.C.
 site: bookdown::bookdown_site
 ---
@@ -97,623 +97,154 @@ document.write(\'<div class="btn-group pull-right" style="position: absolute; to
 readr::write_lines(htmlhead, path = "header.html")
 ```
 
-# Reconocimiento de variables
+# Conceptos básicos
 
-Para crear un modelo de regresión lineal se tomó como variable dependiente al *Recuento de escarabajos en un área*. Las posibles variables predictoras fueron:
+## Población (N)
 
-*Temperatura*: Temperatura (°C) ambiental.
+Es el conjunto de todos los elementos que se desean analizar y que presentan una o varias características en común.
 
-*Altura*: Altura (msnsm) del ambiente.
+Ejemplos:
 
-*Humedad*: Humedad relativa (%) ambiental.
+Las parcelas de maíz amarillo duro en la comunidad de Lambayeque durante los meses de abril a agosto de 2021.
+Las plantas de arándano variedad Biloxi en el área experimental del vivero, modulo 9.
 
-*Machos*: Genero predominante en el área (0 si predominan machos, 1 si hembras).
+## Muestra (m)
 
-*Urbano*: 0 (No) si el conteo se hizo en un área no urbana, 1 (Sí) si el conteo se hizo en un área urbana.
+Es un subconjunto representativo de elementos provenientes de una problación.
 
-# Análisis exploratorio y descriptivo
+Ejemplos:
 
-## Análisis descriptivo
+Las parcelas de 10 agricultores de maíz amarillo duro en la comunidad de Lambayeque.
+30 plantas de arándano variedad Biloxi en el área experimental del vivero, modulo 9.
 
-Los datos cuenta con un total de 200 observaciones (n=200).
+## Unidad elemental
 
-\changefontsizes{6pt}
+Es cada una de las personas, animales, cosas, o entidades que conforman las población en estudio.
 
-```{r, echo = F, eval=T, comment="", message=F, warning= F}
-datos <- readxl::read_xlsx("datos11.xlsx", sheet = "Sheet1")
-datos$Macho <- factor(datos$Macho,
-                      levels = c(0,1),
-                      labels = c("Machos","Hembras"))
-datos$Urbano <- factor(datos$Urbano,
-                      levels = c(0,1),
-                      labels = c("No","Sí"))
-```
+Ejemplos:
 
+Las parcelas de maíz amarillo duro.
+Las plantas de arándano.
 
-```{r, echo = T, eval=T, comment="", message=F, warning= F}
-library(summarytools)
-summarytools::descr(datos)
-```
+## Variable
 
-\changefontsizes{7pt}
+Es toda característica que se desea observar, medir o evaluar de las unidades elementales.
 
-```{r, echo = T, eval=T, comment="", message=F, warning= F}
-summary(datos)
-```
+Las variables se pueden clasificar en cuantitativas o cualitativas.
 
-## Gráficos exploratorios
+### Variable cualitativa
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(dplyr)
-datos %>%
-    select_if(is.numeric) %>%
-    pairs
-```
+Proporcionan datos que dan como resultado una categoría.
+Pueden ser de tipo nominal u ordinal.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(psych)
-datos %>%
-    select_if(is.numeric) %>%
-    pairs.panels
-```
+#### Nominales
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(ggplot2)
-library(GGally)
-datos %>%
-    ggpairs + theme_bw()
-```
+Son aquellos cuyos valores o resultados pueden ser organizados y presentados en cualquier orden.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(ggplot2)
-library(GGally)
-datos %>%
-    ggpairs(upper = list(continuous = "density", combo = "box_no_facet"), lower = list(continuous = "points", 
-        combo = "dot_no_facet")) + theme_bw()
-```
+Ejemplos:
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-#Generando gráfico de dispersión
-library(ggplot2)
-datos %>% 
-  ggplot(aes(x=Altura,y=Recuento))+
-  geom_point(position = "jitter", size=3, colour="red")+
-  labs( title = "DIAGRAMA DE DISPERSIÓN",
-        subtitle = "Altura vs Recuento")+
-  geom_smooth(method = "lm")+
-  theme_test()
-```
+- Forma de la hoja bandera del maíz.
+- Tipo de dentadura del grano de maíz.
 
-# Modelo de regresión lineal multiple completo
+#### Ordinales
 
-## Resumen del modelo
+Son aquellas cuyos valores o resultados deben ser organizados y presentados en orden definido.
 
-A continuación presentamos el modelo completo:
+Ejemplos:
 
-$$Recuento=\beta_0+\beta_1*Temperatura+\beta_2*Altura+\beta_3*Humedad+\beta_4*Hembras~+$$
+- Grado de instrucción del agricultor.
 
-$$\beta_5*Urbano+\epsilon_i$$
+### Variable cuantitativa
 
-\changefontsizes{5pt}
+Son aquellas cuyos valores pueden ser expresados en forma numérica,
+Pueden ser discretas o continuas.
 
-```{r, echo = T, eval=T, message=F, warning= F, comment=""}
-lm(Recuento~.,datos) -> modelo_completo
-summary(modelo_completo)
-```
-
-## Análisis de variancia
-
-```{r, echo = T, eval=T, message=F, warning= F, comment=""}
-anova(modelo_completo)
-```
-
-# Selección de variables paso a paso
-
-## Partición inicial de la base de datos
-
-### Resumen de la base de datos de entrenamiento
+#### Discreta
 
-\changefontsizes{6pt}
+Son aquellas que tienen un número finito o infinito numerable de valores posibles. Por lo general se obtienen mediante conteo.
 
-```{r, echo = T, eval=T, message=F, warning= F, comment=""}
-library(caret)
-set.seed(6666)
-train <- createDataPartition(y = datos$Recuento, p = 0.80, list = FALSE, times = 1)
-datos.train <- datos[train, ]
-datos.test  <- datos[-train, ]
-# summarytools::descr(datos.train)
-summary(datos.train)
-```
+Ejemplo:
 
-### Resumen de la base de datos de prueba
+- Número de hojas por planta.
 
-\changefontsizes{6pt}
+#### Continua
 
-```{r, echo = T, eval=T, message=F, warning= F, comment=""}
-# summarytools::descr(datos.test)
-summary(datos.test)
-```
+Son aquellas que tienen una cantidad infinita o no numerable de valores posibles. Por lo general se puede obtener mediante instrumentos de medición.
 
-### Verificación de la distribución de la variable respuesta (Recuento)
+Ejemplos:
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-par(mfrow = c(1,3))
-hist(datos$Recuento,
-                           main = "Datos completos",
-                           sub = c("Media = 196.925"),
-     xlab = "Recuento")
-hist(datos.train$Recuento,
-                           main = "Datos de entrenamiento",
-                           sub = c("Media = 196.7267"),
-     xlab = "Recuento")
-hist(datos.test$Recuento,
-                           main = "Datos de prueba",
-                           sub = c("Media = 197.7436"),
-     xlab = "Recuento")
-```
-
-## Forward
-
-### Resumen del modelo
-
-\changefontsizes{5pt}
+- Diámetro de fruto.
+- Peso de fruto.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-step(object = lm(formula = Recuento ~ 1, data = datos.train),
- direction = "forward",
- scope = formula(lm(Recuento~.,data=datos)),
- trace = F) -> modelo_forward
-modelo_forward %>% summary
-```
+## Otra forma de clasificación de variables
 
-### AIC del modelo
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-AIC(modelo_forward)
-```
+Otra forma de clasificación de las varibales es según su escalada de medida. De esta manera la clasificación sería:
 
-### Coeficientes del modelo
+- Nominal: Los datos son etiquetas o nombres que se emplean para definir un atributo del elemento.
 
-\changefontsizes{5pt}
+Ejemplos: Estado civil, profesión, género.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(tidyverse)
-library(broom)
-modelo_forward %>% 
- tidy %>% 
- filter(term != "(Intercept)") %>% 
- ggplot(aes(x = term, y = estimate)) +
- geom_col() +
- labs(title = "Coeficientes del modelo OLS") +
- theme_bw() +
- theme(axis.text.x = element_text(size = 8, angle = 90))
-```
+- Ordinal: Los datos son etiquetas y además se pueden ordenar de forma ascendente o descendente.
 
-### VIF de las variables seleccionadas
+Ejemplos: Nivel de apreciación o calidad de un fruto.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(faraway)
-modelo_forward %>% vif
-```
+- Intervalo: Los datos son numéricos, el cero es relativo, es decir, no indica ausencia de la característica medida.
 
-### MSE del entrenamiento
+Ejemplo: Temperatura, fechas del calendario.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo_forward %>% predict(newdata = data.frame(datos.train)) -> predicciones_train
-(mean((predicciones_train - datos.train$Recuento)^2) -> training_mse)
-```
-
-### Indicadores predictivos con la base de datos de entrenamiento
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(caret)
-postResample(predicciones_train, obs = datos.train$Recuento)
-```
+Razón: Los datos son numéricos, el cero es **absoluto**, es decir, indica la ausencia de característica medida.
 
-## Backward
-
-### Resumen del modelo
+Ejemplo: Peso, estatura, salario, diámetro.
 
-\changefontsizes{5pt}
+## Observación
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-step(object = lm(formula = Recuento ~ ., data = datos.train),
- direction = "backward",
- scope = list(upper = ~., lower = ~1),
- trace = F) -> modelo_backward
-modelo_backward %>% summary
-```
+Es el dato registrado, producto de la *medición* o aprecación de una característica en una unidad elemental.
 
-### AIC del modelo
+Ejemplo:
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-AIC(modelo_backward)
-```
+El ingreso mensual de la empresa agroexportadora Camposol, producto de las ventas de arándano.
 
-### Coeficientes del modelo
+## Parámetro
 
-\changefontsizes{5pt}
+Es una medida que resume los datos provenientes de la población. Es decir es una función de todas las observaciones de una población.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(tidyverse)
-library(broom)
-modelo_backward %>% 
- tidy %>% 
- filter(term != "(Intercept)") %>% 
- ggplot(aes(x = term, y = estimate)) +
- geom_col() +
- labs(title = "Coeficientes del modelo OLS") +
- theme_bw() +
- theme(axis.text.x = element_text(size = 8, angle = 90))
-```
+Ejemplo: Luego de realizar un censo a los agricultores del distrito de Túcume se obtuvo que el ingreso medio mensual fue de 920 soles.
 
-### VIF de las variables seleccionadas
+## Estadístico
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(faraway)
-modelo_backward %>% vif
-```
+Es una medida que resume los datos provenientes de la muestra.
 
-### MSE del entrenamiento
+Ejemplo: Luego de realizar un muestreo a 30 agricultores del distrito de Túcume se obtuvo que el ingreso medio mensual fue de 950 soles.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo_backward %>% predict(newdata = data.frame(datos.train)) -> predicciones_train
-(mean((predicciones_train - datos.train$Recuento)^2) -> training_mse)
-```
+# 2. Deficinión de Estadística
 
-### Indicadores predictivos con la base de datos de entrenamiento
+Es la ciencia que se ocupa de la creación, desarrollo y aplicación de técnicas que permiten hacer un análisis confiable de una población.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(caret)
-postResample(predicciones_train, obs = datos.train$Recuento)
-```
+En terminos generales, se ocupa de la colección, resumen, presentación, análisis e interpretación de datos y resultados, de modo tal que pueda evaluarse la confiabilidad y riesgos asociados a las conclusiones que se puedan derivar a partir de los datos captados.
 
-## Stepwise
+# 3. División de la Estadística
 
-### Resumen del modelo
+## Descriptiva
 
-\changefontsizes{5pt}
+Son técnicas de recolección, caracterización, resumen y presentación que permiten `describir` un conjunto de datos.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-step(object = lm(formula = Recuento ~ 1, data = datos.train),
- direction = "both",
- scope = formula(lm(Recuento~.,data=datos)),
- trace = F,
- k = log(nrow(datos.train))) -> modelo_step
-modelo_step %>% summary
-```
+Con un análisis descriptivo, se pueden obtener indicadores (estimaciones puntuales). tablas de frecuencia (o contingencia) y gráficos.
 
-### AIC del modelo
+Para realizar el análisis descriptivo se debe tener en cuenta el tipo de variable que se está analizando (cualitativa o cuantitativa) y la cantidad de variables que se están analizando a la vez (univariada, bivariada o multivariada).
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-AIC(modelo_step)
-```
+## Inferencial
 
-### Coeficientes del modelo
+Son técnicas para estimar parámetros de una población o tomar decisiones sobre la población basadas en el resultado de una muestra. Estas conclusiones pueden tener cierto margen de error; por eso, se dan con una medida de confiabilidad o probabilidad.
 
-\changefontsizes{5pt}
+Comprende la estimación de intervalos de confianza y la realización de pruebas de hipótesis para uno o varios parámetros.
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(tidyverse)
-library(broom)
-modelo_step %>% 
- tidy %>% 
- filter(term != "(Intercept)") %>% 
- ggplot(aes(x = term, y = estimate)) +
- geom_col() +
- labs(title = "Coeficientes del modelo OLS") +
- theme_bw() +
- theme(axis.text.x = element_text(size = 8, angle = 90))
-```
+Al igual que el análisis descriptivo para realizar un inferencial se debe tener en cuenta la naturaleza de la variable (si los datos provienen de alguna distribución teórica), el tipo de variable y la cantidad de variables involucradas en el análisis.
 
-### VIF de las variables seleccionadas
+## Paramétrica
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(faraway)
-modelo_step %>% vif
-```
+Utiliza cálculos y procedimientos asumiendo que conoce cómo se distribuye la variable aleatoria a estudiar.
 
-### MSE del entrenamiento
+## No paramétrica
 
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo_step %>% predict(newdata = data.frame(datos.train)) -> predicciones_train
-(mean((predicciones_train - datos.train$Recuento)^2) -> training_mse)
-```
+No requiere del conocimiento de la distribución de la variable aleatoria a estudiar.
 
-### Indicadores predictivos con la base de datos de entrenamiento
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(caret)
-postResample(predicciones_train, obs = datos.train$Recuento)
-```
-
-## Comparación de modelos
-
-\changefontsizes{7pt}
-
-|            |          |                    |           |           |           |
-|------------|----------|--------------------|-----------|-----------|-----------|
-| *Método*   | $AIC$    | $R^2$ **ajustado** | $RMSE$    | $R^2$     | $MAE$     |
-| *Forward*  | 973.239  | 99.54              | 4.8186162 | 0.9955231 | 3.7545822 |
-| *Backward* | 973.239  | 99.54              | 4.8186162 | 0.9955231 | 3.7545822 |
-| *Stepwise* | 976.0164 | 99.53              | 4.8906414 | 0.9953883 | 3.8580781 |
-
-Se selecciona al modelo Stepwise, por lo que el modelo final considerará a las variables Altura y Temperatura. La variable Macho, no tiene gran aporte predictivo, por ello, fue descartado.
-
-# Modelo de regresión lineal final
-
-## Resumen del modelo
-
-A continuación presentamos el modelo final:
-
-$$Recuento=\beta_0+\beta_1*Temperatura+\beta_2*Altura+\epsilon_i$$
-
-\changefontsizes{5pt}
-
-```{r, echo = T, eval=T, message=F, warning= F, comment=""}
-lm(Recuento~Temperatura+Altura,datos.train) -> modelo_final
-summary(modelo_final)
-```
-
-## Análisis de variancia
-
-```{r, echo = T, eval=T, message=F, warning= F, comment=""}
-anova(modelo_final)
-```
-
-## Gráfico de dispersión 3D
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(scatterplot3d)
-library(rgl)
-library(car)
-scatterplot3d(x = datos.train$Altura,y = datos.train$Temperatura, z = datos.train$Recuento, pch=16, highlight.3d=TRUE, xlab = "Altura", ylab = "Temperatura", zlab = "Recuento",angle = 80,
- type="h", main="3D Scatterplot")
-```
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-
-lm(Recuento ~ Altura+Temperatura, data = datos.train) %>% avPlots
-```
-
-## Análisis de supuestos
-
-### Valores predichos vs Residuos
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 <- modelo_final
-par(mfrow = c(1,1))
-plot(modelo1,which = 1, pch = 16,    # optional parameters to make points blue
-     col = '#006EA1')
-```
-
-### Gráfico de probabilidad normal de residuos
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-plot(modelo1,which = 2, pch = 16,    # optional parameters to make points blue
-     col = '#006EA1')
-```
-
-### Valores predichos vs Raíz de los residuos estandarizados absolutos
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-plot(modelo1,which = 3, pch = 16,    # optional parameters to make points blue
-     col = '#006EA1')
-```
-
-### Leverage vs Residuos estandarizados
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-plot(modelo1,which = 5, pch = 16,    # optional parameters to make points blue
-     col = '#006EA1')
-```
-
-### Distancias de Cook
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-plot(modelo1,which = 4, pch = 16,    # optional parameters to make points blue
-     col = '#006EA1')
-```
-
-### Distancias de Cook vs Leverage
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-plot(modelo1,which = 6, pch = 16,    # optional parameters to make points blue
-     col = '#006EA1')
-```
-
-### Resumen de supuestos con check_model
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>%
-  performance::check_model()
-```
-
-### Prueba de hipótesis para la normalidad de residuos
-
-#### Simetría de los residuos
-
-\changefontsizes{7pt}
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>%
-  residuals() %>%
-  moments::skewness()
-```
-
-#### Curtosis de los residuos
-
-\changefontsizes{7pt}
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>%
-  residuals() %>%
-  moments::kurtosis()
-```
-
-### Prueba de hipótesis para la normalidad de residuos
-
-Las pruebas de hipótesis para normalidad de los residuos, con la siguiente hipótesis:
-
-$H_0:$ Los residuos estandarizados del modelo planteado se distribuyen de forma similar a la función normal.
-
-$H_1:$ Los residuos estandarizados del modelo planteado no se distribuyen de forma similar a la función normal.
-
-\changefontsizes{7pt}
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>%
-  rstudent %>%
-  stats::shapiro.test()
-modelo1 %>%
-  rstudent %>%
-  nortest::ad.test()
-modelo1 %>%
-  rstudent %>%
-  ks.test("pnorm")
-```
-
-### Prueba de hipótesis para la homocedasticidad
-
-Por otro lado, al evaluar el supuesto de homocedasticidad y constrastar con la siguiente hipótesis:
-
-$H_0:$ La variancia de los errores del modelo planteado es homocedástica.
-
-$H_1:$ La variancia de los errores del modelo planteado es heterocedástica.
-
-\changefontsizes{4pt}
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>%
-  ncvTest
-
-library(olsrr)
-modelo1 %>%
-  ols_test_breusch_pagan
-
-library(lmtest)
-modelo1 %>%
-  bptest
-```
-
-### Prueba de hipótesis para la autocorrelación de residuos
-
-El uso de esta prueba es recomendado cuando interviene el tiempo como variable regresora del modelo.
-
-Al evaluar el supuesto de autocorrelación y constrastar la siguiente hipótesis:
-
-$H_0:$ Los errores del modelo planteado no están autocorrelacionados.
-
-$H_1:$ Los errores del modelo planteado están autocorrelacionados.
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>% residuals() %>% TSA::acf()
-```
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>% residuals() -> residuales
-plot(1:nrow(datos.train),residuales, type = "l", pch = 16,    # optional parameters to make points blue
-     col = '#006EA1', xlab = "Índice")
-```
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>% forecast::checkresiduals(pch = 16,    # optional parameters to make points blue
-     col = '#006EA1')
-```
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>% dwtest(alternative = "two.sided")
-```
-
-\changefontsizes{7pt}
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>% car::durbinWatsonTest(alternative = "two.sided",
-                            max.lag=10,
-                            reps=1e3)
-```
-
-### Leverages
-
-\changefontsizes{4pt}
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-
-modelo1 %>% model.matrix -> X1
-X1 %*% solve(t(X1)%*%X1) %*% t(X1) -> H1
-
-round((modelo1 %>% hatvalues),4)
-
-3 -> k1
-length(datos.train$Recuento) -> n1
-
-2*k1/n1
-
-data.frame(leverage=diag(H1)>2*k1/n1,
- influencial=abs(modelo1 %>% rstudent)>2) %>%
-  filter(influencial %in% "TRUE") %>%
-  row.names()
-```
-
-Entonces, una observación podrá ser considerada como un leverage si $h_ii>2\frac{k}{n}$, donde $k$ es el número de coeficinetes de regresión y $n$ es el tamaño de la muetra, siempre y cuando $2\frac{k}{n}<1$
-
-Para nuestro caso, tenemos que $k=3$ y nuestro $n=161$ observaciones entonces $2\frac{k}{n}<1$ = $2*(3/161)$ = $0.0373 < 1$
-
-En nuestro caso vemos que se cumple para nuestro conjunto de datos donde tenemos que $2k<n$ -\> $n>2k$ -\> $n>2(p+1)$donde $p$ es el número de variables predictoras para nosotros $p=2$ por tanto vemos que se cumple la condición $161>2(2+1)>2$
-
-Por otro lado, sabemos que no todo **leverage** es un punto influenciable.
-
-Cuando se extrajo la matriz Hat para nuestras 161 obervaciones vemos que todos los valores son menores a uno.
-
-Para nuestro caso son considerados valores leverage los siguientes: 26, 44, 77, 101, 125, 127 y 151. Sabemos que estas observaciones no son necesariamente influenciales pero se apartar de la distribución o el patron de los datos.
-
-### Distancia de Cook
-
-\changefontsizes{4pt}
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-round(modelo1 %>% cooks.distance(),4)
-
-data.frame(cook=(modelo1 %>% cooks.distance()),
- influencial=modelo1 %>% cooks.distance %>% pf(3,161-3)>0.05) %>%
-  filter(influencial %in% "TRUE") %>%
-  row.names()
-
-```
-
-Por otro lado, se ha detectdo que ninguna de las observaciones poseen una distancia de cook estadísticamente significativa. Entonces, no existen observaciones que influyen en el cálculo de los betas en el modelo de regresión.
-
-### COVRATIO
-
-\changefontsizes{3pt}
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo1 %>% covratio() 
-3 -> k
-length(datos.train$Recuento) -> n
-n > 3*k
-
-COVRATIO <- modelo1 %>% covratio() > 1+3*k/n | modelo1 %>% covratio() < 1-3*k/n
-COVRATIO <- data.frame(id = seq(1:161), COVRATIO)
-TRUES <- COVRATIO %>%
-  filter(COVRATIO %in% "TRUE")
-TRUES$id
-```
-
-Las observaciones con un alto COVRATIO fueron: 17, 26, 57, 100, 102 y 123. Estas observaciones influyen en el calculo de los estimadores del error estándar.
-
-## Poder predictivo del modelo final
-
-### MSE del modelo final sobre los datos de prueba
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-modelo_step %>% predict(newdata = data.frame(datos.test)) -> predicciones_test
-(mean((predicciones_train - datos.train$Recuento)^2) -> test_mse)
-```
-
-### Indicadores predictivos con la base de datos de prueba
-
-```{r, echo = T, eval=T, message=F, comment="", warning= F, fig.align='center'}
-library(caret)
-postResample(predicciones_test, obs = datos.test$Recuento)
-```

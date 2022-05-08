@@ -1,5 +1,4 @@
-Aplicación del modelo lineal general
+# Introducción a la estadística agrícola en R
 
-Ejemplo aplicado en conteo de escarabajos.
+Un manual básico de R, apoyado de teorías básicas de la estadística con ejemplos aplicados a la agricultura.
 
-*This repo was initially generated from a bookdown template available here: https://github.com/jtr13/bookdown-template.*
