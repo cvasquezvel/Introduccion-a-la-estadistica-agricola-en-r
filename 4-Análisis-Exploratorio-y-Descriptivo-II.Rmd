@@ -4,7 +4,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, agricolae, summarytools, car, psych)
 ```
 
-# 4. Análisis exploratorio y descriptivo II
+# 04. Análisis exploratorio y descriptivo II
 
 ## Escala de medida
 

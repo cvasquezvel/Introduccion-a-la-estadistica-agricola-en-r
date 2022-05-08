@@ -4,7 +4,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, agricolae, raster, car)
 ```
 
-# 2. Indicadores estadísticos
+# 02. Indicadores estadísticos
 
 ## Importancia de los indicadores
 

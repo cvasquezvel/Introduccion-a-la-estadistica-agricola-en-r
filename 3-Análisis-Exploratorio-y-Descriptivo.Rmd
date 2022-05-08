@@ -4,11 +4,11 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl, agricolae, summarytools, car, psych)
 ```
 
-# 3. Análisis exploratorio y descriptivo
+# 03. Análisis exploratorio y descriptivo
 
 ## Caso: Investigación en Maíz
 
-Se realizó un estudio del comportamiento agronómico de líneas promisorias y variedades comerciales de maíz amarillo duro en un experimento realizado en la Estación Experimental Agraria Vista Florida del Instituto Nacional de Innovación Agraria (INIA), ubicado en el distrito de Picsi, Provincia de Ferreñafe, Departamento de Lambayeque, Perú.
+Se realizó un estudio del comportamiento agronómico de líneas promisorias y variedades comerciales de maíz amarillo duro en un experimento ubicado en el distrito de Picsi, Provincia de Ferreñafe, Departamento de Lambayeque, Perú.
 
 ```{r, echo = F, comment = NA, fig.align='center',fig.width=6,fig.height=4}
 
