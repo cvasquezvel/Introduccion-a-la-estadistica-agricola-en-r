@@ -1,5 +1,5 @@
 ---
-title: "Introducción a la estadística agrícola con R"
+title: "Introducción a la estadística agrícola en R"
 author: "Vásquez V., C.R.A."
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
