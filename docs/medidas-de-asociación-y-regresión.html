@@ -933,7 +933,7 @@ sample estimates:
 <p>En teoría el p-value es la probabilidad de rechazar la <span class="math inline">\(H_0\)</span> siendo esta verdadera. En correlación la <span class="math inline">\(H_0\)</span> es planteada como la no existencia de correlación, es decir = 0.</p>
 <p>Alternativamente se tiene los límites de confianza. Para no rechazar la <span class="math inline">\(H_0\)</span> mediante los límites de confianza, estos deben encerrar al valor de 0 (cero incluido en el intervalo).</p>
 <p>Alternativa de la hipótesis:</p>
-<p>1: hipótesis de un solo ladom solo menor o mayor.</p>
+<p>1: hipótesis de un solo lado, solo menor o mayor.</p>
 <p>Si el interés es probar que la correlación sea buena y mayor de 0.6, entonces la hipótesis nula será:</p>
 <p><span class="math inline">\(H_0: \rho \le 0.6\)</span> cuya alternante será <span class="math inline">\(H_1: \rho &gt; 0.6\)</span></p>
 <p>2 colas: hipótesis de ambos lados (diferencia de cero).</p>
@@ -1152,13 +1152,13 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="medidas-de-asociación-y-regresión.html#cb264-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div>
 <p><strong>1. Falta de ajuste</strong></p>
 <p>Se analiza, si falta ajustar mejor el modelo, la línea roja es la que nos permite entender si se debe agregar algunos términos más en el modelo.</p>
-<p>Hay posibilidad de hacer un ajuste en el modelo.</p>
+<p>En este caso hay posibilidad de hacer un ajuste en el modelo.</p>
 <p><strong>2. La normalidad</strong></p>
 <p>Los puntos deben estar sobre la línea (perfecta normalidad en los errores).</p>
 <p>Se puede hacer un gráfico de normalidad y una prueba de hipótesis.</p>
 <p><strong>3. La magnitud del error</strong></p>
 <p>Es un gráfico estándar para detectar errores muy grandes. Es tolerable valores menores a 1.5.</p>
-<p>Exsiten tres posibles valores con errores críticos.</p>
+<p>Para este ejercicio, existen tres posibles valores con errores críticos.</p>
 <p><strong>4. Valores extremos</strong></p>
 <p>En el gráfico se puede detectar los outliers, que son posibles valores influyentes en el comportamiento del modelo.</p>
 <p>No hay valores extremos en el ejemplo.</p>
