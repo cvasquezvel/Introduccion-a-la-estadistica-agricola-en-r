@@ -154,7 +154,7 @@ Alternativamente se tiene los límites de confianza. Para no rechazar la $H_0$ m
 
 Alternativa de la hipótesis:
 
-1: hipótesis de un solo ladom solo menor o mayor.
+1: hipótesis de un solo lado, solo menor o mayor.
 
 Si el interés es probar que la correlación sea buena y mayor de 0.6, entonces la hipótesis nula será:
 
@@ -384,7 +384,7 @@ par(op)
 
 Se analiza, si falta ajustar mejor el modelo, la línea roja es la que nos permite entender si se debe agregar algunos términos más en el modelo.
 
-Hay posibilidad de hacer un ajuste en el modelo.
+En este caso hay posibilidad de hacer un ajuste en el modelo.
 
 **2. La normalidad**
 
@@ -396,7 +396,7 @@ Se puede hacer un gráfico de normalidad y una prueba de hipótesis.
 
 Es un gráfico estándar para detectar errores muy grandes. Es tolerable valores menores a 1.5.
 
-Exsiten tres posibles valores con errores críticos.
+Para este ejercicio, existen tres posibles valores con errores críticos.
 
 **4. Valores extremos**
 

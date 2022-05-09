@@ -13,3 +13,4 @@ RnwWeave: Sweave
 LaTeX: pdfLaTeX
 
 BuildType: Website
+WebsitePath: ~/InkaStats/GIT/Introduccion-a-la-estadistica-agricola-en-r

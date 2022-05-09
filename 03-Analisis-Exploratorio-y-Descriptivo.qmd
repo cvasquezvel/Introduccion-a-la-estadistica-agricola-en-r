@@ -104,7 +104,7 @@ pie(p1, main = "Gráfico circular", labels = c("Ausente o muy\ndébil (21.71 %)"
 
 barplot(tabla3,horiz = TRUE, las = 1, main = "Gráfico de barras",
         col = "blue")
-barplot(prop.table(tabla3)*100,horiz = TRUE, las = 1)
+barplot(prop.table(tabla3)*100,horiz = TRUE, las = 1, xlim = c(0,40))
 
 cat("Tabla de contingencia de PAE según los tratamientos:\n")
 table(maiz$PAE,maiz$Tratamiento) -> tabla4

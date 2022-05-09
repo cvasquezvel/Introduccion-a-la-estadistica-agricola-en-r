@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Introducción a la estadística agrícola en R</title>
+  <meta name="description" content="Introducción a la estadística agrícola en R" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Introducción a la estadística agrícola en R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Introducción a la estadística agrícola en R" />
+  
+  
+  
+
+<meta name="author" content="Vásquez V., C.R.A." />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+<script>
+/* ========================================================================
+  * Bootstrap: transition.js v3.3.7
+* http://getbootstrap.com/javascript/#transitions
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  
+  +function ($) {
+    'use strict';
+    
+    // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+    // ============================================================
+      
+      function transitionEnd() {
+        var el = document.createElement('bootstrap')
+        
+        var transEndEventNames = {
+          WebkitTransition : 'webkitTransitionEnd',
+          MozTransition    : 'transitionend',
+          OTransition      : 'oTransitionEnd otransitionend',
+          transition       : 'transitionend'
+        }
+        
+        for (var name in transEndEventNames) {
+          if (el.style[name] !== undefined) {
+            return { end: transEndEventNames[name] }
+          }
+        }
+        
+        return false // explicit for ie8 (  ._.)
+      }
+    
+    // http://blog.alexmaccaw.com/css-transitions
+    $.fn.emulateTransitionEnd = function (duration) {
+      var called = false
+      var $el = this
+      $(this).one('bsTransitionEnd', function () { called = true })
+      var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+      setTimeout(callback, duration)
+      return this
+    }
+    
+    $(function () {
+      $.support.transition = transitionEnd()
+      
+      if (!$.support.transition) return
+      
+      $.event.special.bsTransitionEnd = {
+        bindType: $.support.transition.end,
+        delegateType: $.support.transition.end,
+        handle: function (e) {
+          if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+        }
+      }
+    })
+    
+  }(jQuery);
+</script>
+<script>
+/* ========================================================================
+  * Bootstrap: collapse.js v3.3.7
+* http://getbootstrap.com/javascript/#collapse
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  /* jshint latedef: false */
+  
+  +function ($) {
+    'use strict';
+    
+    // COLLAPSE PUBLIC CLASS DEFINITION
+    // ================================
+      
+      var Collapse = function (element, options) {
+        this.$element      = $(element)
+        this.options       = $.extend({}, Collapse.DEFAULTS, options)
+        this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                                 '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+        this.transitioning = null
+        
+        if (this.options.parent) {
+          this.$parent = this.getParent()
+        } else {
+          this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+        }
+        
+        if (this.options.toggle) this.toggle()
+      }
+      
+      Collapse.VERSION  = '3.3.7'
+      
+      Collapse.TRANSITION_DURATION = 350
+      
+      Collapse.DEFAULTS = {
+        toggle: true
+      }
+      
+      Collapse.prototype.dimension = function () {
+        var hasWidth = this.$element.hasClass('width')
+        return hasWidth ? 'width' : 'height'
+      }
+      
+      Collapse.prototype.show = function () {
+        if (this.transitioning || this.$element.hasClass('in')) return
+        
+        var activesData
+        var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+        
+        if (actives && actives.length) {
+          activesData = actives.data('bs.collapse')
+          if (activesData && activesData.transitioning) return
+        }
+        
+        var startEvent = $.Event('show.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+        
+        if (actives && actives.length) {
+          Plugin.call(actives, 'hide')
+          activesData || actives.data('bs.collapse', null)
+        }
+        
+        var dimension = this.dimension()
+        
+        this.$element
+        .removeClass('collapse')
+        .addClass('collapsing')[dimension](0)
+        .attr('aria-expanded', true)
+        
+        this.$trigger
+        .removeClass('collapsed')
+        .attr('aria-expanded', true)
+        
+        this.transitioning = 1
+        
+        var complete = function () {
+          this.$element
+          .removeClass('collapsing')
+          .addClass('collapse in')[dimension]('')
+          this.transitioning = 0
+          this.$element
+          .trigger('shown.bs.collapse')
+        }
+        
+        if (!$.support.transition) return complete.call(this)
+        
+        var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+        
+        this.$element
+        .one('bsTransitionEnd', $.proxy(complete, this))
+        .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+      }
+      
+      Collapse.prototype.hide = function () {
+        if (this.transitioning || !this.$element.hasClass('in')) return
+        
+        var startEvent = $.Event('hide.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+        
+        var dimension = this.dimension()
+        
+        this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+        
+        this.$element
+        .addClass('collapsing')
+        .removeClass('collapse in')
+        .attr('aria-expanded', false)
+        
+        this.$trigger
+        .addClass('collapsed')
+        .attr('aria-expanded', false)
+        
+        this.transitioning = 1
+        
+        var complete = function () {
+          this.transitioning = 0
+          this.$element
+          .removeClass('collapsing')
+          .addClass('collapse')
+          .trigger('hidden.bs.collapse')
+        }
+        
+        if (!$.support.transition) return complete.call(this)
+        
+        this.$element
+        [dimension](0)
+        .one('bsTransitionEnd', $.proxy(complete, this))
+        .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+      }
+      
+      Collapse.prototype.toggle = function () {
+        this[this.$element.hasClass('in') ? 'hide' : 'show']()
+      }
+      
+      Collapse.prototype.getParent = function () {
+        return $(this.options.parent)
+        .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+        .each($.proxy(function (i, element) {
+          var $element = $(element)
+          this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+        }, this))
+        .end()
+      }
+      
+      Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+        var isOpen = $element.hasClass('in')
+        
+        $element.attr('aria-expanded', isOpen)
+        $trigger
+        .toggleClass('collapsed', !isOpen)
+        .attr('aria-expanded', isOpen)
+      }
+      
+      function getTargetFromTrigger($trigger) {
+        var href
+        var target = $trigger.attr('data-target')
+        || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+                                                                
+                                                                return $(target)
+      }
+      
+      
+      // COLLAPSE PLUGIN DEFINITION
+      // ==========================
+        
+        function Plugin(option) {
+          return this.each(function () {
+            var $this   = $(this)
+            var data    = $this.data('bs.collapse')
+            var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+            
+            if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+            if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+            if (typeof option == 'string') data[option]()
+          })
+        }
+      
+      var old = $.fn.collapse
+      
+      $.fn.collapse             = Plugin
+      $.fn.collapse.Constructor = Collapse
+      
+      
+      // COLLAPSE NO CONFLICT
+      // ====================
+        
+        $.fn.collapse.noConflict = function () {
+          $.fn.collapse = old
+          return this
+        }
+      
+      
+      // COLLAPSE DATA-API
+      // =================
+        
+        $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+          var $this   = $(this)
+          
+          if (!$this.attr('data-target')) e.preventDefault()
+          
+          var $target = getTargetFromTrigger($this)
+          var data    = $target.data('bs.collapse')
+          var option  = data ? 'toggle' : $this.data()
+          
+          Plugin.call($target, option)
+        })
+      
+  }(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+  
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+  
+  // index for unique code element ids
+  var currentIndex = 1;
+  
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+    
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+    
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+    .attr('data-toggle', 'collapse')
+    .attr('data-target', '#' + id)
+    .attr('aria-expanded', show)
+    .attr('aria-controls', id);
+    
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+    
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+    
+    div.before(buttonRow);
+    
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+  
+}
+</script>
+<script>
+/* ========================================================================
+  * Bootstrap: dropdown.js v3.3.7
+* http://getbootstrap.com/javascript/#dropdowns
+  * ========================================================================
+  * Copyright 2011-2016 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
+  
+  
+  +function ($) {
+    'use strict';
+    
+    // DROPDOWN CLASS DEFINITION
+    // =========================
+      
+      var backdrop = '.dropdown-backdrop'
+      var toggle   = '[data-toggle="dropdown"]'
+      var Dropdown = function (element) {
+        $(element).on('click.bs.dropdown', this.toggle)
+      }
+      
+      Dropdown.VERSION = '3.3.7'
+      
+      function getParent($this) {
+        var selector = $this.attr('data-target')
+        
+        if (!selector) {
+          selector = $this.attr('href')
+          selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+        }
+        
+        var $parent = selector && $(selector)
+        
+        return $parent && $parent.length ? $parent : $this.parent()
+      }
+      
+      function clearMenus(e) {
+        if (e && e.which === 3) return
+        $(backdrop).remove()
+        $(toggle).each(function () {
+          var $this         = $(this)
+          var $parent       = getParent($this)
+          var relatedTarget = { relatedTarget: this }
+          
+          if (!$parent.hasClass('open')) return
+          
+          if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+          
+          $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+          
+          if (e.isDefaultPrevented()) return
+          
+          $this.attr('aria-expanded', 'false')
+          $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+        })
+      }
+      
+      Dropdown.prototype.toggle = function (e) {
+        var $this = $(this)
+        
+        if ($this.is('.disabled, :disabled')) return
+        
+        var $parent  = getParent($this)
+        var isActive = $parent.hasClass('open')
+        
+        clearMenus()
+        
+        if (!isActive) {
+          if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+            // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+.open > .dropdown-menu {
+    display: block;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+<script>
+document.write('<div class="btn-group pull-right" style="position: absolute; top: 20%; right: 2%; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>')
+</script>
+
+
+
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path=""><a href="#conceptos-básicos"><i class="fa fa-check"></i><b>1</b> Conceptos básicos</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path=""><a href="#población-n"><i class="fa fa-check"></i><b>1.1</b> Población (N)</a></li>
+<li class="chapter" data-level="1.2" data-path=""><a href="#muestra-n"><i class="fa fa-check"></i><b>1.2</b> Muestra (n)</a></li>
+<li class="chapter" data-level="1.3" data-path=""><a href="#unidad-elemental"><i class="fa fa-check"></i><b>1.3</b> Unidad elemental</a></li>
+<li class="chapter" data-level="1.4" data-path=""><a href="#variable"><i class="fa fa-check"></i><b>1.4</b> Variable</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path=""><a href="#variable-cualitativa"><i class="fa fa-check"></i><b>1.4.1</b> Variable cualitativa</a></li>
+<li class="chapter" data-level="1.4.2" data-path=""><a href="#variable-cuantitativa"><i class="fa fa-check"></i><b>1.4.2</b> Variable cuantitativa</a></li>
+<li class="chapter" data-level="1.4.3" data-path=""><a href="#otra-forma-de-clasificación-de-variables"><i class="fa fa-check"></i><b>1.4.3</b> Otra forma de clasificación de variables</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path=""><a href="#observación"><i class="fa fa-check"></i><b>1.5</b> Observación</a></li>
+<li class="chapter" data-level="1.6" data-path=""><a href="#parámetro"><i class="fa fa-check"></i><b>1.6</b> Parámetro</a></li>
+<li class="chapter" data-level="1.7" data-path=""><a href="#estadístico"><i class="fa fa-check"></i><b>1.7</b> Estadístico</a></li>
+<li class="chapter" data-level="1.8" data-path=""><a href="#deficinión-de-estadística"><i class="fa fa-check"></i><b>1.8</b> Deficinión de Estadística</a></li>
+<li class="chapter" data-level="1.9" data-path=""><a href="#división-de-la-estadística"><i class="fa fa-check"></i><b>1.9</b> División de la Estadística</a>
+<ul>
+<li class="chapter" data-level="1.9.1" data-path=""><a href="#descriptiva"><i class="fa fa-check"></i><b>1.9.1</b> Descriptiva</a></li>
+<li class="chapter" data-level="1.9.2" data-path=""><a href="#inferencial"><i class="fa fa-check"></i><b>1.9.2</b> Inferencial</a></li>
+<li class="chapter" data-level="1.9.3" data-path=""><a href="#paramétrica"><i class="fa fa-check"></i><b>1.9.3</b> Paramétrica</a></li>
+<li class="chapter" data-level="1.9.4" data-path=""><a href="#no-paramétrica"><i class="fa fa-check"></i><b>1.9.4</b> No paramétrica</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introducción a la estadística agrícola en R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Introducción a la estadística agrícola en R</h1>
+<h2 class="subtitle"><em>Un manual básico de R, apoyado de teorías básicas de la estadística con ejemplos aplicados a la agricultura.</em></h2>
+<p class="author"><em>Vásquez V., C.R.A.</em></p>
+<p class="date"><em>09 Junio, 2022</em></p>
+</div>
+<div id="conceptos-básicos" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Conceptos básicos<a href="#conceptos-básicos" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="población-n" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Población (N)<a href="#población-n" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es el conjunto de todos los elementos que se desean analizar y que presentan una o varias características en común.</p>
+<p>Ejemplos:</p>
+<p>Las parcelas de maíz amarillo duro en la comunidad de Lambayeque durante los meses de abril a agosto de 2021.
+Las plantas de arándano variedad Biloxi en el área experimental del vivero, modulo 9.</p>
+</div>
+<div id="muestra-n" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Muestra (n)<a href="#muestra-n" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es un subconjunto representativo de elementos provenientes de una problación.</p>
+<p>Ejemplos:</p>
+<p>Las parcelas de 10 agricultores de maíz amarillo duro en la comunidad de Lambayeque.
+30 plantas de arándano variedad Biloxi en el área experimental del vivero, modulo 9.</p>
+</div>
+<div id="unidad-elemental" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Unidad elemental<a href="#unidad-elemental" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es cada una de las personas, animales, cosas, o entidades que conforman las población en estudio.</p>
+<p>Ejemplos:</p>
+<p>Las parcelas de maíz amarillo duro.
+Las plantas de arándano.</p>
+</div>
+<div id="variable" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Variable<a href="#variable" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es toda característica que se desea observar, medir o evaluar de las unidades elementales.</p>
+<p>Las variables se pueden clasificar en cuantitativas o cualitativas.</p>
+<div id="variable-cualitativa" class="section level3 hasAnchor" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> Variable cualitativa<a href="#variable-cualitativa" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Proporcionan datos que dan como resultado una categoría.
+Pueden ser de tipo nominal u ordinal.</p>
+<div id="nominales" class="section level4 hasAnchor" number="1.4.1.1">
+<h4><span class="header-section-number">1.4.1.1</span> Nominales<a href="#nominales" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Son aquellos cuyos valores o resultados pueden ser organizados y presentados en cualquier orden.</p>
+<p>Ejemplos:</p>
+<ul>
+<li>Forma de la hoja bandera del maíz.</li>
+<li>Tipo de dentadura del grano de maíz.</li>
+</ul>
+</div>
+<div id="ordinales" class="section level4 hasAnchor" number="1.4.1.2">
+<h4><span class="header-section-number">1.4.1.2</span> Ordinales<a href="#ordinales" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Son aquellas cuyos valores o resultados deben ser organizados y presentados en orden definido.</p>
+<p>Ejemplos:</p>
+<ul>
+<li>Grado de instrucción del agricultor.</li>
+</ul>
+</div>
+</div>
+<div id="variable-cuantitativa" class="section level3 hasAnchor" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> Variable cuantitativa<a href="#variable-cuantitativa" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Son aquellas cuyos valores pueden ser expresados en forma numérica,
+Pueden ser discretas o continuas.</p>
+<div id="discreta" class="section level4 hasAnchor" number="1.4.2.1">
+<h4><span class="header-section-number">1.4.2.1</span> Discreta<a href="#discreta" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Son aquellas que tienen un número finito o infinito numerable de valores posibles. Por lo general se obtienen mediante conteo.</p>
+<p>Ejemplo:</p>
+<ul>
+<li>Número de hojas por planta.</li>
+</ul>
+</div>
+<div id="continua" class="section level4 hasAnchor" number="1.4.2.2">
+<h4><span class="header-section-number">1.4.2.2</span> Continua<a href="#continua" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Son aquellas que tienen una cantidad infinita o no numerable de valores posibles. Por lo general se puede obtener mediante instrumentos de medición.</p>
+<p>Ejemplos:</p>
+<ul>
+<li>Diámetro de fruto.</li>
+<li>Peso de fruto.</li>
+</ul>
+</div>
+</div>
+<div id="otra-forma-de-clasificación-de-variables" class="section level3 hasAnchor" number="1.4.3">
+<h3><span class="header-section-number">1.4.3</span> Otra forma de clasificación de variables<a href="#otra-forma-de-clasificación-de-variables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Otra forma de clasificación de las varibales es según su escalada de medida. De esta manera la clasificación sería:</p>
+<ul>
+<li>Nominal: Los datos son etiquetas o nombres que se emplean para definir un atributo del elemento.</li>
+</ul>
+<p>Ejemplos: Estado civil, profesión, género.</p>
+<ul>
+<li>Ordinal: Los datos son etiquetas y además se pueden ordenar de forma ascendente o descendente.</li>
+</ul>
+<p>Ejemplos: Nivel de apreciación o calidad de un fruto.</p>
+<ul>
+<li>Intervalo: Los datos son numéricos, el cero es relativo, es decir, no indica ausencia de la característica medida.</li>
+</ul>
+<p>Ejemplo: Temperatura, fechas del calendario.</p>
+<p>Razón: Los datos son numéricos, el cero es <strong>absoluto</strong>, es decir, indica la ausencia de característica medida.</p>
+<p>Ejemplo: Peso, estatura, salario, diámetro.</p>
+</div>
+</div>
+<div id="observación" class="section level2 hasAnchor" number="1.5">
+<h2><span class="header-section-number">1.5</span> Observación<a href="#observación" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es el dato registrado, producto de la <em>medición</em> o aprecación de una característica en una unidad elemental.</p>
+<p>Ejemplo:</p>
+<p>El ingreso mensual de la empresa agroexportadora Camposol, producto de las ventas de arándano.</p>
+</div>
+<div id="parámetro" class="section level2 hasAnchor" number="1.6">
+<h2><span class="header-section-number">1.6</span> Parámetro<a href="#parámetro" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es una medida que resume los datos provenientes de la población. Es decir es una función de todas las observaciones de una población.</p>
+<p>Ejemplo: Luego de realizar un censo a los agricultores del distrito de Túcume se obtuvo que el ingreso medio mensual fue de 920 soles.</p>
+</div>
+<div id="estadístico" class="section level2 hasAnchor" number="1.7">
+<h2><span class="header-section-number">1.7</span> Estadístico<a href="#estadístico" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es una medida que resume los datos provenientes de la muestra.</p>
+<p>Ejemplo: Luego de realizar un muestreo a 30 agricultores del distrito de Túcume se obtuvo que el ingreso medio mensual fue de 950 soles.</p>
+</div>
+<div id="deficinión-de-estadística" class="section level2 hasAnchor" number="1.8">
+<h2><span class="header-section-number">1.8</span> Deficinión de Estadística<a href="#deficinión-de-estadística" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Es la ciencia que se ocupa de la creación, desarrollo y aplicación de técnicas que permiten hacer un análisis confiable de una población.</p>
+<p>En terminos generales, se ocupa de la colección, resumen, presentación, análisis e interpretación de datos y resultados, de modo tal que pueda evaluarse la confiabilidad y riesgos asociados a las conclusiones que se puedan derivar a partir de los datos captados.</p>
+</div>
+<div id="división-de-la-estadística" class="section level2 hasAnchor" number="1.9">
+<h2><span class="header-section-number">1.9</span> División de la Estadística<a href="#división-de-la-estadística" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="descriptiva" class="section level3 hasAnchor" number="1.9.1">
+<h3><span class="header-section-number">1.9.1</span> Descriptiva<a href="#descriptiva" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Son técnicas de recolección, caracterización, resumen y presentación que permiten <code>describir</code> un conjunto de datos.</p>
+<p>Con un análisis descriptivo, se pueden obtener indicadores (estimaciones puntuales). tablas de frecuencia (o contingencia) y gráficos.</p>
+<p>Para realizar el análisis descriptivo se debe tener en cuenta el tipo de variable que se está analizando (cualitativa o cuantitativa) y la cantidad de variables que se están analizando a la vez (univariada, bivariada o multivariada).</p>
+</div>
+<div id="inferencial" class="section level3 hasAnchor" number="1.9.2">
+<h3><span class="header-section-number">1.9.2</span> Inferencial<a href="#inferencial" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Son técnicas para estimar parámetros de una población o tomar decisiones sobre la población basadas en el resultado de una muestra. Estas conclusiones pueden tener cierto margen de error; por eso, se dan con una medida de confiabilidad o probabilidad.</p>
+<p>Comprende la estimación de intervalos de confianza y la realización de pruebas de hipótesis para uno o varios parámetros.</p>
+<p>Al igual que el análisis descriptivo para realizar un inferencial se debe tener en cuenta la naturaleza de la variable (si los datos provienen de alguna distribución teórica), el tipo de variable y la cantidad de variables involucradas en el análisis.</p>
+</div>
+<div id="paramétrica" class="section level3 hasAnchor" number="1.9.3">
+<h3><span class="header-section-number">1.9.3</span> Paramétrica<a href="#paramétrica" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Utiliza cálculos y procedimientos asumiendo que conoce cómo se distribuye la variable aleatoria a estudiar.</p>
+</div>
+<div id="no-paramétrica" class="section level3 hasAnchor" number="1.9.4">
+<h3><span class="header-section-number">1.9.4</span> No paramétrica<a href="#no-paramétrica" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>No requiere del conocimiento de la distribución de la variable aleatoria a estudiar.</p>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/edit/master/%s",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/blob/master/%s",
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

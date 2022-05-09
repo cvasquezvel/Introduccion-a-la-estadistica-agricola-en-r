@@ -29,12 +29,12 @@ maiz2$PAE <- car::recode(maiz2$PAE, "1='Ausente o muy débil';
 maiz2$PAE <- factor(maiz2$PAE,
                    levels = c("Ausente o muy débil","Débil","Media","Fuerte",
                               "Muy fuerte"), ordered = TRUE)
-# Crear un subconjunto con los datos de la localidad 2
-# Loc2 <- subset(maiz2, Localidad=="L2")
 ```
 
 
 ```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
+# Crear un subconjunto con los datos de la localidad 2
+# Loc2 <- subset(maiz2, Localidad=="L2")
 Loc2 <- maiz2[maiz2$Localidad=="L2",]
 cat("Promedio de la longitud de grano en la Localidad 2:",mean(Loc2$LG,
                                                                na.rm = TRUE), "mm.\n")
@@ -71,7 +71,7 @@ longitud <- Loc2$LG
 x <- sort(longitud)
 n <- length(x)
 
-h <- graph.freq(x,plot=FALSE)
+h <- graph.freq(x,plot=TRUE)
 moda <- stat.freq(h)$mode[1,3]
 cat("Moda de la longitud de grano en la Localidad 2:",round(moda,2),"mm.\n")
 ```
@@ -127,10 +127,10 @@ e) Rango intercuartil (IQR): Medida de variación apropiada cuando hay valores e
 $$IQR = Q_3-Q_1$$
 
 ```{r, echo = T, comment = NA, fig.align='center',fig.width=6,fig.height=4}
-cat("IQR de la longitud de grano en la Localidad 2:",IQR(x,na.rm = TRUE),".\n")
+cat("IQR de la longitud de grano en la Localidad 2:",IQR(x,na.rm = TRUE),"mm.\n")
 ```
 
-El rango intercuartil es 1.32, lo que significa que, como la mediana fue de 12.205 mm, entonces el $50\%$ de mazorcas evaluadas de maíz está dispersa entre 12.865 y 11.545 mm. Aproximadamente su variación sería de $5.40\%$.
+El rango intercuartil es 1.32 mm, lo que significa que, como la mediana fue de 12.205 mm, entonces el $50\%$ de mazorcas evaluadas de maíz está dispersa entre 12.865 y 11.545 mm. Aproximadamente su variación sería de $10.82\%$.
 
 f) Coeficiente de variación (CV). Es una medida de variación relativa, útil para comparar la variación de medidas con diferentes unidades.
 

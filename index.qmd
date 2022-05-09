@@ -13,6 +13,7 @@ output:
 subtitle: Un manual básico de R, apoyado de teorías básicas de la estadística con ejemplos aplicados a la agricultura.
 institute: InkaStats - Data Science Solutions S.A.C.
 site: bookdown::bookdown_site
+lang: es
 ---
 
 ```{=html}
@@ -95,7 +96,7 @@ document.write(\'<div class="btn-group pull-right" style="position: absolute; to
 ')
 )
 
-readr::write_lines(htmlhead, path = "header.html")
+readr::write_lines(htmlhead, file = "header.html")
 ```
 
 # Conceptos básicos
