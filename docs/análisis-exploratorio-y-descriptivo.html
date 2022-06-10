@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html lang="es" xml:lang="es">
 <head>
 
   <meta charset="utf-8" />
@@ -904,13 +904,20 @@ T1 T2 T3 T4 T5 T6 T7 T8
 <div id="resumen-general-de-los-datos" class="section level2 hasAnchor" number="3.2">
 <h2><span class="header-section-number">3.2</span> Resumen general de los datos<a href="análisis-exploratorio-y-descriptivo.html#resumen-general-de-los-datos" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="análisis-exploratorio-y-descriptivo.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(maiz)</span></code></pre></div>
-<pre><code> Tratamiento         Localidad                          PAE            LG              AG               PM       
- Length:640         Length:640         Ausente o muy débil:139   Min.   : 8.37   Min.   : 5.740   Min.   : 22.1  
- Class :character   Class :character   Débil              :254   1st Qu.:11.80   1st Qu.: 8.268   1st Qu.:192.2  
- Mode  :character   Mode  :character   Media              :144   Median :12.41   Median : 8.855   Median :226.7  
-                                       Fuerte             :103   Mean   :12.45   Mean   : 8.828   Mean   :224.6  
-                                       Muy fuerte         :  0   3rd Qu.:13.16   3rd Qu.: 9.393   3rd Qu.:256.7  
-                                                                 Max.   :16.62   Max.   :12.780   Max.   :358.4  </code></pre>
+<pre><code> Tratamiento         Localidad                          PAE     
+ Length:640         Length:640         Ausente o muy débil:139  
+ Class :character   Class :character   Débil              :254  
+ Mode  :character   Mode  :character   Media              :144  
+                                       Fuerte             :103  
+                                       Muy fuerte         :  0  
+                                                                
+       LG              AG               PM       
+ Min.   : 8.37   Min.   : 5.740   Min.   : 22.1  
+ 1st Qu.:11.80   1st Qu.: 8.268   1st Qu.:192.2  
+ Median :12.41   Median : 8.855   Median :226.7  
+ Mean   :12.45   Mean   : 8.828   Mean   :224.6  
+ 3rd Qu.:13.16   3rd Qu.: 9.393   3rd Qu.:256.7  
+ Max.   :16.62   Max.   :12.780   Max.   :358.4  </code></pre>
 </div>
 <div id="pigmentación-antociánica-de-los-estigmas" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> Pigmentación Antociánica de los estigmas<a href="análisis-exploratorio-y-descriptivo.html#pigmentación-antociánica-de-los-estigmas" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -920,16 +927,20 @@ T1 T2 T3 T4 T5 T6 T7 T8
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="análisis-exploratorio-y-descriptivo.html#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(maiz<span class="sc">$</span>PAE) <span class="ot">-&gt;</span> tabla3</span>
 <span id="cb67-2"><a href="análisis-exploratorio-y-descriptivo.html#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="fu">addmargins</span>(tabla3)</span></code></pre></div>
 <pre><code>
-Ausente o muy débil               Débil               Media              Fuerte          Muy fuerte                 Sum 
-                139                 254                 144                 103                   0                 640 </code></pre>
+Ausente o muy débil               Débil               Media              Fuerte 
+                139                 254                 144                 103 
+         Muy fuerte                 Sum 
+                  0                 640 </code></pre>
 <div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="análisis-exploratorio-y-descriptivo.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla3,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;" /></p>
 <div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="análisis-exploratorio-y-descriptivo.html#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de proporciones de PAE:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
 <pre><code>Tabla de proporciones de PAE:</code></pre>
 <div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="análisis-exploratorio-y-descriptivo.html#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">addmargins</span>(<span class="fu">prop.table</span>(tabla3))</span></code></pre></div>
 <pre><code>
-Ausente o muy débil               Débil               Media              Fuerte          Muy fuerte                 Sum 
-          0.2171875           0.3968750           0.2250000           0.1609375           0.0000000           1.0000000 </code></pre>
+Ausente o muy débil               Débil               Media              Fuerte 
+          0.2171875           0.3968750           0.2250000           0.1609375 
+         Muy fuerte                 Sum 
+          0.0000000           1.0000000 </code></pre>
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="análisis-exploratorio-y-descriptivo.html#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de frecuencia y proporciones de PAE:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
 <pre><code>Tabla de frecuencia y proporciones de PAE:</code></pre>
 <div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="análisis-exploratorio-y-descriptivo.html#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">addmargins</span>(tabla3),<span class="fu">addmargins</span>(<span class="fu">prop.table</span>(tabla3)))</span></code></pre></div>
@@ -997,7 +1008,7 @@ Sum                  640 1.0000000</code></pre>
 <div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="análisis-exploratorio-y-descriptivo.html#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla3,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;Gráfico de barras&quot;</span>,</span>
 <span id="cb92-2"><a href="análisis-exploratorio-y-descriptivo.html#cb92-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
 <p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-4.png" width="576" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="análisis-exploratorio-y-descriptivo.html#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">prop.table</span>(tabla3)<span class="sc">*</span><span class="dv">100</span>,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="análisis-exploratorio-y-descriptivo.html#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">prop.table</span>(tabla3)<span class="sc">*</span><span class="dv">100</span>,<span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">40</span>))</span></code></pre></div>
 <p><img src="bookdownproj_files/figure-html/unnamed-chunk-19-5.png" width="576" style="display: block; margin: auto;" /></p>
 <div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="análisis-exploratorio-y-descriptivo.html#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Tabla de contingencia de PAE según los tratamientos:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
 <pre><code>Tabla de contingencia de PAE según los tratamientos:</code></pre>
@@ -1015,8 +1026,10 @@ Sum                  640 1.0000000</code></pre>
 <pre><code>Margenes de fila:</code></pre>
 <div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="análisis-exploratorio-y-descriptivo.html#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">margin.table</span>(tabla4,<span class="dv">1</span>)</span></code></pre></div>
 <pre><code>
-Ausente o muy débil               Débil               Media              Fuerte          Muy fuerte 
-                139                 254                 144                 103                   0 </code></pre>
+Ausente o muy débil               Débil               Media              Fuerte 
+                139                 254                 144                 103 
+         Muy fuerte 
+                  0 </code></pre>
 <div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="análisis-exploratorio-y-descriptivo.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Margenes de columna:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
 <pre><code>Margenes de columna:</code></pre>
 <div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="análisis-exploratorio-y-descriptivo.html#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">margin.table</span>(tabla4,<span class="dv">2</span>)</span></code></pre></div>
@@ -1207,15 +1220,24 @@ $names
 12.76062 12.13244 </code></pre>
 <p><strong>Resumen general de un dataset</strong></p>
 <div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="análisis-exploratorio-y-descriptivo.html#cb144-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">describe</span>(maiz2)</span></code></pre></div>
-<pre><code>             vars   n   mean    sd median trimmed   mad   min    max  range  skew kurtosis   se
-Tratamiento*    1 640   4.50  2.29   4.50    4.50  2.97  1.00   8.00   7.00  0.00    -1.24 0.09
-Localidad*      2 640   1.50  0.50   1.50    1.50  0.74  1.00   2.00   1.00  0.00    -2.00 0.02
-HPP             3 640  15.80  2.34  16.00   15.71  2.97  2.00  22.00  20.00  0.02     1.54 0.09
-GPM             4 640  32.95  5.35  33.00   32.92  5.93  2.00  49.00  47.00 -0.22     1.05 0.21
-LG              5 640  12.45  1.05  12.41   12.47  0.97  8.37  16.62   8.25 -0.26     0.90 0.04
-AG              6 640   8.83  0.91   8.86    8.83  0.82  5.74  12.78   7.04  0.13     0.88 0.04
-PM              7 640 224.63 49.27 226.70  225.62 47.29 22.10 358.40 336.30 -0.23     0.22 1.95
-PAE*            8 640   2.33  0.99   2.00    2.29  1.48  1.00   4.00   3.00  0.30    -0.93 0.04</code></pre>
+<pre><code>             vars   n   mean    sd median trimmed   mad   min    max  range
+Tratamiento*    1 640   4.50  2.29   4.50    4.50  2.97  1.00   8.00   7.00
+Localidad*      2 640   1.50  0.50   1.50    1.50  0.74  1.00   2.00   1.00
+HPP             3 640  15.80  2.34  16.00   15.71  2.97  2.00  22.00  20.00
+GPM             4 640  32.95  5.35  33.00   32.92  5.93  2.00  49.00  47.00
+LG              5 640  12.45  1.05  12.41   12.47  0.97  8.37  16.62   8.25
+AG              6 640   8.83  0.91   8.86    8.83  0.82  5.74  12.78   7.04
+PM              7 640 224.63 49.27 226.70  225.62 47.29 22.10 358.40 336.30
+PAE*            8 640   2.33  0.99   2.00    2.29  1.48  1.00   4.00   3.00
+              skew kurtosis   se
+Tratamiento*  0.00    -1.24 0.09
+Localidad*    0.00    -2.00 0.02
+HPP           0.02     1.54 0.09
+GPM          -0.22     1.05 0.21
+LG           -0.26     0.90 0.04
+AG            0.13     0.88 0.04
+PM           -0.23     0.22 1.95
+PAE*          0.30    -0.93 0.04</code></pre>
 <div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="análisis-exploratorio-y-descriptivo.html#cb146-1" aria-hidden="true" tabindex="-1"></a>summarytools<span class="sc">::</span><span class="fu">descr</span>(maiz2)</span></code></pre></div>
 <pre><code>Non-numerical variable(s) ignored: Tratamiento, Localidad, PAE</code></pre>
 <pre><code>Descriptive Statistics  
@@ -1279,7 +1301,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/edit/master/03-Análisis-Exploratorio-y-Descriptivo.Rmd",
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/edit/master/03-Analisis-Exploratorio-y-Descriptivo.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -1287,7 +1309,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/blob/master/03-Análisis-Exploratorio-y-Descriptivo.Rmd",
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/blob/master/03-Analisis-Exploratorio-y-Descriptivo.Rmd",
 "text": null
 },
 "download": null,

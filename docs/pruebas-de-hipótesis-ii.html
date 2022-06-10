@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="" xml:lang="">
+<html lang="es" xml:lang="es">
 <head>
 
   <meta charset="utf-8" />
@@ -952,9 +952,12 @@ T.AD = ( Anderson-Darling  Criterion - mean)/sigma
 
 Null Hypothesis: All samples come from a common population.
 
-            AD  T.AD                                                    asympt. P-value
-version 1: 121 90.46 0.0000000000000000000000000000000000000000000000000000000001908000
-version 2: 126 94.39 0.0000000000000000000000000000000000000000000000000000000000002719</code></pre>
+            AD  T.AD
+version 1: 121 90.46
+version 2: 126 94.39
+                                                              asympt. P-value
+version 1: 0.0000000000000000000000000000000000000000000000000000000001908000
+version 2: 0.0000000000000000000000000000000000000000000000000000000000002719</code></pre>
 <p><span class="math inline">\(H_0: Mediana_{Aucatadijo} = Mediana_{Bolaina} = Mediana_{Shihuahuaco} = Mediana_{Tornillo}\)</span></p>
 <p><span class="math inline">\(H_1: \text{Al menos una Mediana es diferente a las demás}\)</span></p>
 <div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="pruebas-de-hipótesis-ii.html#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(dap,<span class="fu">kruskal</span>(<span class="at">y =</span> dap,<span class="at">trt =</span> especie,<span class="at">alpha =</span> <span class="fl">0.05</span>,<span class="at">group =</span> T,<span class="at">console =</span> T))</span></code></pre></div>
@@ -1058,7 +1061,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/edit/master/06-Pruebas-de-hipótesis-II.Rmd",
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/edit/master/06-Pruebas-de-hipotesis-II.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -1066,7 +1069,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/blob/master/06-Pruebas-de-hipótesis-II.Rmd",
+"link": "https://github.com/cvasquezvel/Introduccion-a-la-estadistica-agricola-en-r/blob/master/06-Pruebas-de-hipotesis-II.Rmd",
 "text": null
 },
 "download": null,

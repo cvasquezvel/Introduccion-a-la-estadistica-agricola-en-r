@@ -13,6 +13,7 @@ output:
 subtitle: Un manual básico de R, apoyado de teorías básicas de la estadística con ejemplos aplicados a la agricultura.
 institute: InkaStats - Data Science Solutions S.A.C.
 site: bookdown::bookdown_site
+template: https://raw.githubusercontent.com/jgm/pandoc-templates/master/default.html5
 lang: es
 ---
 
