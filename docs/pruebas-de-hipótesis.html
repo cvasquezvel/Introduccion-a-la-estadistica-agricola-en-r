@@ -829,9 +829,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="prueba-sobre-la-media-poblacional" class="section level2 hasAnchor" number="5.1">
 <h2><span class="header-section-number">5.1</span> Prueba sobre la media poblacional<a href="pruebas-de-hipótesis.html#prueba-sobre-la-media-poblacional" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>La media poblacional es un parámetro que mide la centralidad de los datos. Lo que se investiga a través de la hipótesis, es probar si hay cambios en la medida central.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="pruebas-de-hipótesis.html#cb1-1" aria-hidden="true" tabindex="-1"></a>T1 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T1&quot;</span>,]</span>
-<span id="cb1-2"><a href="pruebas-de-hipótesis.html#cb1-2" aria-hidden="true" tabindex="-1"></a>T2 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T2&quot;</span>,]</span>
-<span id="cb1-3"><a href="pruebas-de-hipótesis.html#cb1-3" aria-hidden="true" tabindex="-1"></a>T3 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T3&quot;</span>,]</span></code></pre></div>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="pruebas-de-hipótesis.html#cb167-1" aria-hidden="true" tabindex="-1"></a>T1 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T1&quot;</span>,]</span>
+<span id="cb167-2"><a href="pruebas-de-hipótesis.html#cb167-2" aria-hidden="true" tabindex="-1"></a>T2 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T2&quot;</span>,]</span>
+<span id="cb167-3"><a href="pruebas-de-hipótesis.html#cb167-3" aria-hidden="true" tabindex="-1"></a>T3 <span class="ot">&lt;-</span> maiz2[maiz2<span class="sc">$</span>Tratamiento<span class="sc">==</span><span class="st">&quot;T3&quot;</span>,]</span></code></pre></div>
 </div>
 <div id="prueba-de-una-cola-superior" class="section level2 hasAnchor" number="5.2">
 <h2><span class="header-section-number">5.2</span> Prueba de una cola superior<a href="pruebas-de-hipótesis.html#prueba-de-una-cola-superior" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -841,7 +841,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><span class="math inline">\(H_1: \mu &gt; 15~mm\)</span></p>
 <p><span class="math inline">\(\alpha = 0.05\)</span></p>
 <p>Utilice la prueba de t-student</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="pruebas-de-hipótesis.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T1<span class="sc">$</span>LG, <span class="at">mu =</span> <span class="dv">15</span>, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="pruebas-de-hipótesis.html#cb168-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T1<span class="sc">$</span>LG, <span class="at">mu =</span> <span class="dv">15</span>, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>)</span></code></pre></div>
 <pre><code>
     One Sample t-test
 
@@ -853,8 +853,8 @@ alternative hypothesis: true mean is greater than 15
 sample estimates:
 mean of x 
  12.27925 </code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="pruebas-de-hipótesis.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valor critico de la prueba</span></span>
-<span id="cb4-2"><a href="pruebas-de-hipótesis.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.95</span>,<span class="dv">79</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="pruebas-de-hipótesis.html#cb170-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valor critico de la prueba</span></span>
+<span id="cb170-2"><a href="pruebas-de-hipótesis.html#cb170-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.95</span>,<span class="dv">79</span>)</span></code></pre></div>
 <pre><code>[1] 1.664371</code></pre>
 <p>Se observó que la media de la longitud de grano en el tratamiento 1 fue de 12.28 mm.</p>
 <p><strong>Conclusión</strong>, con un alfa de 0.05, existe suficiente evidencia estadística para no rechazar la <span class="math inline">\(H_0\)</span> (hipótesis nula), por lo tanto, se concluye que la media de la longitud de grano en el tratamiento 1 es menor o igual a 15 mm.</p>
@@ -868,20 +868,20 @@ mean of x
 <p><span class="math inline">\(H_1: \mu &lt; 9~mm\)</span></p>
 <p><span class="math inline">\(\alpha = 0.08\)</span></p>
 <p>Utilice la prueba de t-student</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="pruebas-de-hipótesis.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T3<span class="sc">$</span>AG, <span class="at">mu =</span> <span class="dv">9</span>, <span class="at">alternative =</span> <span class="st">&quot;less&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="pruebas-de-hipótesis.html#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T3<span class="sc">$</span>AG, <span class="at">mu =</span> <span class="dv">9</span>, <span class="at">alternative =</span> <span class="st">&quot;less&quot;</span>)</span></code></pre></div>
 <pre><code>
     One Sample t-test
 
 data:  T3$AG
-t = -8.2518, df = 79, p-value = 1.407e-12
+t = -8.2518, df = 79, p-value = 0.000000000001407
 alternative hypothesis: true mean is less than 9
 95 percent confidence interval:
      -Inf 8.505551
 sample estimates:
 mean of x 
  8.380625 </code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="pruebas-de-hipótesis.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valor critico de la prueba</span></span>
-<span id="cb8-2"><a href="pruebas-de-hipótesis.html#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.08</span>,<span class="dv">79</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="pruebas-de-hipótesis.html#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valor critico de la prueba</span></span>
+<span id="cb174-2"><a href="pruebas-de-hipótesis.html#cb174-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.08</span>,<span class="dv">79</span>)</span></code></pre></div>
 <pre><code>[1] -1.418424</code></pre>
 <p>Se observó que el valor crítico de la prueba fue de t = -1.418424. Si se logra obtener un valor de t calculado menor a el t crítico o tabular de la prueba, entonces se rechaza la hipótesis nula.</p>
 <p>El valor calculado de t fue de -88.189 (menor a -1.418424), obteniendo un p valor &lt; 0.001 (p &lt; 0.00000000000000022). Teniendo en cuenta que el nivel de alfa designado para la prueba fue de 0.08, entonces el t calculado está situado en la zona de rechazo de la hipótesis nula.</p>
@@ -905,12 +905,12 @@ mean of x
 <p>Es una estimación del parámetro por intervalo, es mejor que una estimación puntual.</p>
 <p>Halle los límites de confianza al 95 % del ancho de grano del tratamiento 1.</p>
 <p>Utilice t-student.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="pruebas-de-hipótesis.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="pruebas-de-hipótesis.html#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>))</span></code></pre></div>
 <pre><code>
     One Sample t-test
 
 data:  AG
-t = 105.97, df = 79, p-value &lt; 2.2e-16
+t = 105.97, df = 79, p-value &lt; 0.00000000000000022
 alternative hypothesis: true mean is not equal to 0
 95 percent confidence interval:
  9.063248 9.410252
@@ -918,7 +918,7 @@ sample estimates:
 mean of x 
   9.23675 </code></pre>
 <p>El valor medio del ancho de grano en el tratamiento 1 fue de <span class="math inline">\(9.23675 mm\)</span>, su límite inferior fue de <span class="math inline">\(9.063248\)</span> y su límite superior fue de <span class="math inline">\(9.410252\)</span> al 95 % de confianza.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="pruebas-de-hipótesis.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">alternative =</span> <span class="st">&quot;less&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="pruebas-de-hipótesis.html#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">alternative =</span> <span class="st">&quot;less&quot;</span>))</span></code></pre></div>
 <pre><code>
     One Sample t-test
 
@@ -930,12 +930,12 @@ alternative hypothesis: true mean is less than 0
 sample estimates:
 mean of x 
   9.23675 </code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="pruebas-de-hipótesis.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="pruebas-de-hipótesis.html#cb180-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(T1, <span class="fu">t.test</span>(AG, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>))</span></code></pre></div>
 <pre><code>
     One Sample t-test
 
 data:  AG
-t = 105.97, df = 79, p-value &lt; 2.2e-16
+t = 105.97, df = 79, p-value &lt; 0.00000000000000022
 alternative hypothesis: true mean is greater than 0
 95 percent confidence interval:
  9.091671      Inf
@@ -959,7 +959,7 @@ mean of x
 <p><span class="math inline">\(H_1: \frac{\sigma_{T1}}{\sigma_{T3}} \neq 1\)</span></p>
 <p><span class="math inline">\(\alpha = 0.1\)</span></p>
 <p>Utilice la prueba de F</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="pruebas-de-hipótesis.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(T1<span class="sc">$</span>LG,T3<span class="sc">$</span>LG, <span class="at">conf.level =</span> <span class="fl">0.90</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="pruebas-de-hipótesis.html#cb182-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(T1<span class="sc">$</span>LG,T3<span class="sc">$</span>LG, <span class="at">conf.level =</span> <span class="fl">0.90</span>)</span></code></pre></div>
 <pre><code>
     F test to compare two variances
 
@@ -975,12 +975,12 @@ ratio of variances
 <p><strong>Conclusión</strong>
 A un nivel de significancia de 0.1, existe suficiente evidencia estadística para rechazar la hipótesis nula, por lo tanto, las variancias de longitud de grano de los tratamientos 1 y 3 no son equivalentes, entonces las variancias no son estadísticamente iguales.</p>
 <p>En la prueba de t-student debemos considerar estos resultados para realizar un ajuste de la prueba.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="pruebas-de-hipótesis.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T1<span class="sc">$</span>LG,T3<span class="sc">$</span>LG, <span class="at">conf.level =</span> <span class="fl">0.97</span>, <span class="at">alternative =</span> <span class="st">&quot;two.sided&quot;</span>, <span class="at">var =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="pruebas-de-hipótesis.html#cb184-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(T1<span class="sc">$</span>LG,T3<span class="sc">$</span>LG, <span class="at">conf.level =</span> <span class="fl">0.97</span>, <span class="at">alternative =</span> <span class="st">&quot;two.sided&quot;</span>, <span class="at">var =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>
     Welch Two Sample t-test
 
 data:  T1$LG and T3$LG
-t = 4.302, df = 149.89, p-value = 3.04e-05
+t = 4.302, df = 149.89, p-value = 0.0000304
 alternative hypothesis: true difference in means is not equal to 0
 97 percent confidence interval:
  0.3144217 0.9670783
